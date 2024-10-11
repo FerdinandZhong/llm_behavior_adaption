@@ -1,0 +1,3 @@
+[submodule "Synthetic-Persona-Chat"]
+	path = Synthetic-Persona-Chat
+	url = https://github.com/google-research-datasets/Synthetic-Persona-Chat.git
