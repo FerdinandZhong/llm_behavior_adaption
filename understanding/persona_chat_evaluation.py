@@ -59,7 +59,7 @@ async def model_query(
     input_list: List,
     target_model: str,
     tested_user: str = "User 1",
-    chunk_size: int = 50
+    chunk_size: int = 50,
 ):
     """
     Prepare and execute queries using the model for few-shot samples.
@@ -86,7 +86,9 @@ async def model_query(
     if few_shots_num < 5:
         logger.info("Request sample: %s", requests_list[0])
 
-    results = await query_server_in_chunk(requests_list, target_model, chunk_size=chunk_size)
+    results = await query_server_in_chunk(
+        requests_list, target_model, chunk_size=chunk_size
+    )
 
     return results
 
@@ -96,7 +98,7 @@ async def main(
     inputs_list_dict: Dict,
     result_csv_name: str,
     target_model: str,
-    chunk_size: int = 50
+    chunk_size: int = 50,
 ):
     """
     Main asynchronous function to run the evaluation process.
@@ -113,16 +115,14 @@ async def main(
     results_dict = {}
     for tested_user in ["User 1", "User 2"]:
         for num_samples in [0, 1, 5, 10]:
-            output_col = (
-                f"{tested_user.replace(' ', '').lower()}_{num_samples}_results.csv"
-            )
+            output_col = f"{tested_user.replace(' ', '').lower()}_{num_samples}_results"
             results_dict[output_col] = await model_query(
                 few_shots_samples=few_shots_samples,
                 few_shots_num=num_samples,
                 input_list=inputs_list_dict[tested_user],
                 target_model=target_model,
                 tested_user=tested_user,
-                chunk_size=chunk_size
+                chunk_size=chunk_size,
             )
 
     results_df = pd.DataFrame(results_dict)
@@ -137,9 +137,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--results_csv", type=str, help="Name of results csv file", required=True
     )
-    parser.add_argument(
-        "--chunk_size", type=int, help="query chunk size", default=50
-    )
+    parser.add_argument("--chunk_size", type=int, help="query chunk size", default=50)
 
     # Parse the arguments
     args = parser.parse_args()
@@ -162,6 +160,6 @@ if __name__ == "__main__":
             inputs_list_dict=user_inputs_list_dict,
             result_csv_name=args.results_csv,
             target_model=args.model,
-            chunk_size=args.chunk_size
+            chunk_size=args.chunk_size,
         )
     )
