@@ -5,8 +5,14 @@ LLM_CHAT_MESSAGES = [
     }
 ]
 
-SAMPLE_USER_CONTENT_TEMPLATE = (
+SAMPLE_USER_CONTENT_TEMPLATE_FIVE = (
     "Given the following dialogue history between two users:\n{dialogue_history}\n\n"
     "Select five persona attributes of {user} from the following list:\n{attributes_candidates}\n\n"
     "Only respond with attributes ids."
+)
+
+SAMPLE_USER_CONTENT_TEMPLATE_SINGLE = (
+    "Given the following dialogue history between two users:\n{dialogue_history}\n\n"
+    "Select one most suitable persona attribute of {user} from the following list:\n{attributes_candidates}\n\n"
+    "Only respond with attributes id."
 )

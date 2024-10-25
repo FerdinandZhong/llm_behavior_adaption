@@ -3,6 +3,7 @@ import ast
 import json
 import logging
 import os
+
 import pandas as pd
 
 from understanding.utils import register_logger
@@ -14,6 +15,7 @@ register_logger(logger)
 
 DATASETS_FOLDER = os.path.join(os.getcwd(), "datasets")
 JSON_FOLDER = os.path.join(os.getcwd(), "results_jsons")
+
 
 def process_result_column(row, target_column):
     """

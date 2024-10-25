@@ -7,11 +7,20 @@ import openai
 from openai import AsyncOpenAI
 from tqdm import tqdm
 
-from .constant import LLM_CHAT_MESSAGES, SAMPLE_USER_CONTENT_TEMPLATE
+from .constant import (
+    LLM_CHAT_MESSAGES,
+    SAMPLE_USER_CONTENT_TEMPLATE_FIVE,
+    SAMPLE_USER_CONTENT_TEMPLATE_SINGLE,
+)
+
+templates_dict = {
+    1: SAMPLE_USER_CONTENT_TEMPLATE_SINGLE,
+    5: SAMPLE_USER_CONTENT_TEMPLATE_FIVE,
+}
 
 openai = AsyncOpenAI(
     api_key=os.environ["api_key"],
-    base_url="https://api.deepinfra.com/v1/openai",
+    base_url="http://localhost:8000/v1",
 )
 
 
@@ -90,19 +99,22 @@ async def query_server_in_chunk(
     return generated_list
 
 
-def generate_fewshots_samples(samples_list: List[Dict], tested_user: str = "User 1"):
+def generate_fewshots_samples(
+    samples_list: List[Dict], tested_user: str = "User 1", selection_num: int = 1
+):
     """generate samples for few shots
 
     Args:
         samples_list (List[Dict]): List of samples in dictionary format
         tested_user (str): target of user
     """
+    template = templates_dict[selection_num]
     few_shots_samples = []
     user_column = f"{tested_user.replace(' ', '').lower()}_personas_candidates"
     for sample_dict in samples_list:
         few_shots_samples.append(
             {
-                "user": SAMPLE_USER_CONTENT_TEMPLATE.format(
+                "user": template.format(
                     dialogue_history="\n".join(sample_dict["conversations"]),
                     attributes_candidates=sample_dict[user_column],
                     user=tested_user,
@@ -113,23 +125,26 @@ def generate_fewshots_samples(samples_list: List[Dict], tested_user: str = "User
                         for index in sample_dict[
                             f"{tested_user.replace(' ', '').lower()}_gt_index_list"
                         ]
-                    ]
+                    ][:selection_num]
                 ),
             }
         )
     return few_shots_samples
 
 
-def generate_input_contents(input_rows: List[Dict], tested_user: str = "User 1"):
+def generate_input_contents(
+    input_rows: List[Dict], tested_user: str = "User 1", selection_num: int = 1
+):
     """generate input contents
 
     Args:
         input_rows (List[Dict]): List of samples in dictionary format
         tested_user (str): target of user
     """
+    template = templates_dict[selection_num]
     user_column = f"{tested_user.replace(' ', '').lower()}_personas_candidates"
     return [
-        SAMPLE_USER_CONTENT_TEMPLATE.format(
+        template.format(
             dialogue_history="\n".join(input_row["conversations"]),
             attributes_candidates=input_row[user_column],
             user=tested_user,
