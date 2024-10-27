@@ -14,11 +14,12 @@ from understanding.utils import load_dataset, register_logger
 logger = logging.getLogger(__name__)
 register_logger(logger)
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Initialize BERT model and tokenizer
 MODEL_NAME = "bert-base-uncased"
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
-model = BertModel.from_pretrained(MODEL_NAME)
+model = BertModel.from_pretrained(MODEL_NAME).to(device)
 model.eval()  # Set model to evaluation mode
 
 
