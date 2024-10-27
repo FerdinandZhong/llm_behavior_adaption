@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 from transformers import BertModel, BertTokenizer
 
 from understanding.constant import DATASETS_FOLDER
@@ -34,11 +35,13 @@ def compute_embeddings(sentences):
         torch.Tensor: Tensor of embeddings.
     """
     # Tokenize and encode sentences to get input IDs and attention masks
-    inputs = tokenizer(sentences, return_tensors="pt", padding=True, truncation=True)
+    inputs = tokenizer(
+        sentences, return_tensors="pt", padding=True, truncation=True
+    ).to(device)
     with torch.no_grad():
         outputs = model(**inputs)
-        embeddings = outputs.last_hidden_state[:, 0, :]  # Use CLS token embeddings
-    return embeddings
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+    return embeddings.cpu()
 
 
 def compute_max_similarities(embeddings, ground_truth_indices):
@@ -55,6 +58,7 @@ def compute_max_similarities(embeddings, ground_truth_indices):
     """
     # Compute cosine similarity between all embeddings
     sim_matrix = cosine_similarity(embeddings)
+    ground_truth_indices = [gt_index - 1 for gt_index in ground_truth_indices]
 
     max_similarities = []
     for i in range(len(sim_matrix)):
@@ -67,7 +71,15 @@ def compute_max_similarities(embeddings, ground_truth_indices):
             max_sim = sim_to_ground_truth.max()
             max_similarities.append(max_sim)
 
-    return max_similarities
+    # Filter out None values (ground truth sentence placeholders) before calculating the average
+    non_ground_truth_similarities = [sim for sim in max_similarities if sim is not None]
+    avg_max_similarity = (
+        sum(non_ground_truth_similarities) / len(non_ground_truth_similarities)
+        if non_ground_truth_similarities
+        else None
+    )
+
+    return max_similarities, avg_max_similarity
 
 
 def process_dataframe(df, user_name):
@@ -83,24 +95,33 @@ def process_dataframe(df, user_name):
     """
     candidates_column = f"{user_name}_personas_candidates"
     ground_truth_column = f"{user_name}_gt_index_list"
-    similarity_column = f"{user_name}_candidates_similarities"
-    max_sim_scores = []
+    max_similarity_column = f"{user_name}_candidates_similarities"
+    avg_similarity_column = f"{user_name}_avg_similarity"
 
-    for _, row in df.iterrows():
+    max_sim_scores = []
+    avg_max_similarities = []
+
+    for _, row in tqdm(
+        df.iterrows(), desc="Processing rows in DataFrame", total=len(df)
+    ):
         sentences = row[candidates_column]
         ground_truth_indices = row[ground_truth_column]
 
         # Compute embeddings for each sentence in the cell
         embeddings = compute_embeddings(sentences)
 
-        # Compute max similarity scores for each non-ground-truth sentence
-        max_similarities = compute_max_similarities(embeddings, ground_truth_indices)
+        max_similarities, avg_max_similarity = compute_max_similarities(
+            embeddings, ground_truth_indices
+        )
 
         # Store results
         max_sim_scores.append(max_similarities)
+        avg_max_similarities.append(avg_max_similarity)
 
     # Add the new column to the DataFrame
-    df[similarity_column] = max_sim_scores
+    df[max_similarity_column] = max_sim_scores
+    df[avg_similarity_column] = avg_max_similarities
+
     return df
 
 

@@ -21,5 +21,5 @@ SAMPLE_USER_CONTENT_TEMPLATE_SINGLE = (
 
 
 DATASETS_FOLDER = os.path.join(os.getcwd(), "datasets")
-OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.environ["output_folder"])
+OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.getenv("output_folder", "outputs"))
 DATASET_NAME = "personas_candidates.csv"

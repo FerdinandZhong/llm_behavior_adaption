@@ -7,3 +7,4 @@ datasets/qwen25_72b_results.csv filter=lfs diff=lfs merge=lfs -text
 single_selection_outputs/llama31_8b_results.csv filter=lfs diff=lfs merge=lfs -text
 single_selection_outputs/llama32_3b_results.csv filter=lfs diff=lfs merge=lfs -text
 single_selection_outputs/llama3_8b_results.csv filter=lfs diff=lfs merge=lfs -text
+datasets/personas_candidates_similarities.csv filter=lfs diff=lfs merge=lfs -text
