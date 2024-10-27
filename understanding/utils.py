@@ -1,5 +1,11 @@
+import ast
 import logging
+import os
 import sys
+
+import pandas as pd
+
+from understanding.constant import DATASET_NAME, DATASETS_FOLDER
 
 
 class ColorfulFormatter(logging.Formatter):
@@ -36,3 +42,25 @@ def register_logger(logger=None):
         handler.setFormatter(ColorfulFormatter())
         logger.setLevel(logging.DEBUG)
         logger.addHandler(handler)
+
+
+def load_dataset():
+    """
+    Load the dataset from the specified CSV file.
+
+    Returns:
+        pandas.DataFrame: Loaded DataFrame containing the dataset.
+    """
+    df = pd.read_csv(os.path.join(DATASETS_FOLDER, DATASET_NAME))
+    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+    columns_to_convert = [
+        "user1_personas_candidates",
+        "user2_personas_candidates",
+        "user1_gt_index_list",
+        "user2_gt_index_list",
+        "conversations",
+    ]
+    for col_name in columns_to_convert:
+        df[col_name] = df[col_name].apply(ast.literal_eval)
+
+    return df

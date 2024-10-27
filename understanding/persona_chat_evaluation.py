@@ -6,7 +6,6 @@ and querying LLMs to assess persona understanding.
 """
 
 import argparse
-import ast
 import asyncio
 import logging
 import os
@@ -20,38 +19,13 @@ from understanding.llm_evaluation import (
     generate_input_contents,
     query_server_in_chunk,
 )
-from understanding.utils import register_logger
+from understanding.utils import load_dataset, register_logger
 
-# setup library logging
 logger = logging.getLogger(__name__)
 register_logger(logger)
 
 
-DATASETS_FOLDER = os.path.join(os.getcwd(), "datasets")
 OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.environ["output_folder"])
-DATASET_NAME = "personas_candidates.csv"
-
-
-def load_dataset():
-    """
-    Load the dataset from the specified CSV file.
-
-    Returns:
-        pandas.DataFrame: Loaded DataFrame containing the dataset.
-    """
-    df = pd.read_csv(os.path.join(DATASETS_FOLDER, DATASET_NAME))
-    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
-    columns_to_convert = [
-        "user1_personas_candidates",
-        "user2_personas_candidates",
-        "user1_gt_index_list",
-        "user2_gt_index_list",
-        "conversations",
-    ]
-    for col_name in columns_to_convert:
-        df[col_name] = df[col_name].apply(ast.literal_eval)
-
-    return df
 
 
 async def model_query(
@@ -166,9 +140,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num_samples",
         type=int,
-        nargs='+',
+        nargs="+",
         default=[0, 1, 5, 10],
-        help="List of sample numbers for testing (e.g., --num_samples 0 1 5 10)"
+        help="List of sample numbers for testing (e.g., --num_samples 0 1 5 10)",
     )
 
     # Parse the arguments
@@ -176,13 +150,17 @@ if __name__ == "__main__":
 
     # Load an existing DataFrame if available
     result_csv_path = os.path.join(OUTPUTS_FOLDER, args.results_csv)
-    existing_df = pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
+    existing_df = (
+        pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
+    )
 
     # Load dataset and set up data for testing
     persona_df = load_dataset()
 
     all_few_shots_samples = persona_df.iloc[:10].to_dict(orient="records")
-    remaining_rows = persona_df.iloc[10:].reset_index(drop=True).to_dict(orient="records")
+    remaining_rows = (
+        persona_df.iloc[10:].reset_index(drop=True).to_dict(orient="records")
+    )
 
     user_inputs_list_dict = {
         "User 1": generate_input_contents(
@@ -203,6 +181,6 @@ if __name__ == "__main__":
             num_samples=args.num_samples,
             chunk_size=args.chunk_size,
             selection_num=args.selection_num,
-            existing_df=existing_df
+            existing_df=existing_df,
         )
     )

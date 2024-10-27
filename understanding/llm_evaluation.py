@@ -20,7 +20,7 @@ templates_dict = {
 
 openai = AsyncOpenAI(
     api_key=os.environ["api_key"],
-    base_url=os.environ["base_url"], # "http://localhost:8000/v1",
+    base_url=os.environ["base_url"],  # "http://localhost:8000/v1",
 )
 
 

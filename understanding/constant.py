@@ -1,3 +1,5 @@
+import os
+
 LLM_CHAT_MESSAGES = [
     {
         "role": "system",
@@ -16,3 +18,8 @@ SAMPLE_USER_CONTENT_TEMPLATE_SINGLE = (
     "Select one most suitable persona attribute of {user} from the following list:\n{attributes_candidates}\n\n"
     "Only respond with attributes id."
 )
+
+
+DATASETS_FOLDER = os.path.join(os.getcwd(), "datasets")
+OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.environ["output_folder"])
+DATASET_NAME = "personas_candidates.csv"
