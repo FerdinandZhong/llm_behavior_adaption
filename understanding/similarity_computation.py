@@ -129,3 +129,5 @@ if __name__ == "__main__":
 
     for user in ["user1", "user2"]:
         persona_df = process_dataframe(df=persona_df, user_name=user)
+
+    persona_df.to_csv(os.path.join(DATASETS_FOLDER, args.results_csv), index=False)
