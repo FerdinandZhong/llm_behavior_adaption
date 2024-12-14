@@ -10,17 +10,19 @@ from tqdm import tqdm
 from .constant import (
     LLM_CHAT_MESSAGES,
     SAMPLE_USER_CONTENT_TEMPLATE_FIVE,
+    SAMPLE_USER_CONTENT_TEMPLATE_NO_FIXED,
     SAMPLE_USER_CONTENT_TEMPLATE_SINGLE,
 )
 
 templates_dict = {
+    0: SAMPLE_USER_CONTENT_TEMPLATE_NO_FIXED,
     1: SAMPLE_USER_CONTENT_TEMPLATE_SINGLE,
     5: SAMPLE_USER_CONTENT_TEMPLATE_FIVE,
 }
 
 openai = AsyncOpenAI(
     api_key=os.environ["api_key"],
-    base_url=os.environ["base_url"],  # "http://localhost:8000/v1",
+    base_url=os.getenv("base_url", "http://localhost:8000/v1"),
 )
 
 

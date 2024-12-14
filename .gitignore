@@ -162,3 +162,9 @@ cython_debug/
 #.idea/
 
 notebooks/**
+gpt_datasets/**_inputs**
+gpt_datasets/**_outputs**
+logs/**
+datasets/values_dataset/vsm2013**
+datasets/generated_dialogues/**trial.jsonl
+temp.txt

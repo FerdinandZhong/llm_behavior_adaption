@@ -19,7 +19,15 @@ SAMPLE_USER_CONTENT_TEMPLATE_SINGLE = (
     "Only respond with attributes id."
 )
 
+SAMPLE_USER_CONTENT_TEMPLATE_NO_FIXED = (
+    "Given the following dialogue history between two users:\n{dialogue_history}\n\n"
+    "Select all suitable persona attributes of {user} from the following list:\n{attributes_candidates}\n\n"
+    "Only respond with attributes ids."
+)
+
 
 DATASETS_FOLDER = os.path.join(os.getcwd(), "datasets")
 OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.getenv("output_folder", "outputs"))
 DATASET_NAME = "personas_candidates.csv"
+
+OUTPUTS_FOLDER = os.path.join(os.getcwd(), os.environ["output_folder"])

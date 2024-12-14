@@ -5,7 +5,7 @@ import sys
 
 import pandas as pd
 
-from understanding.constant import DATASET_NAME, DATASETS_FOLDER
+from .constant import DATASET_NAME, DATASETS_FOLDER
 
 
 class ColorfulFormatter(logging.Formatter):

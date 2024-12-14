@@ -5,15 +5,17 @@ Dialogue controller
 import json
 import logging
 import os
-from typing import Dict
+from copy import deepcopy
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
 from persona_understanding.dialogue_dataset_creation.constant import (
+    CHATBOT_SYSTEM_PROMPT,
     CONVERSATION_TEMPLATE_STRING,
     DIALOGUE_RUNS_THRESHOLD,
+    LLM_BASED_OOC_DETECTION_PROMPT,
     PROFILE_TEMPLATE,
     USER_SIMULATOR_INITIAL_PROMPT_MESSAGES,
     USER_SIMULATOR_SUBSEQUENT_PROMPT_MESSAGES,
@@ -22,7 +24,6 @@ from persona_understanding.dialogue_dataset_creation.generation_utils import (
     render_template,
     retrieve_user_profile,
 )
-from copy import deepcopy
 
 logger = logging.getLogger(__name__)
 
@@ -44,12 +45,12 @@ class DialogueRun(BaseModel):
 class DialogueGenerator:
     def __init__(
         self,
-        seed_row: Dict,
         user_simulator="gpt-4o",
         chatbot="gpt-4o",
         ooc_detector=None,
+        ooc_detector_type="llm",
         openai_client=None,
-        user_simulator_generation_paramters=None,
+        user_simulator_generation_parameters=None,
         chatbot_generation_parameters=None,
         dialogue_runs_threshold: int = DIALOGUE_RUNS_THRESHOLD,
         verbose: int = 0,
@@ -58,13 +59,13 @@ class DialogueGenerator:
         Initialize the conversation management system with specified components.
 
         Args:
-            seed_row (Dict): The seed data used to retrieve and render the user's profile.
             user_simulator (str, optional): The model used as a user simulator. Defaults to "gpt-4o".
             chatbot (str, optional): The model used for chatbot interactions. Defaults to "gpt-4o".
             ooc_detector (optional): The out-of-character (OOC) detection mechanism. Defaults to None.
+            ooc_detector_type (optional, str): The OOC detector type. Defaults to llm.
             openai_client (optional): An OpenAI client instance for API interactions. If None, a default
                 `AsyncOpenAI` client is instantiated using the API key from the environment. Defaults to None.
-            user_simulator_generation_paramters (dict, optional): Parameters for generating responses
+            user_simulator_generation_parameters (dict, optional): Parameters for generating responses
                 from the user simulator model. Defaults to an empty dictionary.
             chatbot_generation_parameters (dict, optional): Parameters for generating chatbot responses.
                 Defaults to an empty dictionary.
@@ -100,13 +101,10 @@ class DialogueGenerator:
         self._ooc_detector = ooc_detector
         self._response_format = {"type": "json_object"}
 
-        self._user_profile = render_template(
-            PROFILE_TEMPLATE, profile_data=retrieve_user_profile(seed_row)
-        )
         self._user_simulator_generation_parameters = (
             {}
-            if user_simulator_generation_paramters is None
-            else user_simulator_generation_paramters
+            if user_simulator_generation_parameters is None
+            else user_simulator_generation_parameters
         )
         self._chatbot_generation_parameters = (
             {}
@@ -116,15 +114,15 @@ class DialogueGenerator:
         self._conversation_history = []
         self._dialogue_runs_threshold = dialogue_runs_threshold
         self._verbose = verbose
+        if ooc_detector_type == "llm":
+            self.ooc_detection = self._llm_ooc_detection
+        else:
+            self.ooc_detection = None  # TODO
 
     # Getters
     @property
     def dialogue_history(self):
         return self._dialogue_history
-
-    @property
-    def user_profile(self):
-        return self._user_profile
 
     @property
     def openai_client(self):
@@ -147,7 +145,7 @@ class DialogueGenerator:
         return self._response_format
 
     @property
-    def user_simulator_generation_paramters(self):
+    def user_simulator_generation_parameters(self):
         return self._user_simulator_generation_parameters
 
     @property
@@ -161,27 +159,31 @@ class DialogueGenerator:
     def add_to_conversation_history(self, dialogue_run):
         self._conversation_history.append(dialogue_run)
 
+    @conversation_history.setter
+    def conversation_history(self, new_list):
+        self._conversation_history = new_list
+
     @property
     def dialogue_runs_threshold(self):
         return self._dialogue_runs_threshold
 
-    async def _init_dialogue(self):
+    async def _init_dialogue(self, user_profile):
         prompt_for_simulator = deepcopy(USER_SIMULATOR_INITIAL_PROMPT_MESSAGES)
         prompt_for_simulator[1]["content"] = prompt_for_simulator[1]["content"].format(
-            user_details=self.user_profile
+            user_details=user_profile
         )
         chat_completion_sample = await self.openai_client.chat.completions.create(
             model=self.user_simulator,
             messages=prompt_for_simulator,
             response_format=self.response_format,
-            **self.user_simulator_generation_paramters
+            **self.user_simulator_generation_parameters
         )
 
         return json.loads(chat_completion_sample.choices[0].message.content)[
             "proposed_question"
         ]
 
-    async def _followup_question(self):
+    async def _followup_question(self, user_profile):
         formatted_conversation_history = []
         for run in self.conversation_history:
             formatted_conversation_history.append(
@@ -196,20 +198,20 @@ class DialogueGenerator:
             )
         )
         prompt_for_simulator[2]["content"] = prompt_for_simulator[2]["content"].format(
-            user_details=self.user_profile
+            user_details=user_profile
         )
 
         chat_completion_sample = await self.openai_client.chat.completions.create(
             model=self.user_simulator,
             messages=prompt_for_simulator,
             response_format=self.response_format,
-            **self.user_simulator_generation_paramters
+            **self.user_simulator_generation_parameters
         )
 
         return json.loads(chat_completion_sample.choices[0].message.content)
 
     async def _query_chatbot(self, proposed_question):
-        conversation_history_for_chatbot = []
+        conversation_history_for_chatbot = [CHATBOT_SYSTEM_PROMPT]
         for run in self.conversation_history:
             conversation_history_for_chatbot += run.convert_to_openai_history()
 
@@ -225,10 +227,22 @@ class DialogueGenerator:
 
         return chatbot_answer.choices[0].message.content
 
-    def ooc_detection(self, proposed_question):
-        pass
+    async def _llm_ooc_detection(self, user_profile, proposed_question):
+        ooc_detector_prompt = deepcopy(LLM_BASED_OOC_DETECTION_PROMPT)
 
-    async def dialogue_generation(self):
+        ooc_detector_prompt[1]["content"] = ooc_detector_prompt[1]["content"].format(
+            user_details=user_profile, question=proposed_question
+        )
+
+        detection_result = await self.openai_client.chat.completions.create(
+            model=self.ooc_detector,
+            messages=ooc_detector_prompt,
+            response_format={"type": "json_object"},
+        )
+
+        return json.loads(detection_result.choices[0].message.content)
+
+    async def dialogue_generation(self, seed_row):
         """
         Asynchronously manages the dialogue generation process between the user simulator
         and the chatbot, maintaining a history of dialogue exchanges.
@@ -236,6 +250,9 @@ class DialogueGenerator:
         This method initiates a conversation, processes follow-up interactions, and
         applies optional out-of-character (OOC) detection. The process continues until
         the dialogue history exceeds the predefined threshold or the conversation is terminated.
+
+        Args:
+            seed_row (Dict): The seed data used to retrieve and render the user's profile.
 
         Returns:
             list: The complete conversation history, represented as a list of `DialogueRun` objects.
@@ -262,6 +279,10 @@ class DialogueGenerator:
         if self._verbose == 1:
             logger.info("Starting dialogue generation process.")
 
+        user_profile = render_template(
+            PROFILE_TEMPLATE, profile_data=retrieve_user_profile(seed_row)
+        )
+        self.conversation_history = []
         try:
             # Initialize tqdm progress bar
             with tqdm(
@@ -270,7 +291,7 @@ class DialogueGenerator:
                 unit="turn",
             ) as pbar:
                 # Start initial dialogue
-                first_question = await self._init_dialogue()
+                first_question = await self._init_dialogue(user_profile=user_profile)
                 first_answer = await self._query_chatbot(first_question)
 
                 if self._verbose == 1:
@@ -287,7 +308,9 @@ class DialogueGenerator:
 
                 # Continue generating follow-up dialogues
                 while len(self.conversation_history) < self.dialogue_runs_threshold:
-                    user_simulation = await self._followup_question()
+                    user_simulation = await self._followup_question(
+                        user_profile=user_profile
+                    )
 
                     if user_simulation["end_conversation"]:
                         if self._verbose == 1:
@@ -296,15 +319,21 @@ class DialogueGenerator:
 
                     proposed_question = user_simulation["proposed_question"]
 
-                    if self.ooc_detector is not None and self.ooc_detection(
-                        proposed_question
-                    ):
-                        if self._verbose == 1:
+                    if self.ooc_detector is not None:
+                        detection_result = await self.ooc_detection(
+                            user_profile, proposed_question
+                        )
+                        if detection_result["has_out_of_context"]:
                             logger.warning(
                                 "OOC detected: %s",
-                                " ".join(proposed_question.split()[:20]),
+                                " ".join(proposed_question.split()),
                             )
-                        return self.conversation_history
+                            logger.warning(
+                                "New proposed question: %s",
+                                " ".join(detection_result["updated_question"].split()),
+                            )
+                            proposed_question = detection_result["updated_question"]
+                        # return self.conversation_history
 
                     chatbot_answer = await self._query_chatbot(proposed_question)
 

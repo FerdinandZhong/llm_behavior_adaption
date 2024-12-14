@@ -1,4 +1,4 @@
-PY_SOURCE_FILES=understanding/  #this can be modified to include more files
+PY_SOURCE_FILES=understanding/ persona_understanding/ #this can be modified to include more files
 
 install: package
 	pip install -e .[dev,data_process,training]
