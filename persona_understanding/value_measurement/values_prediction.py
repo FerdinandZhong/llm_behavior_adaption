@@ -356,12 +356,13 @@ class ValuesPredictionController:
             token_obj.token: token_obj
             for token_obj in full_chat_response.choices[0].logprobs.content
         }
-        print(full_chat_response.choices[0].logprobs)
+        # print(selected_option_id)
+        # print(token_logprobs_mapping[str(selected_option_id)])
         option_id_logprobs = token_logprobs_mapping[
             str(selected_option_id)
         ].top_logprobs
         option_id_logprobs = {
-            prob_item.token: prob_item.logprob for prob_item in option_id_logprobs
+            int(prob_item.token): prob_item.logprob for prob_item in option_id_logprobs
         }
         normalized_probs = self._normalize_logprobs(
             option_id_logprobs, DEFAULT_OPTION_IDS
