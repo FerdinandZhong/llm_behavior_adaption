@@ -319,7 +319,10 @@ class ValuesPredictionController:
         generated_dialogues = []
         with open(args.dialogue_file, "r", encoding="utf-8") as dialogue_file:
             for dialogue in dialogue_file:
-                generated_dialogues.append(json.loads(dialogue))
+                dialogue_obj = json.loads(dialogue)
+                if dialogue_obj["index"] < args.starting_row:
+                    continue
+                generated_dialogues.append(dialogue_obj)
                 if len(generated_dialogues) >= args.ending_row:
                     break
 
@@ -356,25 +359,35 @@ class ValuesPredictionController:
         return [p / prob_sum if prob_sum > 0 else 0.0 for p in probs]
 
     def _llm_output_processing(self, full_chat_response):
-        json_output = json.loads(full_chat_response.choices[0].message.content)
+        try:
+            json_output = json.loads(full_chat_response.choices[0].message.content)
+        except Exception as e:
+            logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
+            return "N.A", [0,0,0,0,0], "No valid reason"
         selected_option_id = json_output["option_id"]
         reason_for_selection = json_output["reason"]
         token_logprobs_mapping = {
             token_obj.token: token_obj
             for token_obj in full_chat_response.choices[0].logprobs.content
         }
-        if str(selected_option_id) in token_logprobs_mapping:
+        # print(selected_option_id)
+        # print(token_logprobs_mapping[str(selected_option_id)])
+        try:
             option_id_logprobs = token_logprobs_mapping[
                 str(selected_option_id)
             ].top_logprobs
-            option_id_logprobs = {
-                int(prob_item.token): prob_item.logprob
-                for prob_item in option_id_logprobs
-            }
+            option_id_logprobs_dict = {}
+            for prob_item in option_id_logprobs:
+                try:
+                    option_id_logprobs_dict[int(prob_item.token.strip())] = prob_item.logprob
+                except ValueError as e:
+                    logger.warning(f"Can't have {prob_item.token} casted into int: {str(e)}")
+                    option_id_logprobs_dict[prob_item.token] = prob_item.logprob
             normalized_probs = self._normalize_logprobs(
-                option_id_logprobs, DEFAULT_OPTION_IDS
+                option_id_logprobs_dict, DEFAULT_OPTION_IDS
             )
-        else:
+        except KeyError as ke:
+            logger.warning(f"{str(selected_option_id)} not in map, {str(ke)}")
             normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
 
         return selected_option_id, normalized_probs, reason_for_selection
@@ -420,7 +433,7 @@ class ValuesPredictionController:
         )
 
     async def _dialogue_continue_value_query(
-        self, dialogue_history, full_question, options_str
+        self, question_index, dialogue_history, full_question, options_str
     ):
         dialogue_continue_prompt = deepcopy(CONVERSATION_HISTORY_PROMPT)
         dialogue_history.append(dialogue_continue_prompt[0])
@@ -451,7 +464,13 @@ class ValuesPredictionController:
             reason_for_selection,
         ) = self._llm_output_processing(full_chat_response)
 
-        return selected_option_id, normalized_probs, reason_for_selection
+        return QuestionnaireOutput(
+            question_index=question_index,
+            selected_option_id=selected_option_id,
+            normalized_probs=normalized_probs,
+            reason_for_selection=reason_for_selection,
+        )
+
 
     def _generate_question_options(self, question_row_dict):
         full_question_str = deepcopy(question_row_dict["full_question"]).format(
@@ -502,7 +521,7 @@ class ValuesPredictionController:
                                 "question_index": question_index,
                                 "user_profile": user_profile,
                                 "full_question": full_question_str,
-                                "option_str": options_str,
+                                "options_str": options_str,
                             }
                         )
 
@@ -513,7 +532,7 @@ class ValuesPredictionController:
                     list_user_selections.append(
                         {
                             "user_idx": index,
-                            "value_selections": one_user_selections.model_dump(),
+                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
                         }
                     )
 
@@ -578,18 +597,18 @@ class ValuesPredictionController:
                                 "question_index": question_index,
                                 "dialogue_history": generated_dialogue_runs,
                                 "full_question": full_question_str,
-                                "option_str": options_str,
+                                "options_str": options_str,
                             }
                         )
 
                     one_user_selections = await asyncio.gather(
-                        *[self._direct_value_query(**kwargs) for kwargs in list_kwargs]
+                        *[self._dialogue_continue_value_query(**kwargs) for kwargs in list_kwargs]
                     )
 
                     list_user_selections.append(
                         {
                             "user_idx": user_index,
-                            "value_selections": one_user_selections.model_dump(),
+                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
                         }
                     )
 
@@ -631,7 +650,7 @@ if __name__ == "__main__":
     prediction_controller = ValuesPredictionController.from_cli_args(
         args=values_prediction_args
     )
-    values_for_user_profiles = asyncio.run(
-        prediction_controller.get_values_for_user_profiles()
-    )
+    # values_for_user_profiles = asyncio.run(
+    #     prediction_controller.get_values_for_user_profiles()
+    # )
     values_for_dialogue = asyncio.run(prediction_controller.get_values_for_dialogue())
