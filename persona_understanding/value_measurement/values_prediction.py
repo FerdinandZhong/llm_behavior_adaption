@@ -392,7 +392,6 @@ class ValuesPredictionController:
             full_chat_response = await self.openai_client.chat.completions.create(
                 model=self.evaluated_model,
                 messages=direct_value_selection_prompt,
-                response_format={"type": "json_schema"},
                 logprobs=True,
                 top_logprobs=5,
                 extra_body={"guided_json": self.response_json_schema},
@@ -427,7 +426,6 @@ class ValuesPredictionController:
             full_chat_response = await self.openai_client.chat.completions.create(
                 model=self.evaluated_model,
                 messages=dialogue_history,
-                response_format={"type": "json_schema"},
                 logprobs=True,
                 top_logprobs=5,
                 extra_body={"guided_json": self.response_json_schema},
