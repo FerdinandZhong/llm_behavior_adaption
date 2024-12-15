@@ -224,6 +224,11 @@ class ValuesPredictionController:
             help="OpenAI API key. Defaults to the value of the environment variable 'api_key'.",
         )
         parser.add_argument(
+            "--model-base-url",
+            type=str,
+            default=os.environ.get("base_url")
+        )
+        parser.add_argument(
             "--user-profile-dataset",
             type=str,
             required=True,
@@ -313,8 +318,14 @@ class ValuesPredictionController:
                 generated_dialogues.append(json.loads(dialogue))
                 if len(generated_dialogues) >= args.ending_row:
                     break
-
-        openai_client = AsyncOpenAI(api_key=args.openai_api_key)
+        
+        if "gpt" in args.evaluated_model:
+            openai_client = AsyncOpenAI(api_key=args.openai_api_key)
+        else:
+            openai_client = AsyncOpenAI(
+                api_key=args.openai_api_key,
+                base_url=args.model_base_url
+            )
 
         return cls(
             evaluated_model=args.evaluated_model,
