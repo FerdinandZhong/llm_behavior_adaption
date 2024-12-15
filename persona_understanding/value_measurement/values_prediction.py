@@ -311,6 +311,8 @@ class ValuesPredictionController:
         with open(args.dialogue_file, "r", encoding="utf-8") as dialogue_file:
             for dialogue in dialogue_file:
                 generated_dialogues.append(json.loads(dialogue))
+                if len(generated_dialogues) >= args.ending_row:
+                    break
 
         openai_client = AsyncOpenAI(api_key=args.openai_api_key)
 
