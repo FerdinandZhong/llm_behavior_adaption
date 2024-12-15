@@ -38,7 +38,6 @@ def jensen_shannon_divergence(p, q, base=2):
     return jsd
 
 
-
 def hellinger_distance(p, q):
     """
     Compute the Hellinger Distance between two probability distributions.
@@ -58,4 +57,4 @@ def hellinger_distance(p, q):
         raise ValueError("Both input distributions must sum to 1.")
 
     # Compute the Hellinger distance
-    return np.sqrt(0.5 * np.sum((np.sqrt(p) - np.sqrt(q))**2))
+    return np.sqrt(0.5 * np.sum((np.sqrt(p) - np.sqrt(q)) ** 2))

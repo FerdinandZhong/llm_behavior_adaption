@@ -1,35 +1,7 @@
-import argparse
-import asyncio
-import json
 import logging
-import math
-import os
-from copy import deepcopy
 from typing import Dict, List
 
 import pandas as pd
-from openai import AsyncOpenAI
-from pydantic import BaseModel
-from tqdm.asyncio import tqdm
-
-from persona_understanding.dialogue_dataset_creation.dialogue_controller import (
-    DialogueRun,
-)
-from persona_understanding.dialogue_dataset_creation.generation_utils import (
-    render_template,
-    retrieve_user_profile,
-)
-from persona_understanding.value_measurement.constant import (
-    CONVERSATION_HISTORY_PROMPT,
-    DEFAULT_OPTION_IDS,
-    DIALOGUE_CONTINUE_VALUE_QUESTIONS_CSV,
-    DIRECT_VALUE_QUESTIONS_CSV,
-    DIRECT_VALUE_SELECTION_PROMPT,
-    OPTIONS_TEMPLATE,
-    PROFILE_TEMPLATE,
-)
-from .formulas import  jensen_shannon_divergence, hellinger_distance
-
 
 logger = logging.getLogger(__name__)
 
@@ -45,14 +17,14 @@ class ValuesComparison:
     ) -> None:
         """
         Initializes the ValuesComparison class with user profile data, direct predictions, and optional dialogue data.
-        
+
         Args:
             user_profile_dataset (pd.DataFrame): A pandas DataFrame containing the user profile data.
             direct_values_predictions (List[Dict]): A list of dictionaries containing the direct predictions for values.
             generated_dialogues (List[Dict], optional): A list of generated dialogues. Defaults to None.
             dialogue_values_predictions (List[Dict], optional): A list of predicted values based on dialogues. Defaults to None.
             verbose (int, optional): A verbosity level for logging. Defaults to 0.
-        
+
         Raises:
             TypeError: If `user_profile_dataset` is not a pandas DataFrame.
             TypeError: If `direct_values_predictions` is not a list of dictionaries.
@@ -94,10 +66,6 @@ class ValuesComparison:
         return self._verbose
 
     def _get_index_list_for_groups(self, df, target_col):
-        grouped_indices = df.groupby(target_col).apply(lambda x: x.index.tolist())    
+        grouped_indices = df.groupby(target_col).apply(lambda x: x.index.tolist())
 
         return grouped_indices
-
-    
-
-        

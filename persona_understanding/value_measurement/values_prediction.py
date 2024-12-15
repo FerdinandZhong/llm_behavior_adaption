@@ -99,12 +99,11 @@ class ValuesPredictionController:
             else:
                 base_url = os.getenv("base_url", "http://localhost:8000/v1")
                 self._openai_client = AsyncOpenAI(
-                    api_key=os.environ["api_key"],
-                    base_url=base_url
+                    api_key=os.environ["api_key"], base_url=base_url
                 )
         else:
             self._openai_client = openai_client
-        
+
         if "gpt" in evaluated_model:
             self.response_json_schema = {
                 "type": "json_schema",
@@ -224,9 +223,7 @@ class ValuesPredictionController:
             help="OpenAI API key. Defaults to the value of the environment variable 'api_key'.",
         )
         parser.add_argument(
-            "--model-base-url",
-            type=str,
-            default=os.environ.get("base_url")
+            "--model-base-url", type=str, default=os.environ.get("base_url")
         )
         parser.add_argument(
             "--user-profile-dataset",
@@ -318,13 +315,12 @@ class ValuesPredictionController:
                 generated_dialogues.append(json.loads(dialogue))
                 if len(generated_dialogues) >= args.ending_row:
                     break
-        
+
         if "gpt" in args.evaluated_model:
             openai_client = AsyncOpenAI(api_key=args.openai_api_key)
         else:
             openai_client = AsyncOpenAI(
-                api_key=args.openai_api_key,
-                base_url=args.model_base_url
+                api_key=args.openai_api_key, base_url=args.model_base_url
             )
 
         return cls(
@@ -440,8 +436,9 @@ class ValuesPredictionController:
         return selected_option_id, normalized_probs, reason_for_selection
 
     def _generate_question_options(self, question_row_dict):
-        full_question_str = deepcopy(question_row_dict["full_question"])
-        full_question_str.format(question=question_row_dict["questions"])
+        full_question_str = deepcopy(question_row_dict["full_question"]).format(
+            question=question_row_dict["questions"]
+        )
 
         options = []
         for option_col in [f"option_{i+1}" for i in range(5)]:
@@ -582,7 +579,10 @@ class ValuesPredictionController:
                     )
 
                     # Store results periodically if storage_step is defined
-                    if self._storage_step and (user_index + 1) % self._storage_step == 0:
+                    if (
+                        self._storage_step
+                        and (user_index + 1) % self._storage_step == 0
+                    ):
                         self.append_to_file(
                             list_user_selections, self._dialogue_output_file_path
                         )
