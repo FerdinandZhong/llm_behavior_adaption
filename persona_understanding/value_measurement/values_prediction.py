@@ -356,7 +356,7 @@ class ValuesPredictionController:
             token_obj.token: token_obj
             for token_obj in full_chat_response.choices[0].logprobs.content
         }
-        logger.debug(full_chat_response.choices[0].logprobs)
+        print(full_chat_response.choices[0].logprobs)
         option_id_logprobs = token_logprobs_mapping[
             str(selected_option_id)
         ].top_logprobs
