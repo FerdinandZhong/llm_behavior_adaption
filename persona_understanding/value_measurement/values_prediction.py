@@ -40,6 +40,13 @@ class Response(BaseModel):
     reason: str
 
 
+class QuestionnaireOutput(BaseModel):
+    question_index: int
+    selected_option_id: int
+    normalized_probs: List[float]
+    reason_for_selection: str
+
+
 class ValuesPredictionController:
     """Values prediction class"""
 
@@ -356,21 +363,25 @@ class ValuesPredictionController:
             token_obj.token: token_obj
             for token_obj in full_chat_response.choices[0].logprobs.content
         }
-        # print(selected_option_id)
-        # print(token_logprobs_mapping[str(selected_option_id)])
-        option_id_logprobs = token_logprobs_mapping[
-            str(selected_option_id)
-        ].top_logprobs
-        option_id_logprobs = {
-            int(prob_item.token): prob_item.logprob for prob_item in option_id_logprobs
-        }
-        normalized_probs = self._normalize_logprobs(
-            option_id_logprobs, DEFAULT_OPTION_IDS
-        )
+        if str(selected_option_id) in token_logprobs_mapping:
+            option_id_logprobs = token_logprobs_mapping[
+                str(selected_option_id)
+            ].top_logprobs
+            option_id_logprobs = {
+                int(prob_item.token): prob_item.logprob
+                for prob_item in option_id_logprobs
+            }
+            normalized_probs = self._normalize_logprobs(
+                option_id_logprobs, DEFAULT_OPTION_IDS
+            )
+        else:
+            normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
 
         return selected_option_id, normalized_probs, reason_for_selection
 
-    async def _direct_value_query(self, user_profile, full_question, options_str):
+    async def _direct_value_query(
+        self, question_index, user_profile, full_question, options_str
+    ):
         direct_value_selection_prompt = deepcopy(DIRECT_VALUE_SELECTION_PROMPT)
         direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[1][
             "content"
@@ -401,7 +412,12 @@ class ValuesPredictionController:
             reason_for_selection,
         ) = self._llm_output_processing(full_chat_response)
 
-        return selected_option_id, normalized_probs, reason_for_selection
+        return QuestionnaireOutput(
+            question_index=question_index,
+            selected_option_id=selected_option_id,
+            normalized_probs=normalized_probs,
+            reason_for_selection=reason_for_selection,
+        )
 
     async def _dialogue_continue_value_query(
         self, dialogue_history, full_question, options_str
@@ -469,6 +485,8 @@ class ValuesPredictionController:
                     if self._verbose == 1:
                         logger.info(f"Processing row {index}: {row_dict}")
 
+                    list_kwargs = []
+
                     for (
                         question_index,
                         question_row,
@@ -479,26 +497,24 @@ class ValuesPredictionController:
                             options_str,
                         ) = self._generate_question_options(question_row_dict)
 
-                        (
-                            selected_option_id,
-                            normalized_probs,
-                            reason_for_selection,
-                        ) = await self._direct_value_query(
-                            user_profile=user_profile,
-                            full_question=full_question_str,
-                            options_str=options_str,
-                        )
-                        one_user_selections.append(
+                        list_kwargs.append(
                             {
-                                "question_idx": question_index,
-                                "selected_option_id": selected_option_id,
-                                "normalized_probs": normalized_probs,
-                                "reason_for_selection": reason_for_selection,
+                                "question_index": question_index,
+                                "user_profile": user_profile,
+                                "full_question": full_question_str,
+                                "option_str": options_str,
                             }
                         )
 
+                    one_user_selections = await asyncio.gather(
+                        *[self._direct_value_query(**kwargs) for kwargs in list_kwargs]
+                    )
+
                     list_user_selections.append(
-                        {"user_idx": index, "value_selections": one_user_selections}
+                        {
+                            "user_idx": index,
+                            "value_selections": one_user_selections.model_dump(),
+                        }
                     )
 
                     # Store results periodically if storage_step is defined
@@ -545,38 +561,35 @@ class ValuesPredictionController:
                             f"Processing row {user_index}: {generated_dialogue_runs}"
                         )
 
+                    list_kwargs = []
+
                     for (
                         question_index,
                         question_row,
-                    ) in self.dialogue_continue_value_questions.iterrows():
+                    ) in self.direct_value_questions.iterrows():
                         question_row_dict = question_row.to_dict()
                         (
                             full_question_str,
                             options_str,
                         ) = self._generate_question_options(question_row_dict)
 
-                        (
-                            selected_option_id,
-                            normalized_probs,
-                            reason_for_selection,
-                        ) = await self._dialogue_continue_value_query(
-                            dialogue_history=generated_dialogue_runs,
-                            full_question=full_question_str,
-                            options_str=options_str,
-                        )
-                        one_user_selections.append(
+                        list_kwargs.append(
                             {
-                                "question_idx": question_index,
-                                "selected_option_id": selected_option_id,
-                                "normalized_probs": normalized_probs,
-                                "reason_for_selection": reason_for_selection,
+                                "question_index": question_index,
+                                "dialogue_history": generated_dialogue_runs,
+                                "full_question": full_question_str,
+                                "option_str": options_str,
                             }
                         )
+
+                    one_user_selections = await asyncio.gather(
+                        *[self._direct_value_query(**kwargs) for kwargs in list_kwargs]
+                    )
 
                     list_user_selections.append(
                         {
                             "user_idx": user_index,
-                            "value_selections": one_user_selections,
+                            "value_selections": one_user_selections.model_dump(),
                         }
                     )
 
