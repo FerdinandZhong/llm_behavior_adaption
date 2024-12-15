@@ -356,6 +356,7 @@ class ValuesPredictionController:
             token_obj.token: token_obj
             for token_obj in full_chat_response.choices[0].logprobs.content
         }
+        logger.debug(full_chat_response.choices[0].logprobs)
         option_id_logprobs = token_logprobs_mapping[
             str(selected_option_id)
         ].top_logprobs
@@ -404,12 +405,12 @@ class ValuesPredictionController:
     async def _dialogue_continue_value_query(
         self, dialogue_history, full_question, options_str
     ):
-        direct_value_selection_prompt = deepcopy(CONVERSATION_HISTORY_PROMPT)
-        dialogue_history.append(direct_value_selection_prompt[0])
-        direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[2][
+        dialogue_continue_prompt = deepcopy(CONVERSATION_HISTORY_PROMPT)
+        dialogue_history.append(dialogue_continue_prompt[0])
+        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1][
             "content"
         ].format(question=full_question, option_list=options_str)
-        dialogue_history.append(direct_value_selection_prompt[1])
+        dialogue_history.append(dialogue_continue_prompt[1])
         if "gpt" in self.evaluated_model:
             full_chat_response = await self.openai_client.chat.completions.create(
                 model=self.evaluated_model,
@@ -453,7 +454,7 @@ class ValuesPredictionController:
         try:
             with tqdm(
                 total=len(self.user_profile_dataset),
-                desc="Generating Dialogues",
+                desc="Generating values output",
                 unit="dialogue",
             ) as pbar:
                 for index, row in self.user_profile_dataset.iterrows():
