@@ -442,7 +442,7 @@ class ValuesPredictionController:
 
         return full_question_str, options_str
 
-    def get_values_for_user_profiles(self):
+    async def get_values_for_user_profiles(self):
         list_user_selections = []
         try:
             with tqdm(
@@ -475,7 +475,7 @@ class ValuesPredictionController:
                             selected_option_id,
                             normalized_probs,
                             reason_for_selection,
-                        ) = self._direct_value_query(
+                        ) = await self._direct_value_query(
                             user_profile=user_profile,
                             full_question=full_question_str,
                             options_str=options_str,
@@ -514,7 +514,7 @@ class ValuesPredictionController:
             )
             raise
 
-    def get_values_for_dialogue(self):
+    async def get_values_for_dialogue(self):
         list_user_selections = []
         try:
             with tqdm(
@@ -551,7 +551,7 @@ class ValuesPredictionController:
                             selected_option_id,
                             normalized_probs,
                             reason_for_selection,
-                        ) = self._dialogue_continue_value_query(
+                        ) = await self._dialogue_continue_value_query(
                             dialogue_history=generated_dialogue_runs,
                             full_question=full_question_str,
                             options_str=options_str,
