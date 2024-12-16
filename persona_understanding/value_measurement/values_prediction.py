@@ -363,7 +363,7 @@ class ValuesPredictionController:
             json_output = json.loads(full_chat_response.choices[0].message.content)
         except Exception as e:
             logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
-            return "N.A", [0,0,0,0,0], "No valid reason"
+            return 0, [0,0,0,0,0], "Response un-decodable"
         selected_option_id = json_output["option_id"]
         reason_for_selection = json_output["reason"]
         token_logprobs_mapping = {
