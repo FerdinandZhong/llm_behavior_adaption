@@ -1,0 +1,39 @@
+python persona_understanding/value_measurement/values_prediction.py --openai-api-key token-abc123 \
+                                                            --model-base-url http://localhost:8000/v1 \
+                                                            --user-profile-dataset datasets/recruitment_data.csv \
+                                                            --starting-row 0 \
+                                                            --ending-row 200 \
+                                                            --dialogue-file datasets/generated_dialogues/first_200_rows.jsonl \
+                                                            --evaluated_model nvidia/Llama-3.1-Nemotron-70B-Instruct-HF \
+                                                            --direct_output_file_path values_results/Llama-3.1-Nemotron-70B-Instruct-HF/vsm/direct_questions/first_200.jsonl \
+                                                            --dialogue_output_file_path values_results/Llama-3.1-Nemotron-70B-Instruct-HF/vsm/dialogue_questions/first_200.jsonl \
+                                                            --verbose 1 \
+                                                            --storage-step 10 2>&1 | tee logs/values_prediction_vsm_first_200.txt
+
+
+
+python persona_understanding/value_measurement/values_prediction.py --openai-api-key sk-f794be8cb48e43f99e3cd04a20dd76aa \
+                --model-base-url https://api.deepseek.com \
+                --user-profile-dataset datasets/recruitment_data.csv \
+                --starting-row 0 \
+                --ending-row 200 \
+                --dialogue-file datasets/generated_dialogues/first_200_rows.jsonl \
+                --evaluated_model deepseek-chat \
+                --direct_output_file_path values_results/deepseek-v3/vsm/direct_questions/first_200.jsonl \
+                --dialogue_output_file_path values_results/deepseek-v3/vsm/dialogue_questions/first_200.jsonl \
+                --verbose 1 \
+                --llm_server llm_platform \
+                --storage-step 10 2>&1 | tee logs/deepseek_values_prediction_vsm_first_200.txt
+
+python persona_understanding/value_measurement/values_prediction.py --openai-api-key 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 \
+                --model-base-url https://openrouter.ai/api/v1 \
+                --user-profile-dataset datasets/recruitment_data.csv \
+                --starting-row 0 \
+                --ending-row 2 \
+                --dialogue-file datasets/generated_dialogues/first_1000_rows.jsonl \
+                --evaluated_model qwen/qwen-2.5-72b-instruct \
+                --direct_output_file_path values_results/qwen2.5-72B/vsm/direct_questions/first_2.jsonl \
+                --dialogue_output_file_path values_results/qwen2.5-72B/vsm/dialogue_questions/first_2.jsonl \
+                --verbose 1 \
+                --llm_server llm_platform \
+                --storage-step 10 2>&1 | tee logs/qwen2.5-72b_values_prediction_vsm_first_2.txt

@@ -168,3 +168,6 @@ logs/**
 datasets/values_dataset/vsm2013**
 datasets/generated_dialogues/**trial.jsonl
 temp.txt
+values_results/**
+.DS_Store
+images/**

@@ -8,6 +8,7 @@ import logging
 import math
 import os
 from copy import deepcopy
+from functools import partial
 from typing import Dict, List
 
 import pandas as pd
@@ -28,6 +29,7 @@ from persona_understanding.value_measurement.constant import (
     DIALOGUE_CONTINUE_VALUE_QUESTIONS_CSV,
     DIRECT_VALUE_QUESTIONS_CSV,
     DIRECT_VALUE_SELECTION_PROMPT,
+    EXTRA_FORMAT,
     OPTIONS_TEMPLATE,
     PROFILE_TEMPLATE,
 )
@@ -62,6 +64,7 @@ class ValuesPredictionController:
         openai_client=None,
         verbose: int = 0,
         storage_step: int = None,
+        llm_server: str = "llm_platform",
     ) -> None:
         """
         Initializes the ValuesPredictionController class with the specified parameters.
@@ -77,7 +80,7 @@ class ValuesPredictionController:
             openai_client: Client for interfacing with OpenAI API.
             verbose (int, optional): Verbosity level for logging. Defaults to 0.
             storage_step (int, optional): Interval to store results to file. Defaults to None.
-
+            llm_server (str, optional): llm_server, gpt, vllm
         Raises:
             ValueError: If required arguments are invalid or missing.
             TypeError: If input arguments are of incorrect types.
@@ -111,16 +114,42 @@ class ValuesPredictionController:
         else:
             self._openai_client = openai_client
 
-        if "gpt" in evaluated_model:
-            self.response_json_schema = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "math_response",
-                    "schema": Response.model_json_schema(),
+        self.prompt_append_format = False
+        if llm_server == "llm_platform":
+            self.query_llm = partial(
+                self.openai_client.chat.completions.create,
+                model=self.evaluated_model,
+                response_format={"type": "json_object"},
+                logprobs=True,
+                top_logprobs=5,
+            )
+            self.prompt_append_format = True
+        elif llm_server == "gpt":
+            self.query_llm = partial(
+                self.openai_client.chat.completions.create,
+                model=self.evaluated_model,
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "math_response",
+                        "schema": Response.model_json_schema(),
+                    },
                 },
-            }
+                logprobs=True,
+                top_logprobs=5,
+            )
+        elif llm_server == "vllm":
+            # use vllm
+            self.query_llm = partial(
+                self.openai_client.chat.completions.create,
+                model=self.evaluated_model,
+                logprobs=True,
+                top_logprobs=5,
+                extra_body={"guided_json": Response.model_json_schema()},
+            )
         else:
-            self.response_json_schema = Response.model_json_schema()
+            raise ValueError("invalid llm server type")
+        self.llm_server = llm_server
 
     @property
     def evaluated_model(self) -> str:
@@ -275,6 +304,13 @@ class ValuesPredictionController:
             required=True,
         )
         parser.add_argument(
+            "--llm_server",
+            type=str,
+            help="The type of llm_server",
+            default="llm_platform",
+            required=True,
+        )
+        parser.add_argument(
             "--verbose",
             type=int,
             choices=[0, 1],
@@ -343,6 +379,7 @@ class ValuesPredictionController:
             dialogue_continue_value_questions=dialogue_continue_value_questions,
             openai_client=openai_client,
             storage_step=args.storage_step,
+            llm_server=args.llm_server,
             verbose=args.verbose,
         )
 
@@ -362,32 +399,32 @@ class ValuesPredictionController:
         try:
             json_output = json.loads(full_chat_response.choices[0].message.content)
         except Exception as e:
-            logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
-            return 0, [0,0,0,0,0], "Response un-decodable"
+            logger.warning(
+                f"Error decoding as json: {full_chat_response.choices[0].message.content}"
+            )
+            return 0, [0, 0, 0, 0, 0], "Response un-decodable"
         selected_option_id = json_output["option_id"]
         reason_for_selection = json_output["reason"]
-        token_logprobs_mapping = {
-            token_obj.token: token_obj
-            for token_obj in full_chat_response.choices[0].logprobs.content
-        }
-        # print(selected_option_id)
-        # print(token_logprobs_mapping[str(selected_option_id)])
-        try:
-            option_id_logprobs = token_logprobs_mapping[
-                str(selected_option_id)
-            ].top_logprobs
-            option_id_logprobs_dict = {}
-            for prob_item in option_id_logprobs:
-                try:
-                    option_id_logprobs_dict[int(prob_item.token.strip())] = prob_item.logprob
-                except ValueError as e:
-                    logger.warning(f"Can't have {prob_item.token} casted into int: {str(e)}")
-                    option_id_logprobs_dict[prob_item.token] = prob_item.logprob
-            normalized_probs = self._normalize_logprobs(
-                option_id_logprobs_dict, DEFAULT_OPTION_IDS
-            )
-        except KeyError as ke:
-            logger.warning(f"{str(selected_option_id)} not in map, {str(ke)}")
+        option_id_logprobs = None
+        for token_obj in full_chat_response.choices[0].logprobs.content:
+            if token_obj.token == str(selected_option_id):
+                option_id_logprobs = token_obj.top_logprobs
+        option_id_logprobs_dict = {}
+        for prob_item in option_id_logprobs:
+            try:
+                option_id_logprobs_dict[int(prob_item.token.strip())] = (
+                    prob_item.logprob
+                )
+            except ValueError as e:
+                logger.warning(
+                    f"Can't have {prob_item.token} casted into int: {str(e)}"
+                )
+                option_id_logprobs_dict[prob_item.token] = prob_item.logprob
+        normalized_probs = self._normalize_logprobs(
+            option_id_logprobs_dict, DEFAULT_OPTION_IDS
+        )
+        if option_id_logprobs is None:
+            logger.warning(f"{str(selected_option_id)} not in map")
             normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
 
         return selected_option_id, normalized_probs, reason_for_selection
@@ -402,22 +439,30 @@ class ValuesPredictionController:
         direct_value_selection_prompt[2]["content"] = direct_value_selection_prompt[2][
             "content"
         ].format(question=full_question, option_list=options_str)
-        if "gpt" in self.evaluated_model:
-            full_chat_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=direct_value_selection_prompt,
-                response_format=self.response_json_schema,
-                logprobs=True,
-                top_logprobs=5,
-            )
-        else:
-            full_chat_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=direct_value_selection_prompt,
-                logprobs=True,
-                top_logprobs=5,
-                extra_body={"guided_json": self.response_json_schema},
-            )
+
+        if self.prompt_append_format:
+            direct_value_selection_prompt.append(EXTRA_FORMAT)
+
+        full_chat_response = await self.query_llm(
+            messages=direct_value_selection_prompt
+        )
+
+        # if "gpt" in self.evaluated_model:
+        #     full_chat_response = await self.openai_client.chat.completions.create(
+        #         model=self.evaluated_model,
+        #         messages=direct_value_selection_prompt,
+        #         response_format=self.response_json_schema,
+        #         logprobs=True,
+        #         top_logprobs=5,
+        #     )
+        # else:
+        #     full_chat_response = await self.openai_client.chat.completions.create(
+        #         model=self.evaluated_model,
+        #         messages=direct_value_selection_prompt,
+        #         logprobs=True,
+        #         top_logprobs=5,
+        #         extra_body={"guided_json": self.response_json_schema},
+        #     )
 
         (
             selected_option_id,
@@ -436,27 +481,35 @@ class ValuesPredictionController:
         self, question_index, dialogue_history, full_question, options_str
     ):
         dialogue_continue_prompt = deepcopy(CONVERSATION_HISTORY_PROMPT)
-        dialogue_history.append(dialogue_continue_prompt[0])
-        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1][
+        dialogue_based_msgs = deepcopy(dialogue_history)
+        dialogue_based_msgs.append(dialogue_continue_prompt[0])
+        dialogue_based_msgs.append(dialogue_continue_prompt[1])
+        dialogue_continue_prompt[2]["content"] = dialogue_continue_prompt[2][
             "content"
         ].format(question=full_question, option_list=options_str)
-        dialogue_history.append(dialogue_continue_prompt[1])
-        if "gpt" in self.evaluated_model:
-            full_chat_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=dialogue_history,
-                response_format=self.response_json_schema,
-                logprobs=True,
-                top_logprobs=5,
-            )
-        else:
-            full_chat_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=dialogue_history,
-                logprobs=True,
-                top_logprobs=5,
-                extra_body={"guided_json": self.response_json_schema},
-            )
+        dialogue_based_msgs.append(dialogue_continue_prompt[2])
+
+        if self.prompt_append_format:
+            dialogue_based_msgs.append(EXTRA_FORMAT)
+
+        full_chat_response = await self.query_llm(messages=dialogue_based_msgs)
+
+        # if "gpt" in self.evaluated_model:
+        #     full_chat_response = await self.openai_client.chat.completions.create(
+        #         model=self.evaluated_model,
+        #         messages=dialogue_history,
+        #         response_format=self.response_json_schema,
+        #         logprobs=True,
+        #         top_logprobs=5,
+        #     )
+        # else:
+        #     full_chat_response = await self.openai_client.chat.completions.create(
+        #         model=self.evaluated_model,
+        #         messages=dialogue_history,
+        #         logprobs=True,
+        #         top_logprobs=5,
+        #         extra_body={"guided_json": self.response_json_schema},
+        #     )
 
         (
             selected_option_id,
@@ -470,7 +523,6 @@ class ValuesPredictionController:
             normalized_probs=normalized_probs,
             reason_for_selection=reason_for_selection,
         )
-
 
     def _generate_question_options(self, question_row_dict):
         full_question_str = deepcopy(question_row_dict["full_question"]).format(
@@ -532,7 +584,10 @@ class ValuesPredictionController:
                     list_user_selections.append(
                         {
                             "user_idx": index,
-                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
+                            "value_selections": [
+                                each_question.model_dump()
+                                for each_question in one_user_selections
+                            ],
                         }
                     )
 
@@ -562,7 +617,7 @@ class ValuesPredictionController:
         try:
             with tqdm(
                 total=len(self.generated_dialogues),
-                desc="Generating Dialogues",
+                desc="Generation Dialogue based values",
                 unit="dialogue",
             ) as pbar:
                 for dialogue_details in self.generated_dialogues:
@@ -585,7 +640,7 @@ class ValuesPredictionController:
                     for (
                         question_index,
                         question_row,
-                    ) in self.direct_value_questions.iterrows():
+                    ) in self.dialogue_continue_value_questions.iterrows():
                         question_row_dict = question_row.to_dict()
                         (
                             full_question_str,
@@ -602,13 +657,19 @@ class ValuesPredictionController:
                         )
 
                     one_user_selections = await asyncio.gather(
-                        *[self._dialogue_continue_value_query(**kwargs) for kwargs in list_kwargs]
+                        *[
+                            self._dialogue_continue_value_query(**kwargs)
+                            for kwargs in list_kwargs
+                        ]
                     )
 
                     list_user_selections.append(
                         {
                             "user_idx": user_index,
-                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
+                            "value_selections": [
+                                each_question.model_dump()
+                                for each_question in one_user_selections
+                            ],
                         }
                     )
 
