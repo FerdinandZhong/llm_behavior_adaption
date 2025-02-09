@@ -2,6 +2,9 @@ import argparse
 
 from persona_understanding.value_measurement.measurement_utils import JobClassifier
 from persona_understanding.value_measurement.values_comparison import *
+from tqdm import tqdm
+
+tqdm.pandas()
 
 
 def _read_csv(csv_path):
@@ -31,12 +34,12 @@ if __name__ == "__main__":
     job_classifier = JobClassifier()
 
     job_classifier = JobClassifier()
-    user_profile_dataset["Position_Level"] = user_profile_dataset.apply(
+    user_profile_dataset["Position_Level"] = user_profile_dataset.progress_apply(
         lambda x: job_classifier.get_position_level(x["Job Title"]), axis=1
     )
 
     grouped_data = (
-        user_profile_dataset.groupby("").apply(lambda x: x.index.tolist()).to_dict()
+        user_profile_dataset.groupby("Position_Level").apply(lambda x: x.index.tolist()).to_dict()
     )
 
     with open(args.output_file, "w") as output_file:
