@@ -20,10 +20,10 @@ from persona_understanding.value_measurement.formulas import (
     jensen_shannon_divergence,
 )
 from persona_understanding.value_measurement.measurement_utils import (
+    JobClassifier,
     get_continent,
     get_culture,
     get_development_level,
-    JobClassifier
 )
 
 logger = logging.getLogger(__name__)
@@ -235,8 +235,10 @@ class ValuesComparison:
             )
         elif target_col == "Position_Level":
             job_classifier = JobClassifier()
-            self.user_profile_dataset["Job Title"] = self.user_profile_dataset.apply(
-                lambda x: job_classifier.get_position_level(x["Job Title"]), axis=1
+            self.user_profile_dataset["Position_Level"] = (
+                self.user_profile_dataset.apply(
+                    lambda x: job_classifier.get_position_level(x["Job Title"]), axis=1
+                )
             )
 
         grouped_data = self.user_profile_dataset.groupby(target_col).apply(
