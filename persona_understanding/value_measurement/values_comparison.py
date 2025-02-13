@@ -335,7 +335,7 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_comparison(self, formula, target_col, values_selection_results):
+    def inner_dataset_comparison(self, formula, target_col, values_selection_results, groups=None):
         """
         Efficiently compare distributions across groups in a dataset, avoiding redundant comparisons.
 
@@ -343,6 +343,7 @@ class ValuesComparison:
             formula (str): The name of the divergence formula to use.
             target_col (str): The target column to group by.
             values_selection_results (list): List of values selections for users.
+            groups (Dict): Pre-defined groups
 
         Returns:
             dict: Comparison results with divergence scores between groups.
@@ -355,7 +356,8 @@ class ValuesComparison:
         }
 
         # Group user indices by target column
-        groups = self._get_index_list_for_groups(target_col)
+        if groups is None:
+            groups = self._get_index_list_for_groups(target_col)
         formula_func = formula_mapping[formula]
 
         # Precompute distributions for each group
@@ -664,13 +666,14 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_groups_comparison(self, target_col, values_selection_results):
+    def inner_dataset_groups_comparison(self, target_col, values_selection_results, groups=None):
         """
         Compute per group divergences with Jenson-shannon centroids of each group.
 
         Args:
             target_col (str): The target column to group by.
             values_selection_results (list): List of values selections for users.
+            groups (Dict): Pre-defined groups
 
         Returns:
             dict: Comparison results with divergence scores between groups.
@@ -683,7 +686,8 @@ class ValuesComparison:
         }
 
         # Group user indices by target column
-        groups = self._get_index_list_for_groups(target_col)
+        if groups is None:
+            groups = self._get_index_list_for_groups(target_col)
 
         # Precompute distributions for each group
         all_group_distributions = {
