@@ -399,34 +399,40 @@ class ValuesPredictionController:
     def _llm_output_processing(self, full_chat_response):
         try:
             json_output = json.loads(full_chat_response.choices[0].message.content)
-        except Exception as e:
+        except Exception:
             logger.warning(
                 f"Error decoding as json: {full_chat_response.choices[0].message.content}"
             )
             return 0, [0, 0, 0, 0, 0], {"1":0, "2":0, "3":0, "4":0, "5":0}, "Response un-decodable"
-        selected_option_id = json_output["option_id"]
-        reason_for_selection = json_output["reason"]
-        option_id_logprobs = None
-        for token_obj in full_chat_response.choices[0].logprobs.content:
-            if token_obj.token == str(selected_option_id):
-                option_id_logprobs = token_obj.top_logprobs
-        option_id_logprobs_dict = {}
-        if option_id_logprobs is None:
-            logger.warning(f"{str(selected_option_id)} not in map")
-            normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
-        for prob_item in option_id_logprobs:
-            try:
-                option_id_logprobs_dict[int(prob_item.token.strip())] = (
-                    prob_item.logprob
-                )
-            except ValueError as e:
-                logger.warning(
-                    f"Can't have {prob_item.token} casted into int: {str(e)}"
-                )
-                option_id_logprobs_dict[prob_item.token] = prob_item.logprob
-        normalized_probs = self._normalize_logprobs(
-            option_id_logprobs_dict, DEFAULT_OPTION_IDS
-        )
+        try:
+            selected_option_id = json_output["option_id"]
+            reason_for_selection = json_output["reason"]
+            option_id_logprobs = None
+            for token_obj in full_chat_response.choices[0].logprobs.content:
+                if token_obj.token == str(selected_option_id):
+                    option_id_logprobs = token_obj.top_logprobs
+            option_id_logprobs_dict = {}
+            if option_id_logprobs is None:
+                logger.warning(f"{str(selected_option_id)} not in map")
+                normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
+            for prob_item in option_id_logprobs:
+                try:
+                    option_id_logprobs_dict[int(prob_item.token.strip())] = (
+                        prob_item.logprob
+                    )
+                except ValueError as e:
+                    logger.warning(
+                        f"Can't have {prob_item.token} casted into int: {str(e)}"
+                    )
+                    option_id_logprobs_dict[prob_item.token] = prob_item.logprob
+            normalized_probs = self._normalize_logprobs(
+                option_id_logprobs_dict, DEFAULT_OPTION_IDS
+            )
+        except Exception:
+            logger.warning(
+                f"Error decoding as json: {full_chat_response.choices[0].message.content}"
+            )
+            return 0, [0, 0, 0, 0, 0], {"1":0, "2":0, "3":0, "4":0, "5":0}, "Response un-decodable"
 
         return selected_option_id, normalized_probs, option_id_logprobs_dict, reason_for_selection
 
