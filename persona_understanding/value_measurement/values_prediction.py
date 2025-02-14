@@ -9,7 +9,7 @@ import math
 import os
 from copy import deepcopy
 from functools import partial
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import pandas as pd
 from openai import AsyncOpenAI
@@ -47,7 +47,7 @@ class QuestionnaireOutput(BaseModel):
     selected_option_id: int
     normalized_probs: List[float]
     log_probs: Dict
-    reason_for_selection: str
+    reason_for_selection: Union[str, None] = None
 
 
 class ValuesPredictionController:
