@@ -46,6 +46,7 @@ class QuestionnaireOutput(BaseModel):
     question_index: int
     selected_option_id: int
     normalized_probs: List[float]
+    log_probs: Dict
     reason_for_selection: str
 
 
@@ -402,7 +403,7 @@ class ValuesPredictionController:
             logger.warning(
                 f"Error decoding as json: {full_chat_response.choices[0].message.content}"
             )
-            return 0, [0, 0, 0, 0, 0], "Response un-decodable"
+            return 0, [0, 0, 0, 0, 0], {"1":0, "2":0, "3":0, "4":0, "5":0}, "Response un-decodable"
         selected_option_id = json_output["option_id"]
         reason_for_selection = json_output["reason"]
         option_id_logprobs = None
@@ -410,6 +411,9 @@ class ValuesPredictionController:
             if token_obj.token == str(selected_option_id):
                 option_id_logprobs = token_obj.top_logprobs
         option_id_logprobs_dict = {}
+        if option_id_logprobs is None:
+            logger.warning(f"{str(selected_option_id)} not in map")
+            normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
         for prob_item in option_id_logprobs:
             try:
                 option_id_logprobs_dict[int(prob_item.token.strip())] = (
@@ -423,11 +427,8 @@ class ValuesPredictionController:
         normalized_probs = self._normalize_logprobs(
             option_id_logprobs_dict, DEFAULT_OPTION_IDS
         )
-        if option_id_logprobs is None:
-            logger.warning(f"{str(selected_option_id)} not in map")
-            normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
 
-        return selected_option_id, normalized_probs, reason_for_selection
+        return selected_option_id, normalized_probs, option_id_logprobs_dict, reason_for_selection
 
     async def _direct_value_query(
         self, question_index, user_profile, full_question, options_str
@@ -467,6 +468,7 @@ class ValuesPredictionController:
         (
             selected_option_id,
             normalized_probs,
+            option_id_logprobs_dict,
             reason_for_selection,
         ) = self._llm_output_processing(full_chat_response)
 
@@ -474,6 +476,7 @@ class ValuesPredictionController:
             question_index=question_index,
             selected_option_id=selected_option_id,
             normalized_probs=normalized_probs,
+            log_probs=option_id_logprobs_dict,
             reason_for_selection=reason_for_selection,
         )
 
@@ -514,6 +517,7 @@ class ValuesPredictionController:
         (
             selected_option_id,
             normalized_probs,
+            option_id_logprobs_dict,
             reason_for_selection,
         ) = self._llm_output_processing(full_chat_response)
 
@@ -521,6 +525,7 @@ class ValuesPredictionController:
             question_index=question_index,
             selected_option_id=selected_option_id,
             normalized_probs=normalized_probs,
+            log_probs=option_id_logprobs_dict,
             reason_for_selection=reason_for_selection,
         )
 
@@ -711,7 +716,7 @@ if __name__ == "__main__":
     prediction_controller = ValuesPredictionController.from_cli_args(
         args=values_prediction_args
     )
-    # values_for_user_profiles = asyncio.run(
-    #     prediction_controller.get_values_for_user_profiles()
-    # )
-    values_for_dialogue = asyncio.run(prediction_controller.get_values_for_dialogue())
+    values_for_user_profiles = asyncio.run(
+        prediction_controller.get_values_for_user_profiles()
+    )
+    # values_for_dialogue = asyncio.run(prediction_controller.get_values_for_dialogue())
