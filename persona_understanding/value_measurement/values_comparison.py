@@ -335,7 +335,9 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_comparison(self, formula, target_col, values_selection_results, groups=None):
+    def inner_dataset_comparison(
+        self, formula, target_col, values_selection_results, groups=None
+    ):
         """
         Efficiently compare distributions across groups in a dataset, avoiding redundant comparisons.
 
@@ -666,7 +668,9 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_groups_comparison(self, target_col, values_selection_results, groups=None):
+    def inner_dataset_groups_comparison(
+        self, target_col, values_selection_results, groups=None
+    ):
         """
         Compute per group divergences with Jenson-shannon centroids of each group.
 

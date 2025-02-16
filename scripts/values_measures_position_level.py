@@ -1,8 +1,9 @@
 import argparse
 
+from tqdm import tqdm
+
 from persona_understanding.value_measurement.measurement_utils import JobClassifier
 from persona_understanding.value_measurement.values_comparison import *
-from tqdm import tqdm
 
 tqdm.pandas()
 
@@ -39,7 +40,9 @@ if __name__ == "__main__":
     )
 
     grouped_data = (
-        user_profile_dataset.groupby("Position_Level").apply(lambda x: x.index.tolist()).to_dict()
+        user_profile_dataset.groupby("Position_Level")
+        .apply(lambda x: x.index.tolist())
+        .to_dict()
     )
 
     with open(args.output_file, "w") as output_file:

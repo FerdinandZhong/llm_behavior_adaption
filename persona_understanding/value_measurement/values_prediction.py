@@ -403,7 +403,12 @@ class ValuesPredictionController:
             logger.warning(
                 f"Error decoding as json: {full_chat_response.choices[0].message.content}"
             )
-            return 0, [0, 0, 0, 0, 0], {"1":0, "2":0, "3":0, "4":0, "5":0}, "Response un-decodable"
+            return (
+                0,
+                [0, 0, 0, 0, 0],
+                {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0},
+                "Response un-decodable",
+            )
         try:
             selected_option_id = json_output["option_id"]
             reason_for_selection = json_output["reason"]
@@ -432,9 +437,19 @@ class ValuesPredictionController:
             logger.warning(
                 f"Error decoding as json: {full_chat_response.choices[0].message.content}"
             )
-            return 0, [0, 0, 0, 0, 0], {"1":0, "2":0, "3":0, "4":0, "5":0}, "Response un-decodable"
+            return (
+                0,
+                [0, 0, 0, 0, 0],
+                {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0},
+                "Response un-decodable",
+            )
 
-        return selected_option_id, normalized_probs, option_id_logprobs_dict, reason_for_selection
+        return (
+            selected_option_id,
+            normalized_probs,
+            option_id_logprobs_dict,
+            reason_for_selection,
+        )
 
     async def _direct_value_query(
         self, question_index, user_profile, full_question, options_str
