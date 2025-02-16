@@ -116,7 +116,7 @@ class ValuesPredictionController:
             self._openai_client = openai_client
 
         self.prompt_append_format = False
-        if llm_server == "llm_platform" or llm_server == "vllm":
+        if llm_server == "llm_platform":
             self.query_llm = partial(
                 self.openai_client.chat.completions.create,
                 model=self.evaluated_model,
@@ -139,15 +139,15 @@ class ValuesPredictionController:
                 logprobs=True,
                 top_logprobs=5,
             )
-        # elif llm_server == "vllm":
-        #     # use vllm
-        #     self.query_llm = partial(
-        #         self.openai_client.chat.completions.create,
-        #         model=self.evaluated_model,
-        #         logprobs=True,
-        #         top_logprobs=5,
-        #         extra_body={"guided_json": Response.model_json_schema()},
-        #     )
+        elif llm_server == "vllm":
+            # use vllm
+            self.query_llm = partial(
+                self.openai_client.chat.completions.create,
+                model=self.evaluated_model,
+                logprobs=True,
+                top_logprobs=5,
+                extra_body={"guided_json": Response.model_json_schema()},
+            )
         else:
             raise ValueError("invalid llm server type")
         self.llm_server = llm_server
