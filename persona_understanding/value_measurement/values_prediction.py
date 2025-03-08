@@ -146,8 +146,10 @@ class ValuesPredictionController:
                 model=self.evaluated_model,
                 logprobs=True,
                 top_logprobs=5,
-                extra_body={"guided_json": Response.model_json_schema()},
+                response_format={"type": "json_object"},
+                # extra_body={"guided_json": Response.model_json_schema()},
             )
+            self.prompt_append_format = True
         else:
             raise ValueError("invalid llm server type")
         self.llm_server = llm_server
