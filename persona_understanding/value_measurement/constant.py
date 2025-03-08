@@ -26,7 +26,7 @@ OPTIONS_TEMPLATE = """
 DIRECT_VALUE_SELECTION_PROMPT = [
     {
         "role": "system",
-        "content": "You are a chatbot designed to provide precise and personalized answers to questions based on the given user profile.  Analyze the question carefully and tailor your response to match the user's context.",
+        "content": "You are a chatbot designed to provide precise and personalized answers to questions based on the given user profile. Analyze the question carefully and tailor your response to match the user's context.",
     },
     {
         "role": "user",
@@ -52,7 +52,7 @@ CONVERSATION_HISTORY_PROMPT = [
     },
     {
         "role": "user",
-        "content": "Assume you are me, help me find the most sutiable answer to the following question.",
+        "content": "Assume you are me, help me find the most suitable answer to the following question.",
     },
     {
         "role": "user",

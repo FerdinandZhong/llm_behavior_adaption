@@ -35,19 +35,21 @@ def get_continent(country_name):
             "AF": "Africa",
             "AS": "Asia",
             "EU": "Europe",
-            "NA": "North America",
-            "OC": "Oceania",
-            "SA": "South America",
-            "AN": "Antarctica",
+            "NA": "America",
+            "OC": "Unknown", # "Oceania",
+            "SA": "America",
+            "AN": "Unknown", # "Antarctica",
         }
 
         return continent_map.get(continent_code, "Unknown")
 
     except LookupError:
         if country_name == "Micronesia":
-            return "Oceania"
+            # return "Oceania"
+            return "Unknown"
         elif country_name == "pitcairn islands":
-            return "Oceania"
+            # return "Oceania"
+            return "Unknown"
         return "Unknown"
 
 
