@@ -81,7 +81,7 @@ class ValuesPredictionController:
             openai_client: Client for interfacing with OpenAI API.
             verbose (int, optional): Verbosity level for logging. Defaults to 0.
             storage_step (int, optional): Interval to store results to file. Defaults to None.
-            llm_server (str, optional): llm_server, gpt, vllm
+            llm_server (str, optional): llm_server, gpt, vllm, sglang
         Raises:
             ValueError: If required arguments are invalid or missing.
             TypeError: If input arguments are of incorrect types.
@@ -125,20 +125,21 @@ class ValuesPredictionController:
                 top_logprobs=5,
             )
             self.prompt_append_format = True
-        elif llm_server == "gpt":
+        elif llm_server == "gpt" or llm_server == "sglang":
             self.query_llm = partial(
                 self.openai_client.chat.completions.create,
                 model=self.evaluated_model,
                 response_format={
                     "type": "json_schema",
                     "json_schema": {
-                        "name": "math_response",
+                        "name": "option_response",
                         "schema": Response.model_json_schema(),
                     },
                 },
                 logprobs=True,
                 top_logprobs=5,
             )
+            self.prompt_append_format = True
         elif llm_server == "vllm":
             # use vllm
             self.query_llm = partial(
