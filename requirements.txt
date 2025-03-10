@@ -1,5 +1,5 @@
 pandas==2.2.2
 fastparquet==2024.5.0
-vllm==0.7.2
+vllm==0.7.3
 scipy==1.15.1
 pycountry_convert
