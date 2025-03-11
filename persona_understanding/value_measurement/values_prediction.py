@@ -66,6 +66,7 @@ class ValuesPredictionController:
         verbose: int = 0,
         storage_step: int = None,
         llm_server: str = "llm_platform",
+        reasoning: bool = False
     ) -> None:
         """
         Initializes the ValuesPredictionController class with the specified parameters.
@@ -82,6 +83,7 @@ class ValuesPredictionController:
             verbose (int, optional): Verbosity level for logging. Defaults to 0.
             storage_step (int, optional): Interval to store results to file. Defaults to None.
             llm_server (str, optional): llm_server, gpt, vllm, sglang
+            reasoning (bool, optional): whether the tested model is a reasoning model.
         Raises:
             ValueError: If required arguments are invalid or missing.
             TypeError: If input arguments are of incorrect types.
@@ -104,6 +106,7 @@ class ValuesPredictionController:
         self._direct_value_questions = direct_value_questions
         self._dialogue_continue_value_questions = dialogue_continue_value_questions
         self._storage_step = storage_step
+        self._reasoning = reasoning
         if openai_client is None:
             if "gpt" in evaluated_model:
                 self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"])
@@ -245,6 +248,12 @@ class ValuesPredictionController:
         """
         return self._dialogue_continue_value_questions
 
+    @property
+    def reasoning(self) -> bool:
+        """Gettter for the reasoning attribute
+        """
+        return self._reasoning
+
     @staticmethod
     def add_cli_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         """
@@ -327,6 +336,11 @@ class ValuesPredictionController:
             default=None,
             help="Interval at which results are stored to the file.",
         )
+        parser.add_argument(
+            "--reasoning",
+            action='store_true',
+            help="Define doing the reasoning",
+        )
         return parser
 
     @classmethod
@@ -385,6 +399,7 @@ class ValuesPredictionController:
             storage_step=args.storage_step,
             llm_server=args.llm_server,
             verbose=args.verbose,
+            reasoning=args.reasoning
         )
 
     def _normalize_logprobs(self, logprobs, all_tokens):
@@ -465,6 +480,24 @@ class ValuesPredictionController:
             "content"
         ].format(question=full_question, option_list=options_str)
 
+        if self.reasoning:
+            reasoning = self.openai_client.chat.completions.create(
+                model=self.evaluated_model,
+                messages=direct_value_selection_prompt,
+                temperature=0.6, # default setting for reasoning model
+                max_tokens=4096 # larger window
+            ).choices[0].message.content.split("</think>")[0]
+
+            direct_value_selection_prompt.append({
+                "role": "assistant",
+                "content": f"<think>\n{reasoning}\n</think>\n"
+            })
+
+            # direct_value_selection_prompt.append({
+            #     "role": "user",
+            #     "content": "Select the option for the question, given the reasoning."
+            # })
+
         if self.prompt_append_format:
             direct_value_selection_prompt.append(EXTRA_FORMAT)
 
@@ -515,6 +548,24 @@ class ValuesPredictionController:
             "content"
         ].format(question=full_question, option_list=options_str)
         dialogue_based_msgs.append(dialogue_continue_prompt[2])
+
+        if self.reasoning:
+            reasoning = self.openai_client.chat.completions.create(
+                model=self.evaluated_model,
+                messages=dialogue_based_msgs,
+                temperature=0.6, # default setting for reasoning model
+                max_tokens=4096 # larger window
+            ).choices[0].message.content.split("</think>")[0]
+
+            dialogue_based_msgs.append({
+                "role": "assistant",
+                "content": f"<think>\n{reasoning}\n</think>\n"
+            })
+
+            # dialogue_based_msgs.append({
+            #     "role": "user",
+            #     "content": "Select the option for the question, given the reasoning."
+            # })
 
         if self.prompt_append_format:
             dialogue_based_msgs.append(EXTRA_FORMAT)
