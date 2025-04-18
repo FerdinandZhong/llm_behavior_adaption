@@ -1,9 +1,10 @@
+import json
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.manifold import TSNE
-import os
 from matplotlib.cm import get_cmap
-import json
+from sklearn.manifold import TSNE
 
 
 def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
@@ -119,7 +120,16 @@ def visualize_tsne_groups(groups, perplexity=30, learning_rate=200, random_state
     plt.show()
 
 
-def plot_divergence_comparison(datasets, baselines, labels, attribute:str, figsize=(16, 12), output_path=None, group_spacing=1.5, cmap="tab20"):
+def plot_divergence_comparison(
+    datasets,
+    baselines,
+    labels,
+    attribute: str,
+    figsize=(16, 12),
+    output_path=None,
+    group_spacing=1.5,
+    cmap="tab20",
+):
     """
     Visualize divergence comparisons as relative ratios over baseline across multiple models.
 
@@ -138,23 +148,23 @@ def plot_divergence_comparison(datasets, baselines, labels, attribute:str, figsi
     # Extract baselines and prepare data
     baselines = [b["overall_baseline"] for b in baselines]
     n_models = len(datasets)
-    
+
     # Collect and sort groups
     all_groups = set()
     for data in datasets:
         for item in data:
-            group_name = item['compared_groups'].replace('--', ' vs ')
+            group_name = item["compared_groups"].replace("--", " vs ")
             if "unknown" not in group_name.lower():  # Ignore groups with "unknown"
                 all_groups.add(group_name)
-                
+
     # Enhanced sorting: < groups first, then numeric groups, then others
     def sort_key(group):
         if "<" in group:
             return (0, group)
         return (1, group)
-    
+
     sorted_groups = sorted(all_groups, key=sort_key)
-    group_indices = {g:i for i,g in enumerate(sorted_groups)}
+    group_indices = {g: i for i, g in enumerate(sorted_groups)}
 
     # Prepare values matrix
     n_groups = len(sorted_groups)
@@ -163,9 +173,9 @@ def plot_divergence_comparison(datasets, baselines, labels, attribute:str, figsi
     for mi, data in enumerate(datasets):
         base = baselines[mi]
         for item in data:
-            group = item['compared_groups'].replace('--', ' vs ')
+            group = item["compared_groups"].replace("--", " vs ")
             if "unknown" not in group.lower():  # Skip "unknown" groups
-                div = item['compared_details']['average_divergence']
+                div = item["compared_details"]["average_divergence"]
                 values[mi, group_indices[group]] = div / base
 
     # Plot configuration
@@ -173,84 +183,106 @@ def plot_divergence_comparison(datasets, baselines, labels, attribute:str, figsi
     ax = plt.gca()
     cmap = get_cmap(cmap)
     colors = [cmap(i % 20) for i in range(n_models)]
-    
+
     # Dynamic spacing based on number of models
     group_positions = np.arange(n_groups) * group_spacing  # Main change here
 
     # Modified bar positioning
     total_width = min(1.2, 0.6 + 0.1 * len(datasets))
     bar_width = total_width / len(datasets)
-    
+
     # Plot bars for each model
     for mi in range(len(datasets)):
         # Adjusted position calculation using group_spacing
-        x_pos = group_positions - total_width/2 + bar_width/2 + mi*bar_width
-        
-        bars = ax.barh(x_pos, values[mi], 
-                      height=bar_width,  # Height relative to group spacing
-                      color=colors[mi],
-                      alpha=0.85,
-                      label=f'{labels[mi]}')
-        
+        x_pos = group_positions - total_width / 2 + bar_width / 2 + mi * bar_width
+
+        bars = ax.barh(
+            x_pos,
+            values[mi],
+            height=bar_width,  # Height relative to group spacing
+            color=colors[mi],
+            alpha=0.85,
+            label=f"{labels[mi]}",
+        )
+
         # Add value labels with dynamic positioning
-        for idx, val in enumerate(values[mi]):
-            if not np.isnan(val):
-                x_pos = val + (0.02 if val >= 0 else -0.02)
-                ha = 'left' if val >= 0 else 'right'
-                ax.text(x_pos, bars[idx].get_y() + bar_width/2,
-                        f'{val:.2f}',
-                        va='center', ha=ha,
-                        fontsize=16, color=colors[mi])
+        # for idx, val in enumerate(values[mi]):
+        #     if not np.isnan(val):
+        #         x_pos = val + (0.02 if val >= 0 else -0.02)
+        #         ha = 'left' if val >= 0 else 'right'
+        #         ax.text(x_pos, bars[idx].get_y() + bar_width/2,
+        #                 f'{val:.2f}',
+        #                 va='center', ha=ha,
+        #                 fontsize=12, color=colors[mi])
 
     # Styling improvements
     ax.set_yticks(group_positions)
-    ax.set_yticklabels(sorted_groups, fontsize=16, rotation=30)
+    ax.set_yticklabels(sorted_groups, fontsize=22, rotation=30)
     ax.invert_yaxis()
-    ax.xaxis.grid(True, linestyle='--', alpha=0.4)
-    
+    ax.xaxis.grid(True, linestyle="--", alpha=0.4)
+
     # Baseline markers
     for mi in range(n_models):
-        ax.axvline(1.0, color=colors[mi], linestyle=':', alpha=0.7, lw=2)
-    
+        ax.axvline(1.0, color=colors[mi], linestyle=":", alpha=0.7, lw=2)
+
     # Labels and titles
-    ax.set_xlabel('Relative Ratio of Divergence over Baseline', fontsize=18)
-    ax.set_ylabel('Group Comparisons', fontsize=18)
-    ax.set_title(f'Divergence Comparison ({attribute.capitalize()})', fontsize=20, pad=20)
-    
+    ax.set_xlabel("Relative Ratio of Divergence over Baseline", fontsize=22)
+    ax.set_ylabel("Group Comparisons", fontsize=22)
+    ax.set_title(
+        f"Divergence Comparison ({attribute.capitalize()})", fontsize=24, pad=20
+    )
+
     # Enhanced legend
-    ax.legend(loc='upper center', 
-             bbox_to_anchor=(0.5, -0.15),
-             ncol=min(4, n_models), 
-             fontsize=18,
-             frameon=False)
-    
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.15),
+        ncol=min(4, n_models),
+        fontsize=22,
+        frameon=False,
+    )
+
     # Final adjustments
     plt.xticks(fontsize=18)
     max_val = np.nanmax(np.abs(values)) * 1.1
     plt.xlim(-0.1 if np.any(values < 0) else 0, max_val)
     plt.tight_layout()
-    
+
     # Save to file if output path is specified
     if output_path:
-        plt.savefig(output_path, bbox_inches='tight', dpi=300)
+        plt.savefig(output_path, bbox_inches="tight", dpi=300)
 
-    plt.show()
+    # plt.show()
 
-def display_comparison(model_list, scenario:str="BA_user", attribute:str="age", group_spacing=1.25, cmap="tab20"):
+
+def display_comparison(
+    model_list,
+    scenario: str = "BA_user",
+    attribute: str = "age",
+    group_spacing=1.25,
+    cmap="tab20",
+):
     datasets = []
     baselines = []
     for model_label in model_list:
         try:
-            with open(f"../values_results/{model_label}/vsm/{scenario}/{attribute}.jsonl", "r") as jl_file:
+            with open(
+                f"../values_results/{model_label}/vsm/{scenario}/{attribute}.jsonl", "r"
+            ) as jl_file:
                 dataset = []
                 for result in jl_file.readlines():
-                    dataset.append(json.loads(result))
+                    result = json.loads(result)
+                    # if result["compared_groups"].startswith("<30"):
+                    dataset.append(result)
                 datasets.append(dataset)
-            with open(f"../values_results/{model_label}/vsm/{scenario}/{attribute}_baseline.json", "r") as j_file:
+            with open(
+                f"../values_results/{model_label}/vsm/{scenario}/{attribute}_baseline.json",
+                "r",
+            ) as j_file:
                 baselines.append(json.load(j_file))
-        except:
+        except Exception as e:
             print(model_label)
-    
+            print(str(e))
+
     os.makedirs(f"../images/{scenario}/", exist_ok=True)
     output_path = f"../images/{scenario}/{attribute}.png"
     plot_divergence_comparison(
@@ -260,5 +292,81 @@ def display_comparison(model_list, scenario:str="BA_user", attribute:str="age", 
         attribute=attribute,
         output_path=output_path,
         group_spacing=group_spacing,
-        cmap=cmap
+        cmap=cmap,
     )
+
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    group_spacing=1.75,
+    cmap="tab10",
+    attribute="age",
+    scenario="BA_dialogue",
+)
+
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B"
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="education",
+#     scenario="BA_dialogue"
+# )
+
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B"
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="location",
+#     scenario="BA_dialogue"
+# )
+
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B"
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="development_level",
+#     scenario="BA_dialogue"
+# )
+
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B"
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="position_level",
+#     scenario="BA_dialogue"
+# )

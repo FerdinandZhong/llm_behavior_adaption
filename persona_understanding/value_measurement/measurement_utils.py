@@ -36,9 +36,9 @@ def get_continent(country_name):
             "AS": "Asia",
             "EU": "Europe",
             "NA": "America",
-            "OC": "Unknown", # "Oceania",
+            "OC": "Unknown",  # "Oceania",
             "SA": "America",
-            "AN": "Unknown", # "Antarctica",
+            "AN": "Unknown",  # "Antarctica",
         }
 
         return continent_map.get(continent_code, "Unknown")
@@ -119,13 +119,23 @@ class JobClassifier:
         "Design",
     ]  # TODO: to update the list
 
+    job_categories = [
+        "Healthcare & Therapy",
+        "Science, Environment & Research",
+        "Creative Arts & Media",
+        "Education & Social Services",
+        "Business, Finance & Administration",
+        "Technology & Engineering",
+        "Hospitality, Events & Leisure"
+    ]
+
     def __init__(self):
         self.classifier = pipeline(
             "zero-shot-classification", model="facebook/bart-large-mnli"
         )
 
     def get_position_level(self, job_title):
-        result = self.classifier(job_title, self.position_levels)
+        result = self.classifier(job_title, self.job_categories)
 
         selected_lable = result["labels"][np.array(result["scores"]).argmax()]
         return selected_lable

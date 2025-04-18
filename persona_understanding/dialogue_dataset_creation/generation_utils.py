@@ -20,11 +20,16 @@ def calculate_age(dob):
     """
     dob_date = datetime.strptime(dob, "%d-%M-%Y")
     today = datetime.today()
+    print(today)
+    # today = datetime.strptime("02-01-2025", "%d-%M-%Y")
+    # today = datetime.strptime("31-03-2025", "%d-%M-%Y")
     age = (
         today.year
         - dob_date.year
-        - ((today.month, today.day) < (dob_date.month, dob_date.day))
     )
+    if today.month < dob_date.month:
+        if today.day < dob_date.day:
+            age -= 1
     return age
 
 

@@ -66,7 +66,7 @@ class ValuesPredictionController:
         verbose: int = 0,
         storage_step: int = None,
         llm_server: str = "llm_platform",
-        reasoning: bool = False
+        reasoning: bool = False,
     ) -> None:
         """
         Initializes the ValuesPredictionController class with the specified parameters.
@@ -250,8 +250,7 @@ class ValuesPredictionController:
 
     @property
     def reasoning(self) -> bool:
-        """Gettter for the reasoning attribute
-        """
+        """Gettter for the reasoning attribute"""
         return self._reasoning
 
     @staticmethod
@@ -338,7 +337,7 @@ class ValuesPredictionController:
         )
         parser.add_argument(
             "--reasoning",
-            action='store_true',
+            action="store_true",
             help="Define doing the reasoning",
         )
         return parser
@@ -399,7 +398,7 @@ class ValuesPredictionController:
             storage_step=args.storage_step,
             llm_server=args.llm_server,
             verbose=args.verbose,
-            reasoning=args.reasoning
+            reasoning=args.reasoning,
         )
 
     def _normalize_logprobs(self, logprobs, all_tokens):
@@ -414,7 +413,7 @@ class ValuesPredictionController:
         prob_sum = sum(probs)
         return [p / prob_sum if prob_sum > 0 else 0.0 for p in probs]
 
-    def _llm_output_processing(self, full_chat_response):
+    def _llm_output_processing(self, full_chat_response, reasoning=None):
         try:
             json_output = json.loads(full_chat_response.choices[0].message.content)
         except Exception:
@@ -430,6 +429,10 @@ class ValuesPredictionController:
         try:
             selected_option_id = json_output["option_id"]
             reason_for_selection = json_output["reason"]
+            if reasoning is not None:
+                reason_for_selection = (
+                    f"<think>{reasoning}</think>\n" + reason_for_selection
+                )
             option_id_logprobs = None
             for token_obj in full_chat_response.choices[0].logprobs.content:
                 if token_obj.token == str(selected_option_id):
@@ -481,22 +484,30 @@ class ValuesPredictionController:
         ].format(question=full_question, option_list=options_str)
 
         if self.reasoning:
-            reasoning = self.openai_client.chat.completions.create(
+            reasoning_response = await self.openai_client.chat.completions.create(
                 model=self.evaluated_model,
                 messages=direct_value_selection_prompt,
-                temperature=0.6, # default setting for reasoning model
-                max_tokens=4096 # larger window
-            ).choices[0].message.content.split("</think>")[0]
+                temperature=0.6,  # default setting for reasoning model
+                max_tokens=4096,  # larger window
+            )
 
-            direct_value_selection_prompt.append({
-                "role": "assistant",
-                "content": f"<think>\n{reasoning}\n</think>\n"
-            })
+            reasoning_output = reasoning_response.choices[0].message.content.split(
+                "</think>"
+            )[0]
+
+            direct_value_selection_prompt.append(
+                {
+                    "role": "assistant",
+                    "content": f"<think>\n{reasoning_output}\n</think>\n",
+                }
+            )
 
             # direct_value_selection_prompt.append({
             #     "role": "user",
             #     "content": "Select the option for the question, given the reasoning."
             # })
+        else:
+            reasoning_output = None
 
         if self.prompt_append_format:
             direct_value_selection_prompt.append(EXTRA_FORMAT)
@@ -527,7 +538,7 @@ class ValuesPredictionController:
             normalized_probs,
             option_id_logprobs_dict,
             reason_for_selection,
-        ) = self._llm_output_processing(full_chat_response)
+        ) = self._llm_output_processing(full_chat_response, reasoning=reasoning_output)
 
         return QuestionnaireOutput(
             question_index=question_index,
@@ -550,22 +561,30 @@ class ValuesPredictionController:
         dialogue_based_msgs.append(dialogue_continue_prompt[2])
 
         if self.reasoning:
-            reasoning = self.openai_client.chat.completions.create(
+            reasoning_response = await self.openai_client.chat.completions.create(
                 model=self.evaluated_model,
                 messages=dialogue_based_msgs,
-                temperature=0.6, # default setting for reasoning model
-                max_tokens=4096 # larger window
-            ).choices[0].message.content.split("</think>")[0]
+                temperature=0.6,  # default setting for reasoning model
+                max_tokens=4096,  # larger window
+            )
 
-            dialogue_based_msgs.append({
-                "role": "assistant",
-                "content": f"<think>\n{reasoning}\n</think>\n"
-            })
+            reasoning_output = reasoning_response.choices[0].message.content.split(
+                "</think>"
+            )[0]
+
+            dialogue_based_msgs.append(
+                {
+                    "role": "assistant",
+                    "content": f"<think>\n{reasoning_output}\n</think>\n",
+                }
+            )
 
             # dialogue_based_msgs.append({
             #     "role": "user",
             #     "content": "Select the option for the question, given the reasoning."
             # })
+        else:
+            reasoning_output = None
 
         if self.prompt_append_format:
             dialogue_based_msgs.append(EXTRA_FORMAT)
@@ -594,7 +613,7 @@ class ValuesPredictionController:
             normalized_probs,
             option_id_logprobs_dict,
             reason_for_selection,
-        ) = self._llm_output_processing(full_chat_response)
+        ) = self._llm_output_processing(full_chat_response, reasoning=reasoning_output)
 
         return QuestionnaireOutput(
             question_index=question_index,

@@ -13,12 +13,12 @@ from persona_understanding.dialogue_dataset_creation.generation_utils import (
     calculate_age,
 )
 from persona_understanding.value_measurement.formulas import (
+    compute_emd,
     compute_js_centroid,
     compute_js_centroid_and_avg,
     filter_rows,
     hellinger_distance,
     jensen_shannon_divergence,
-    compute_emd
 )
 from persona_understanding.value_measurement.measurement_utils import (
     JobClassifier,
@@ -1073,7 +1073,6 @@ class ValuesComparison:
         )
 
         overall_divergences = []
-       
 
         for user_distribution, dialogue_distribution in zip(
             user_distributions_arry, dialogue_distributions_arry
@@ -1086,7 +1085,7 @@ class ValuesComparison:
             "avg_divergence": np.mean(overall_divergences),
             "std_divergence": np.std(overall_divergences),
         }
-    
+
     def cross_datasets_divergences_baseline_id_based(self):
         """Compute the cross dataset divergences baseline"""
         user_distributions_arry = np.array(
@@ -1115,21 +1114,21 @@ class ValuesComparison:
 
         overall_divergences = []
 
-        for idx, user_distribution in enumerate(user_distributions_arry):  # Loop over the desired number of comparisons
+        for idx, user_distribution in enumerate(
+            user_distributions_arry
+        ):  # Loop over the desired number of comparisons
             # Randomly sample a user distribution and a dialogue distribution
-            random_idx = random.randint(0, user_distributions_arry.shape[0]-1)
+            random_idx = random.randint(0, user_distributions_arry.shape[0] - 1)
             while random_idx == idx:
-                random_idx = random.randint(0, user_distributions_arry.shape[0]-1)
+                random_idx = random.randint(0, user_distributions_arry.shape[0] - 1)
             random_dialogue_distribution = dialogue_distributions_arry[random_idx]
 
             # Compute the divergence and append to the list
             overall_divergences.append(
-                compute_emd(
-                    user_distribution, random_dialogue_distribution
-                )
+                compute_emd(user_distribution, random_dialogue_distribution)
             )
 
         return {
             "avg_divergence": np.mean(overall_divergences),
-            "std_divergence": np.std(overall_divergences)
+            "std_divergence": np.std(overall_divergences),
         }

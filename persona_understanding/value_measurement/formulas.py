@@ -177,20 +177,21 @@ def compute_js_centroid_and_avg(distributions, maxiter=1000, tol=1e-6):
 
     return centroid, failed_count, avg_divergence
 
+
 def compute_emd(vector_a, vector_b):
     # Convert to histograms
     bins = np.arange(1, 6)
     hist_a = np.histogram(vector_a, bins=bins)[0]
     hist_b = np.histogram(vector_b, bins=bins)[0]
-    
+
     # Normalize to probabilities
     p = hist_a / np.sum(hist_a)
     q = hist_b / np.sum(hist_b)
-    
+
     # Compute CDFs
     cdf_p = np.cumsum(p)
     cdf_q = np.cumsum(q)
-    
+
     # Sum absolute differences of CDFs (excluding last category)
     emd = np.sum(np.abs(cdf_p[:-1] - cdf_q[:-1]))
     return emd

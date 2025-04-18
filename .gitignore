@@ -171,3 +171,6 @@ temp.txt
 values_results/**
 .DS_Store
 images/**
+datasets/generated_dialogues/**.jsonl
+datasets/generated_dialogues/human_**
+cmds/**

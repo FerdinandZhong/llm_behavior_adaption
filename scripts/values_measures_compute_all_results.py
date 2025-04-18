@@ -120,7 +120,9 @@ if __name__ == "__main__":
 
     # Consistency
     # cross_datasets_divergence = values_comparison_obj.cross_datasets_divergences()
-    cross_datasets_divergence = values_comparison_obj.cross_datasets_divergences_id_based()
+    cross_datasets_divergence = (
+        values_comparison_obj.cross_datasets_divergences_id_based()
+    )
     # cross_datasets_divergence_baseline = (
     #     values_comparison_obj.cross_datasets_divergences_baseline()
     # )
@@ -130,11 +132,13 @@ if __name__ == "__main__":
 
     os.makedirs(f"./values_results/{args.model_name}/vsm/Consistency/", exist_ok=True)
     with open(
-        f"./values_results/{args.model_name}/vsm/Consistency/divergence_id_based.json", "w"
+        f"./values_results/{args.model_name}/vsm/Consistency/divergence_id_based.json",
+        "w",
     ) as json_file:
         json.dump(cross_datasets_divergence, json_file)
 
     with open(
-        f"./values_results/{args.model_name}/vsm/Consistency/baselines_id_based.json", "w"
+        f"./values_results/{args.model_name}/vsm/Consistency/baselines_id_based.json",
+        "w",
     ) as json_file:
         json.dump(cross_datasets_divergence_baseline, json_file)
