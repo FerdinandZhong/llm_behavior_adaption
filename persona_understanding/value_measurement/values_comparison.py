@@ -238,7 +238,7 @@ class ValuesComparison:
             job_classifier = JobClassifier()
             self.user_profile_dataset["Position_Level"] = (
                 self.user_profile_dataset.apply(
-                    lambda x: job_classifier.get_position_level(x["Job Title"]), axis=1
+                    lambda x: job_classifier.get_classification(x["Job Title"]), axis=1
                 )
             )
 

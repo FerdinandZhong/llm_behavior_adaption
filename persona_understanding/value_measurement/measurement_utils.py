@@ -134,8 +134,11 @@ class JobClassifier:
             "zero-shot-classification", model="facebook/bart-large-mnli"
         )
 
-    def get_position_level(self, job_title):
-        result = self.classifier(job_title, self.job_categories)
+    def get_classification(self, job_title, attr_name: str):
+        """get position level
+
+        """
+        result = self.classifier(job_title, getattr(self, attr_name))
 
         selected_lable = result["labels"][np.array(result["scores"]).argmax()]
         return selected_lable
