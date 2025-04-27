@@ -120,14 +120,15 @@ class JobClassifier:
     ]  # TODO: to update the list
 
     job_categories = [
-        "Healthcare & Therapy",
-        "Science, Environment & Research",
-        "Creative Arts & Media",
-        "Education & Social Services",
-        "Business, Finance & Administration",
-        "Technology & Engineering",
-        "Hospitality, Events & Leisure"
+        "Health",
+        "Science",
+        "Creative",
+        "Education",
+        "Business",
+        "Tech",
+        "Hospitality"
     ]
+
 
     def __init__(self):
         self.classifier = pipeline(

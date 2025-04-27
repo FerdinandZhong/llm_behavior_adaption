@@ -1,0 +1,3 @@
+{"compared_groups": "Female--Male", "compared_details": {"average_user_divergence": 0.14986673210385862, "std_user_divergence": 0.0814851924164981, "failed_distributions_count": 0}}
+{"compared_groups": "Female--Other", "compared_details": {"average_user_divergence": 0.12370574074734482, "std_user_divergence": 0.07685844324261622, "failed_distributions_count": 0}}
+{"compared_groups": "Male--Other", "compared_details": {"average_user_divergence": 0.15167106219374515, "std_user_divergence": 0.08594423679652335, "failed_distributions_count": 0}}

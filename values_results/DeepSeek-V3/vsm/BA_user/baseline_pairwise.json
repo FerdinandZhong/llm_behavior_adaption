@@ -1,0 +1,78 @@
+{
+    "average_user_divergence": 0.13989391462644118,
+    "std_user_divergence": 0.11357564778870957,
+    "per_question_details": {
+        "question_0": {
+            "average_divergence": 9.967325896659751e-05,
+            "failed_count": 0
+        },
+        "question_1": {
+            "average_divergence": 0.20781595146975904,
+            "failed_count": 0
+        },
+        "question_2": {
+            "average_divergence": 0.010168455073763101,
+            "failed_count": 0
+        },
+        "question_3": {
+            "average_divergence": 0.1261641844059992,
+            "failed_count": 0
+        },
+        "question_4": {
+            "average_divergence": 0.18704532473872168,
+            "failed_count": 0
+        },
+        "question_5": {
+            "average_divergence": 0.005411823801465154,
+            "failed_count": 0
+        },
+        "question_6": {
+            "average_divergence": 0.2676684728841767,
+            "failed_count": 0
+        },
+        "question_7": {
+            "average_divergence": 0.03438422538182037,
+            "failed_count": 0
+        },
+        "question_8": {
+            "average_divergence": 0.03490941411901491,
+            "failed_count": 0
+        },
+        "question_9": {
+            "average_divergence": 0.2355377275007574,
+            "failed_count": 0
+        },
+        "question_10": {
+            "average_divergence": 0.07574283756791025,
+            "failed_count": 0
+        },
+        "question_11": {
+            "average_divergence": 0.3331981488831221,
+            "failed_count": 0
+        },
+        "question_12": {
+            "average_divergence": 0.3256948374863136,
+            "failed_count": 0
+        },
+        "question_13": {
+            "average_divergence": 0.02832275491635031,
+            "failed_count": 0
+        },
+        "question_14": {
+            "average_divergence": 0.020623157608775436,
+            "failed_count": 0
+        },
+        "question_15": {
+            "average_divergence": 0.27152595746147185,
+            "failed_count": 0
+        },
+        "question_16": {
+            "average_divergence": 0.1638864057624028,
+            "failed_count": 0
+        },
+        "question_17": {
+            "average_divergence": 0.18989111095515016,
+            "failed_count": 0
+        }
+    }
+}

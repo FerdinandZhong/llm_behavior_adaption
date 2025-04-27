@@ -1,0 +1,6 @@
+{"compared_groups": "Bachelor's_Degree--High_School", "compared_details": {"average_user_divergence": 0.15784758477243807, "std_user_divergence": 0.08541730476264092, "failed_distributions_count": 0}}
+{"compared_groups": "Bachelor's_Degree--Master's_Degree", "compared_details": {"average_user_divergence": 0.13306612729804615, "std_user_divergence": 0.07707461340852452, "failed_distributions_count": 0}}
+{"compared_groups": "Bachelor's_Degree--PhD", "compared_details": {"average_user_divergence": 0.14403374024416554, "std_user_divergence": 0.0815664203696833, "failed_distributions_count": 0}}
+{"compared_groups": "High_School--Master's_Degree", "compared_details": {"average_user_divergence": 0.1487344861907037, "std_user_divergence": 0.08073605406798509, "failed_distributions_count": 0}}
+{"compared_groups": "High_School--PhD", "compared_details": {"average_user_divergence": 0.16331428024610292, "std_user_divergence": 0.09000765321805809, "failed_distributions_count": 0}}
+{"compared_groups": "Master's_Degree--PhD", "compared_details": {"average_user_divergence": 0.11091794637240814, "std_user_divergence": 0.06864229642269969, "failed_distributions_count": 0}}

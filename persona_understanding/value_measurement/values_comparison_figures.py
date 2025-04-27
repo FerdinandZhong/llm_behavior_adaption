@@ -125,7 +125,7 @@ def plot_divergence_comparison(
     baselines,
     labels,
     attribute: str,
-    figsize=(16, 12),
+    figsize=(16, 24),
     output_path=None,
     group_spacing=1.5,
     cmap="tab20",
@@ -260,6 +260,7 @@ def display_comparison(
     attribute: str = "age",
     group_spacing=1.25,
     cmap="tab20",
+    extra_rules=None
 ):
     datasets = []
     baselines = []
@@ -271,8 +272,14 @@ def display_comparison(
                 dataset = []
                 for result in jl_file.readlines():
                     result = json.loads(result)
-                    # if result["compared_groups"].startswith("<30"):
-                    dataset.append(result)
+                    if extra_rules is not None:
+                        # if result["compared_groups"].startswith(extra_rule):
+                        #     dataset.append(result)
+                        for rule in extra_rules:
+                            if rule in result["compared_groups"]:
+                                dataset.append(result)
+                    else:
+                        dataset.append(result)
                 datasets.append(dataset)
             with open(
                 f"../values_results/{model_label}/vsm/{scenario}/{attribute}_baseline.json",
@@ -296,6 +303,69 @@ def display_comparison(
     )
 
 
+
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B"
+    ],
+    group_spacing=1.75,
+    cmap="tab10",
+    attribute="education",
+    scenario="BA_dialogue"
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B"
+    ],
+    group_spacing=1.5,
+    cmap="tab10",
+    attribute="location",
+    scenario="BA_dialogue"
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B"
+    ],
+    group_spacing=1.5,
+    cmap="tab10",
+    attribute="development_level",
+    scenario="BA_dialogue"
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B"
+    ],
+    group_spacing=1.5,
+    cmap="tab10",
+    attribute="position_level",
+    scenario="BA_dialogue"
+)
+
+
 display_comparison(
     [
         "Llama3.1-8B-Instruct",
@@ -307,66 +377,6 @@ display_comparison(
     ],
     group_spacing=1.75,
     cmap="tab10",
-    attribute="age",
-    scenario="BA_dialogue",
+    attribute="job_category",
+    scenario="BA_user",
 )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B"
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="education",
-#     scenario="BA_dialogue"
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B"
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="location",
-#     scenario="BA_dialogue"
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B"
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="development_level",
-#     scenario="BA_dialogue"
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B"
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="position_level",
-#     scenario="BA_dialogue"
-# )

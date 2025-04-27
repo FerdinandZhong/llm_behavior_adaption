@@ -516,23 +516,6 @@ class ValuesPredictionController:
             messages=direct_value_selection_prompt
         )
 
-        # if "gpt" in self.evaluated_model:
-        #     full_chat_response = await self.openai_client.chat.completions.create(
-        #         model=self.evaluated_model,
-        #         messages=direct_value_selection_prompt,
-        #         response_format=self.response_json_schema,
-        #         logprobs=True,
-        #         top_logprobs=5,
-        #     )
-        # else:
-        #     full_chat_response = await self.openai_client.chat.completions.create(
-        #         model=self.evaluated_model,
-        #         messages=direct_value_selection_prompt,
-        #         logprobs=True,
-        #         top_logprobs=5,
-        #         extra_body={"guided_json": self.response_json_schema},
-        #     )
-
         (
             selected_option_id,
             normalized_probs,
@@ -578,11 +561,6 @@ class ValuesPredictionController:
                     "content": f"<think>\n{reasoning_output}\n</think>\n",
                 }
             )
-
-            # dialogue_based_msgs.append({
-            #     "role": "user",
-            #     "content": "Select the option for the question, given the reasoning."
-            # })
         else:
             reasoning_output = None
 
@@ -590,23 +568,6 @@ class ValuesPredictionController:
             dialogue_based_msgs.append(EXTRA_FORMAT)
 
         full_chat_response = await self.query_llm(messages=dialogue_based_msgs)
-
-        # if "gpt" in self.evaluated_model:
-        #     full_chat_response = await self.openai_client.chat.completions.create(
-        #         model=self.evaluated_model,
-        #         messages=dialogue_history,
-        #         response_format=self.response_json_schema,
-        #         logprobs=True,
-        #         top_logprobs=5,
-        #     )
-        # else:
-        #     full_chat_response = await self.openai_client.chat.completions.create(
-        #         model=self.evaluated_model,
-        #         messages=dialogue_history,
-        #         logprobs=True,
-        #         top_logprobs=5,
-        #         extra_body={"guided_json": self.response_json_schema},
-        #     )
 
         (
             selected_option_id,
@@ -803,14 +764,21 @@ class ValuesPredictionController:
                 jsonl_file.write(json.dumps(entry) + "\n")
 
 
-if __name__ == "__main__":
+async def main():
     parser = argparse.ArgumentParser()
     parser = ValuesPredictionController.add_cli_args(parser=parser)
     values_prediction_args = parser.parse_args()
     prediction_controller = ValuesPredictionController.from_cli_args(
         args=values_prediction_args
     )
-    values_for_user_profiles = asyncio.run(
-        prediction_controller.get_values_for_user_profiles()
-    )
-    # values_for_dialogue = asyncio.run(prediction_controller.get_values_for_dialogue())
+    
+    values_for_user_profiles = await prediction_controller.get_values_for_user_profiles()
+    values_for_dialogue = await prediction_controller.get_values_for_dialogue()
+
+    # You can print or return these if needed
+    print(values_for_user_profiles)
+    print(values_for_dialogue)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

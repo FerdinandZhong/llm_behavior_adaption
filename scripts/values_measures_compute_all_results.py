@@ -83,62 +83,73 @@ if __name__ == "__main__":
     with open("./datasets/position_level_index.json", "r") as pl_file:
         position_levels_groups = json.load(pl_file)
 
-    # single_dataset_scenarios = {
-    #     "BA_user": "direct_values_predictions",
-    #     "BA_dialogue": "dialogue_values_predictions",
-    # }
-    # attributes_list = [
-    #     ("Age", "age"),
-    #     ("Education Level", "education"),
-    #     ("Continent", "location"),
-    #     ("Development", "development_level"),
-    #     ("Position_Level", "position_level")
-    # ]
+    with open("./datasets/job_categories_index.json", "r") as pl_file:
+        job_categories_groups = json.load(pl_file)
+        
 
-    # for scenario, scenario_attr in single_dataset_scenarios.items():
-    #     for groupby_attribute, storage_attribute in attributes_list:
-    #         if storage_attribute == "position_level":
-    #             results, groups_details, per_question_baselines, overall_baseline = (
-    #                 values_comparison_obj.inner_dataset_groups_comparison(
-    #                     groupby_attribute, getattr(values_comparison_obj, scenario_attr), groups=position_levels_groups
-    #                 )
-    #             )
-    #         else:
-    #             results, groups_details, per_question_baselines, overall_baseline = (
-    #                 values_comparison_obj.inner_dataset_groups_comparison(
-    #                     groupby_attribute, getattr(values_comparison_obj, scenario_attr)
-    #                 )
-    #             )
-    #         store_single_dataset_results(
-    #             storage_attribute,
-    #             args.model_name,
-    #             scenario,
-    #             results,
-    #             per_question_baselines,
-    #             overall_baseline,
-    #         )
+    single_dataset_scenarios = {
+        "BA_user": "direct_values_predictions",
+        "BA_dialogue": "dialogue_values_predictions",
+    }
+    attributes_list = [
+        # ("Age", "age"),
+        # ("Education Level", "education"),
+        # ("Continent", "location"),
+        # ("Development", "development_level"),
+        # ("Position_Level", "position_level")
+        ("Job Category", "job_category")
+    ]
+
+    for scenario, scenario_attr in single_dataset_scenarios.items():
+        for groupby_attribute, storage_attribute in attributes_list:
+            if storage_attribute == "position_level":
+                results, groups_details, per_question_baselines, overall_baseline = (
+                    values_comparison_obj.inner_dataset_groups_comparison(
+                        groupby_attribute, getattr(values_comparison_obj, scenario_attr), groups=position_levels_groups
+                    )
+                )
+            elif storage_attribute == "job_category":
+                results, groups_details, per_question_baselines, overall_baseline = (
+                    values_comparison_obj.inner_dataset_groups_comparison(
+                        groupby_attribute, getattr(values_comparison_obj, scenario_attr), groups=job_categories_groups
+                    )
+                )
+            else:
+                results, groups_details, per_question_baselines, overall_baseline = (
+                    values_comparison_obj.inner_dataset_groups_comparison(
+                        groupby_attribute, getattr(values_comparison_obj, scenario_attr)
+                    )
+                )
+            store_single_dataset_results(
+                storage_attribute,
+                args.model_name,
+                scenario,
+                results,
+                per_question_baselines,
+                overall_baseline,
+            )
 
     # Consistency
     # cross_datasets_divergence = values_comparison_obj.cross_datasets_divergences()
-    cross_datasets_divergence = (
-        values_comparison_obj.cross_datasets_divergences_id_based()
-    )
+    # cross_datasets_divergence = (
+    #     values_comparison_obj.cross_datasets_divergences_id_based()
+    # )
     # cross_datasets_divergence_baseline = (
     #     values_comparison_obj.cross_datasets_divergences_baseline()
     # )
-    cross_datasets_divergence_baseline = (
-        values_comparison_obj.cross_datasets_divergences_baseline_id_based()
-    )
+    # cross_datasets_divergence_baseline = (
+    #     values_comparison_obj.cross_datasets_divergences_baseline_id_based()
+    # )
 
-    os.makedirs(f"./values_results/{args.model_name}/vsm/Consistency/", exist_ok=True)
-    with open(
-        f"./values_results/{args.model_name}/vsm/Consistency/divergence_id_based.json",
-        "w",
-    ) as json_file:
-        json.dump(cross_datasets_divergence, json_file)
+    # os.makedirs(f"./values_results/{args.model_name}/vsm/Consistency/", exist_ok=True)
+    # with open(
+    #     f"./values_results/{args.model_name}/vsm/Consistency/divergence_id_based.json",
+    #     "w",
+    # ) as json_file:
+    #     json.dump(cross_datasets_divergence, json_file)
 
-    with open(
-        f"./values_results/{args.model_name}/vsm/Consistency/baselines_id_based.json",
-        "w",
-    ) as json_file:
-        json.dump(cross_datasets_divergence_baseline, json_file)
+    # with open(
+    #     f"./values_results/{args.model_name}/vsm/Consistency/baselines_id_based.json",
+    #     "w",
+    # ) as json_file:
+    #     json.dump(cross_datasets_divergence_baseline, json_file)
