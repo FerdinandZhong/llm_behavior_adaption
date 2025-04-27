@@ -168,9 +168,13 @@ logs/**
 datasets/values_dataset/vsm2013**
 datasets/generated_dialogues/**trial.jsonl
 temp.txt
-values_results/**
 .DS_Store
 images/**
 datasets/generated_dialogues/**.jsonl
 datasets/generated_dialogues/human_**
 cmds/**
+datasets/**.csv
+datasets/**.json
+!datasets/recruitment_data.csv
+!datasets/generated_dialogues/first_1000_rows.jsonl
+single_selection_outputs/**

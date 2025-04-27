@@ -1,0 +1,10 @@
+{"compared_groups": "<30--30-40", "compared_details": {"average_user_divergence": 0.20145024135008133, "std_user_divergence": 0.08435133093644841, "failed_distributions_count": 0}}
+{"compared_groups": "<30--40-50", "compared_details": {"average_user_divergence": 0.19750389634046692, "std_user_divergence": 0.08264395714366003, "failed_distributions_count": 0}}
+{"compared_groups": "<30--50-60", "compared_details": {"average_user_divergence": 0.20873408737555116, "std_user_divergence": 0.08701501776625889, "failed_distributions_count": 0}}
+{"compared_groups": "<30-->60", "compared_details": {"average_user_divergence": 0.22853720323283505, "std_user_divergence": 0.0840506351809218, "failed_distributions_count": 0}}
+{"compared_groups": "30-40--40-50", "compared_details": {"average_user_divergence": 0.18993213863024866, "std_user_divergence": 0.08222998191412705, "failed_distributions_count": 0}}
+{"compared_groups": "30-40--50-60", "compared_details": {"average_user_divergence": 0.20070806437933994, "std_user_divergence": 0.0867317658253449, "failed_distributions_count": 0}}
+{"compared_groups": "30-40-->60", "compared_details": {"average_user_divergence": 0.22205785286247315, "std_user_divergence": 0.08472226981692547, "failed_distributions_count": 0}}
+{"compared_groups": "40-50--50-60", "compared_details": {"average_user_divergence": 0.19009073985374003, "std_user_divergence": 0.08434451612160741, "failed_distributions_count": 0}}
+{"compared_groups": "40-50-->60", "compared_details": {"average_user_divergence": 0.20713620697331903, "std_user_divergence": 0.0808026497807713, "failed_distributions_count": 0}}
+{"compared_groups": "50-60-->60", "compared_details": {"average_user_divergence": 0.19769934499480615, "std_user_divergence": 0.07962512993570724, "failed_distributions_count": 0}}
