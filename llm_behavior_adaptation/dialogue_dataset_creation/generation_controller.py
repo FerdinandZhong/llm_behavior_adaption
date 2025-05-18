@@ -10,10 +10,10 @@ import pandas as pd
 from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm
 
-from persona_understanding.dialogue_dataset_creation.constant import (
+from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
     DIALOGUE_RUNS_THRESHOLD,
 )
-from persona_understanding.dialogue_dataset_creation.dialogue_controller import (
+from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import (
     DialogueGenerator,
 )
 

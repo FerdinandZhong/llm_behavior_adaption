@@ -14,11 +14,11 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-from persona_understanding.dialogue_dataset_creation.constant import (
+from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
     LLM_JUDGE_DICT,
     PROFILE_TEMPLATE,
 )
-from persona_understanding.dialogue_dataset_creation.generation_utils import (
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
     render_template,
     retrieve_user_profile,
 )

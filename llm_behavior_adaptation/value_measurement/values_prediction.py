@@ -16,14 +16,14 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-from persona_understanding.dialogue_dataset_creation.dialogue_controller import (
+from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import (
     DialogueRun,
 )
-from persona_understanding.dialogue_dataset_creation.generation_utils import (
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
     render_template,
     retrieve_user_profile,
 )
-from persona_understanding.value_measurement.constant import (
+from llm_behavior_adaptation.value_measurement.constant import (
     CONVERSATION_HISTORY_PROMPT,
     DEFAULT_OPTION_IDS,
     DIALOGUE_CONTINUE_VALUE_QUESTIONS_CSV,

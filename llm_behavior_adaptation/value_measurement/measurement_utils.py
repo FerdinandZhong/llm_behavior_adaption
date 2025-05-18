@@ -6,7 +6,7 @@ import pycountry
 import pycountry_convert as pc
 from transformers import pipeline
 
-from persona_understanding.value_measurement.constant import (
+from llm_behavior_adaptation.value_measurement.constant import (
     COUNTRY_TO_CULTURE,
     DEVELOPMENT_LEVEL,
 )

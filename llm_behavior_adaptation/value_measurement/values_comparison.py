@@ -9,10 +9,10 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from persona_understanding.dialogue_dataset_creation.generation_utils import (
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
     calculate_age,
 )
-from persona_understanding.value_measurement.formulas import (
+from llm_behavior_adaptation.value_measurement.formulas import (
     compute_emd,
     compute_js_centroid,
     compute_js_centroid_and_avg,
@@ -20,7 +20,7 @@ from persona_understanding.value_measurement.formulas import (
     hellinger_distance,
     jensen_shannon_divergence,
 )
-from persona_understanding.value_measurement.measurement_utils import (
+from llm_behavior_adaptation.value_measurement.measurement_utils import (
     JobClassifier,
     get_continent,
     get_culture,
