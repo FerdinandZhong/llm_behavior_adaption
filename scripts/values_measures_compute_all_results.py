@@ -85,7 +85,6 @@ if __name__ == "__main__":
 
     with open("./datasets/job_categories_index.json", "r") as pl_file:
         job_categories_groups = json.load(pl_file)
-        
 
     single_dataset_scenarios = {
         "BA_user": "direct_values_predictions",
@@ -105,13 +104,17 @@ if __name__ == "__main__":
             if storage_attribute == "position_level":
                 results, groups_details, per_question_baselines, overall_baseline = (
                     values_comparison_obj.inner_dataset_groups_comparison(
-                        groupby_attribute, getattr(values_comparison_obj, scenario_attr), groups=position_levels_groups
+                        groupby_attribute,
+                        getattr(values_comparison_obj, scenario_attr),
+                        groups=position_levels_groups,
                     )
                 )
             elif storage_attribute == "job_category":
                 results, groups_details, per_question_baselines, overall_baseline = (
                     values_comparison_obj.inner_dataset_groups_comparison(
-                        groupby_attribute, getattr(values_comparison_obj, scenario_attr), groups=job_categories_groups
+                        groupby_attribute,
+                        getattr(values_comparison_obj, scenario_attr),
+                        groups=job_categories_groups,
                     )
                 )
             else:

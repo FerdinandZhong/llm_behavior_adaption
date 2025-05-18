@@ -771,8 +771,10 @@ async def main():
     prediction_controller = ValuesPredictionController.from_cli_args(
         args=values_prediction_args
     )
-    
-    values_for_user_profiles = await prediction_controller.get_values_for_user_profiles()
+
+    values_for_user_profiles = (
+        await prediction_controller.get_values_for_user_profiles()
+    )
     values_for_dialogue = await prediction_controller.get_values_for_dialogue()
 
     # You can print or return these if needed

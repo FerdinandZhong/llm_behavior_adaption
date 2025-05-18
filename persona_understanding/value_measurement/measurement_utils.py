@@ -126,9 +126,8 @@ class JobClassifier:
         "Education",
         "Business",
         "Tech",
-        "Hospitality"
+        "Hospitality",
     ]
-
 
     def __init__(self):
         self.classifier = pipeline(
@@ -136,9 +135,7 @@ class JobClassifier:
         )
 
     def get_classification(self, job_title, attr_name: str):
-        """get position level
-
-        """
+        """get position level"""
         result = self.classifier(job_title, getattr(self, attr_name))
 
         selected_lable = result["labels"][np.array(result["scores"]).argmax()]
