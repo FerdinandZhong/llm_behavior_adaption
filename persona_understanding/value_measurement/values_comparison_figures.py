@@ -1,10 +1,14 @@
 import json
 import os
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from matplotlib.cm import get_cmap
 from sklearn.manifold import TSNE
+
+mpl.rcParams["font.family"] = "arial"
 
 
 def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
@@ -118,6 +122,124 @@ def visualize_tsne_groups(groups, perplexity=30, learning_rate=200, random_state
     plt.legend()
     plt.grid(alpha=0.3)
     plt.show()
+
+
+def plot_divergence_comparison_radar(
+    datasets,
+    baselines,
+    labels,
+    attribute: str,
+    figsize=(16, 16),
+    output_path=None,
+    csv_path=None,
+    cmap="tab20",
+    label_pad=-5,
+    scenario="BA_user",
+):
+    """
+    Visualize divergence comparisons as relative ratios over baseline across multiple models using a radar chart,
+    and optionally export the data to CSV.
+
+    Parameters:
+        datasets (list of lists): Multiple divergence datasets
+        baselines (list): Baseline values for each model
+        labels (list): Model names
+        attribute (str): The attribute name (used in plot title)
+        figsize (tuple): Figure dimensions
+        output_path (str): Optional path to save the image
+        csv_path (str): Optional path to save the underlying data as CSV
+        cmap (str): Colormap name for plotting
+    """
+    # Validation
+    if not (len(datasets) == len(baselines) == len(labels)):
+        raise ValueError("All input lists must have equal length")
+
+    # Extract baselines
+    baselines = [b["overall_baseline"] for b in baselines]
+    n_models = len(datasets)
+
+    # Collect and sort groups
+    all_groups = set()
+    for data in datasets:
+        for item in data:
+            group_name = item["compared_groups"].replace("--", " vs ")
+            if "unknown" not in group_name.lower():
+                all_groups.add(group_name)
+    sorted_groups = sorted(all_groups)
+    n_groups = len(sorted_groups)
+
+    # Prepare values matrix
+    values = np.zeros((n_models, n_groups))
+    for mi, data in enumerate(datasets):
+        base = baselines[mi]
+        for item in data:
+            group = item["compared_groups"].replace("--", " vs ")
+            if "unknown" not in group.lower():
+                idx = sorted_groups.index(group)
+                div = item["compared_details"]["average_divergence"]
+                values[mi, idx] = div / base
+
+    # Export to CSV if requested
+    if csv_path:
+        df = pd.DataFrame(
+            {
+                "Group": sorted_groups,
+                **{labels[mi]: values[mi, :] for mi in range(n_models)},
+            }
+        )
+        df.to_csv(csv_path, index=False)
+
+    # Radar chart setup
+    angles = np.linspace(0, 2 * np.pi, n_groups, endpoint=False).tolist()
+    angles += angles[:1]  # close the loop
+
+    fig, ax = plt.subplots(figsize=figsize, subplot_kw=dict(polar=True))
+    cmap = get_cmap(cmap)
+    colors = [cmap(i % 20) for i in range(n_models)]
+
+    # Plot each model
+    for mi in range(n_models):
+        data_row = list(values[mi]) + [values[mi][0]]
+        ax.plot(angles, data_row, color=colors[mi], linewidth=2, label=labels[mi])
+        ax.fill(angles, data_row, color=colors[mi], alpha=0.25)
+
+    # Add group labels with rotation to reduce overlap
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(
+        sorted_groups,
+        fontsize=23,
+        ha="center",
+        fontdict={"family": "arial"},
+    )
+    for label in ax.get_xticklabels():
+        label.set_y(label.get_position()[1] - (label_pad / 100))  # Apply custom padding
+
+    # Set radius labels
+    max_val = np.nanmax(values)
+    yticks = np.linspace(0, max_val, num=int(max_val) + 1)
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([f"{y:.1f}" for y in yticks], fontsize=15)
+    ax.set_ylim(0, max_val)
+
+    plt.tight_layout()
+
+    # Save to file if output path is specified
+    if output_path:
+        plt.savefig(output_path, bbox_inches="tight", dpi=300)
+
+    legend_fig, legend_ax = plt.subplots(figsize=(12, 1))
+    legend_ax.axis("off")
+    legend = legend_ax.legend(
+        *ax.get_legend_handles_labels(),
+        loc="center",
+        fontsize=30,
+        frameon=False,
+        ncol=min(6, n_models),
+    )
+    if output_path:
+        legend_fig.savefig(
+            output_path.replace(".pdf", "_legend.pdf"), bbox_inches="tight", dpi=300
+        )
 
 
 def plot_divergence_comparison(
@@ -260,7 +382,9 @@ def display_comparison(
     attribute: str = "age",
     group_spacing=1.25,
     cmap="tab20",
-    extra_rules=None
+    extra_rules=None,
+    use_radar=True,
+    specific_name=None,
 ):
     datasets = []
     baselines = []
@@ -291,18 +415,39 @@ def display_comparison(
             print(str(e))
 
     os.makedirs(f"../images/{scenario}/", exist_ok=True)
-    output_path = f"../images/{scenario}/{attribute}.png"
-    plot_divergence_comparison(
-        datasets=datasets,
-        baselines=baselines,
-        labels=model_list,
-        attribute=attribute,
-        output_path=output_path,
-        group_spacing=group_spacing,
-        cmap=cmap,
+
+    output_path = (
+        f"../images/{scenario}/{specific_name}.pdf"
+        if specific_name is not None
+        else f"../images/{scenario}/{attribute}.pdf"
+    )
+    csv_path = (
+        f"../images/{scenario}/{specific_name}.csv"
+        if specific_name is not None
+        else f"../images/{scenario}/{attribute}.csv"
     )
 
-
+    if use_radar:
+        plot_divergence_comparison_radar(
+            datasets=datasets,
+            baselines=baselines,
+            labels=model_list,
+            attribute=attribute,
+            output_path=output_path,
+            csv_path=csv_path,
+            cmap=cmap,
+            scenario=scenario,
+        )
+    else:
+        plot_divergence_comparison(
+            datasets=datasets,
+            baselines=baselines,
+            labels=model_list,
+            attribute=attribute,
+            output_path=output_path,
+            group_spacing=group_spacing,
+            cmap=cmap,
+        )
 
 
 display_comparison(
@@ -312,12 +457,47 @@ display_comparison(
         "DeepSeek-V3",
         "Qwen2.5-7B-Instruct",
         "Qwen2.5-72B-Instruct",
-        "QwQ-32B"
+        "QwQ-32B",
+    ],
+    group_spacing=1.75,
+    cmap="tab10",
+    attribute="age",
+    scenario="BA_dialogue",
+    # extra_rules=["<30", ">60"],
+    specific_name="BA_dialogue_age_radar",
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    group_spacing=1.75,
+    cmap="tab10",
+    attribute="age",
+    scenario="BA_user",
+    # extra_rules=["<30", ">60"],
+    specific_name="BA_user_age_radar",
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
     ],
     group_spacing=1.75,
     cmap="tab10",
     attribute="education",
-    scenario="BA_dialogue"
+    scenario="BA_dialogue",
+    specific_name="BA_dialogue_education_radar",
 )
 
 display_comparison(
@@ -327,13 +507,15 @@ display_comparison(
         "DeepSeek-V3",
         "Qwen2.5-7B-Instruct",
         "Qwen2.5-72B-Instruct",
-        "QwQ-32B"
+        "QwQ-32B",
     ],
-    group_spacing=1.5,
+    group_spacing=1.75,
     cmap="tab10",
-    attribute="location",
-    scenario="BA_dialogue"
+    attribute="education",
+    scenario="BA_user",
+    specific_name="BA_user_education_radar",
 )
+
 
 display_comparison(
     [
@@ -342,12 +524,28 @@ display_comparison(
         "DeepSeek-V3",
         "Qwen2.5-7B-Instruct",
         "Qwen2.5-72B-Instruct",
-        "QwQ-32B"
+        "QwQ-32B",
     ],
     group_spacing=1.5,
     cmap="tab10",
     attribute="development_level",
-    scenario="BA_dialogue"
+    scenario="BA_dialogue",
+    specific_name="BA_dialogue_development_level_radar",
+)
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    group_spacing=1.5,
+    cmap="tab10",
+    attribute="development_level",
+    scenario="BA_user",
+    specific_name="BA_user_development_level_radar",
 )
 
 display_comparison(
@@ -357,14 +555,30 @@ display_comparison(
         "DeepSeek-V3",
         "Qwen2.5-7B-Instruct",
         "Qwen2.5-72B-Instruct",
-        "QwQ-32B"
+        "QwQ-32B",
     ],
     group_spacing=1.5,
     cmap="tab10",
     attribute="position_level",
-    scenario="BA_dialogue"
+    scenario="BA_user",
+    specific_name="BA_user_position_level_radar",
 )
 
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    group_spacing=1.5,
+    cmap="tab10",
+    attribute="position_level",
+    scenario="BA_dialogue",
+    specific_name="BA_dialogue_position_level_radar",
+)
 
 display_comparison(
     [
@@ -379,4 +593,22 @@ display_comparison(
     cmap="tab10",
     attribute="job_category",
     scenario="BA_user",
+    specific_name="BA_user_job_category_radar",
+    # extra_rules=["Business", "Science"]
+)
+
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    group_spacing=1.75,
+    cmap="tab10",
+    attribute="job_category",
+    scenario="BA_dialogue",
+    specific_name="BA_dialogue_job_category_radar",
 )

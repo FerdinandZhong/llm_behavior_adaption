@@ -5,24 +5,23 @@ import argparse
 import asyncio
 import json
 import logging
-import math
 import os
 from copy import deepcopy
-from functools import partial
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import pandas as pd
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
+from persona_understanding.dialogue_dataset_creation.constant import (
+    LLM_JUDGE_DICT,
+    PROFILE_TEMPLATE,
+)
 from persona_understanding.dialogue_dataset_creation.generation_utils import (
     render_template,
     retrieve_user_profile,
 )
-
-from persona_understanding.dialogue_dataset_creation.constant import PROFILE_TEMPLATE, PROFILE_KEYS, LLM_JUDGE_DICT
-
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +32,7 @@ class Rating(BaseModel):
 
 
 class GenerationJudgeController:
-    """LLM Judge
-    """
+    """LLM Judge"""
 
     def __init__(
         self,
@@ -60,7 +58,7 @@ class GenerationJudgeController:
             raise ValueError("output_file_path must be a non-empty string.")
         if not isinstance(verbose, int) or verbose < 0:
             raise ValueError("verbose must be a non-negative integer.")
-        if judge_dim_index not in [1,2,3,4]:
+        if judge_dim_index not in [1, 2, 3, 4]:
             raise ValueError("judge_dim_index must be in 1 to 4")
 
         self._user_profile_dataset = user_profile_dataset
@@ -88,7 +86,7 @@ class GenerationJudgeController:
             pd.DataFrame: The user profile dataset.
         """
         return self._user_profile_dataset
-    
+
     @property
     def output_file_path(self) -> str:
         """
@@ -118,7 +116,7 @@ class GenerationJudgeController:
             List[Dict]: List of generated dialogues.
         """
         return self._generated_dialogues
-    
+
     @property
     def openai_client(self) -> AsyncOpenAI:
         """
@@ -192,8 +190,8 @@ class GenerationJudgeController:
         parser.add_argument(
             "--judge-dim-index",
             type=int,
-            choices=[1,2,3,4],
-            help="Judge dim index to get the template"
+            choices=[1, 2, 3, 4],
+            help="Judge dim index to get the template",
         )
         parser.add_argument(
             "--verbose",
@@ -209,7 +207,7 @@ class GenerationJudgeController:
             help="Interval at which results are stored to the file.",
         )
         return parser
-    
+
     @classmethod
     def from_cli_args(
         cls,
@@ -224,6 +222,7 @@ class GenerationJudgeController:
         Returns:
           DatasetGeneration: An instance of the class populated with CLI argument values.
         """
+
         def _read_csv(csv_path):
             df = pd.read_csv(csv_path)
             df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -242,11 +241,11 @@ class GenerationJudgeController:
                 generated_dialogues.append(dialogue_obj)
                 if len(generated_dialogues) >= args.ending_row:
                     break
-        
+
         openai_client = AsyncOpenAI(
             api_key=args.openai_api_key, base_url=args.model_base_url
         )
-        
+
         return cls(
             openai_client=openai_client,
             output_file_path=args.output_file_path,
@@ -256,7 +255,7 @@ class GenerationJudgeController:
             storage_step=args.storage_step,
             verbose=args.verbose,
         )
-    
+
     def _llm_output_processing(self, full_chat_response):
         try:
             json_output = json.loads(full_chat_response.choices[0].message.content)
@@ -265,21 +264,20 @@ class GenerationJudgeController:
             logger.warning(
                 f"Error decoding as json: {full_chat_response.choices[0].message.content}"
             )
-            return {
-                "rating": 3,
-                "reason": "Default value"
-            }
-    
-    async def _judge_generated_questions(
-        self, user_profile, questions_str, seed=1
-    ):
+            return {"rating": 3, "reason": "Default value"}
+
+    async def _judge_generated_questions(self, user_profile, questions_str, seed=1):
         messages = deepcopy(self._judge_prompt_template)
-        messages[1]["content"] = messages[1]["content"].format(user_details=user_profile)
-        messages[2]["content"] = messages[2]["content"].format(question_str=questions_str)
+        messages[1]["content"] = messages[1]["content"].format(
+            user_details=user_profile
+        )
+        messages[2]["content"] = messages[2]["content"].format(
+            question_str=questions_str
+        )
         judge_response = await self.openai_client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
-            max_tokens=4096, # larger window
+            max_tokens=4096,  # larger window
             seed=seed,
             # response_format={
             #     'type': 'json_object'
@@ -297,19 +295,17 @@ class GenerationJudgeController:
         json_output["seed"] = seed
 
         return json_output
-    
+
     def _render_questions(self, dialogue_runs):
         dialogue_strs = []
         for idx, dialogue_run in enumerate(dialogue_runs):
             dialogue_str = f'Question {idx+1}: {dialogue_run["user_content"]}\n\n'
             dialogue_strs.append(dialogue_str)
-        
+
         return "".join(dialogue_strs)
 
     async def get_judgements_for_generations(self):
-        """Get judgements for all generated datasets
-
-        """
+        """Get judgements for all generated datasets"""
         list_judgements = []
         try:
             with tqdm(
@@ -324,7 +320,9 @@ class GenerationJudgeController:
                     user_profile = render_template(
                         PROFILE_TEMPLATE, profile_data=retrieve_user_profile(row_dict)
                     )
-                    dialogue_details = self.generated_dialogues[user_idx]["generated_dialogue"]
+                    dialogue_details = self.generated_dialogues[user_idx][
+                        "generated_dialogue"
+                    ]
 
                     if self._verbose == 1:
                         logger.info(f"Processing row {user_idx}: {row_dict}")
@@ -336,7 +334,7 @@ class GenerationJudgeController:
                             {
                                 "seed": seed_value,
                                 "user_profile": user_profile,
-                                "questions_str": questions_str
+                                "questions_str": questions_str,
                             }
                         )
                     one_profile_judgements = await asyncio.gather(
@@ -346,40 +344,38 @@ class GenerationJudgeController:
                         ]
                     )
 
-                    final_rating = sum([result["rating"] for result in one_profile_judgements])/len(one_profile_judgements)
-                    list_judgements.append({
-                        f"generation_{user_idx}": {
-                            "overall_rating": final_rating,
-                            "all_results": one_profile_judgements,
+                    final_rating = sum(
+                        [result["rating"] for result in one_profile_judgements]
+                    ) / len(one_profile_judgements)
+                    list_judgements.append(
+                        {
+                            f"generation_{user_idx}": {
+                                "overall_rating": final_rating,
+                                "all_results": one_profile_judgements,
+                            }
                         }
-                    })
+                    )
 
-                    if (
-                        self._storage_step
-                        and user_idx % self._storage_step == 0
-                    ):
-                        self.append_to_file(
-                            list_judgements, self.output_file_path
-                        )
+                    if self._storage_step and user_idx % self._storage_step == 0:
+                        self.append_to_file(list_judgements, self.output_file_path)
                         list_judgements.clear()
 
                     pbar.update(1)
             if len(list_judgements) > 0:
-                self.append_to_file(
-                    list_judgements, self.output_file_path
-                )
+                self.append_to_file(list_judgements, self.output_file_path)
                 list_judgements.clear()
         except Exception as e:
             logger.error(
                 f"An error occurred in the value selection given dialogue context: {e}"
             )
             raise e
-    
+
     def append_to_file(self, data, output_file_path):
         """Append data to the specified JSONL file."""
         with open(output_file_path, "a", encoding="utf-8") as jsonl_file:
             for entry in data:
                 jsonl_file.write(json.dumps(entry) + "\n")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

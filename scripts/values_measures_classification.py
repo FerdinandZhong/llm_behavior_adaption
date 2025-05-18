@@ -26,11 +26,7 @@ if __name__ == "__main__":
         type=str,
         default="../datasets/recruitment_position_levels.json",
     )
-    parser.add_argument(
-        "--classification_attr",
-        type=str,
-        default="position_levels"
-    )
+    parser.add_argument("--classification_attr", type=str, default="position_levels")
     parser.add_argument("--ending_index", type=int, default=1000)
 
     args = parser.parse_args()
@@ -41,7 +37,10 @@ if __name__ == "__main__":
 
     job_classifier = JobClassifier()
     user_profile_dataset["Position_Level"] = user_profile_dataset.progress_apply(
-        lambda x: job_classifier.get_classification(x["Job Title"], args.classification_attr), axis=1
+        lambda x: job_classifier.get_classification(
+            x["Job Title"], args.classification_attr
+        ),
+        axis=1,
     )
 
     grouped_data = (
