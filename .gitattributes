@@ -10,3 +10,5 @@ single_selection_outputs/llama3_8b_results.csv filter=lfs diff=lfs merge=lfs -te
 datasets/personas_candidates_similarities.csv filter=lfs diff=lfs merge=lfs -text
 datasets/generated_dialogues/first_1000_rows.jsonl filter=lfs diff=lfs merge=lfs -text
 values_results/ filter=lfs diff=lfs merge=lfs -text
+datasets/seed_dataset.csv filter=lfs diff=lfs merge=lfs -text
+datasets/generated_dialogues/generated_dialogues.jsonl filter=lfs diff=lfs merge=lfs -text

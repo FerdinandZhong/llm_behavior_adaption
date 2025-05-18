@@ -4,7 +4,7 @@ import os
 
 import pandas as pd
 
-from persona_understanding.value_measurement.values_comparison import (
+from llm_behavior_adaptation.value_measurement.values_comparison import (
     ValuesComparison,
     load_jsonl_file,
 )

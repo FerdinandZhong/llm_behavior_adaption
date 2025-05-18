@@ -15,7 +15,7 @@
 ├── cmds
 │   ├── llm_judge.txt
 │   └── values_prediction_cmds.txt
-├── persona_understanding
+├── llm_behavior_adaptation
 │   ├── dialogue_dataset_creation
 │   ├── utils.py
 │   └── value_measurement

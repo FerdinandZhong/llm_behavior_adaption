@@ -11,14 +11,14 @@ with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
     requires = [req.strip() for req in f if req]
 
 setup(
-    name="persona_understanding",
+    name="llm_behavior_adaptation",
     version="0.0.1",
     description="Research for LLM's persona understanding",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Zhong Qishuai",
     author_email="ferdinandzhong@gmail.com",
-    url="git@github.com:FerdinandZhong/persona_understanding",
+    url="git@github.com:FerdinandZhong/llm_behavior_adaptation",
     packages=find_packages(exclude=["tests*", "example*"]),
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",

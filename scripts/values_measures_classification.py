@@ -2,8 +2,8 @@ import argparse
 
 from tqdm import tqdm
 
-from persona_understanding.value_measurement.measurement_utils import JobClassifier
-from persona_understanding.value_measurement.values_comparison import *
+from llm_behavior_adaptation.value_measurement.measurement_utils import JobClassifier
+from llm_behavior_adaptation.value_measurement.values_comparison import *
 
 tqdm.pandas()
 

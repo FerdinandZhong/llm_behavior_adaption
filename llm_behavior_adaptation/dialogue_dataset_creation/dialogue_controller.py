@@ -11,7 +11,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-from persona_understanding.dialogue_dataset_creation.constant import (
+from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
     CHATBOT_SYSTEM_PROMPT,
     CONVERSATION_TEMPLATE_STRING,
     DIALOGUE_RUNS_THRESHOLD,
@@ -20,7 +20,7 @@ from persona_understanding.dialogue_dataset_creation.constant import (
     USER_SIMULATOR_INITIAL_PROMPT_MESSAGES,
     USER_SIMULATOR_SUBSEQUENT_PROMPT_MESSAGES,
 )
-from persona_understanding.dialogue_dataset_creation.generation_utils import (
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
     render_template,
     retrieve_user_profile,
 )
