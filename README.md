@@ -2,6 +2,8 @@
 
 Repository for paper `Evaluating LLM Adaptation to Sociodemographic Factors: User Profile vs. Dialogue History`.
 
+**Paper Link**: [arxiv link](https://arxiv.org/abs/2505.21362)
+
 ## Directory Structure
 
 ```bash
