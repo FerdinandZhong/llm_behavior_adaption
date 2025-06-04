@@ -1,50 +1,57 @@
 # Evaluating LLM Adaptation to Sociodemographic Factors
 
-## Code Structure
+Repository for paper `Evaluating LLM Adaptation to Sociodemographic Factors: User Profile vs. Dialogue History`.
+
+**Paper Link**: [arxiv link](https://arxiv.org/abs/2505.21362)
+
+## Directory Structure
 
 ```bash
-.
 ├── LICENSE
 ├── Makefile
 ├── README.md
-├── STRUCTURE.md
 ├── Synthetic-Persona-Chat
-│   ├── README.md
-│   ├── Synthetic-Persona-Chat.py
-│   └── data
-├── cmds
-│   ├── llm_judge.txt
-│   └── values_prediction_cmds.txt
 ├── llm_behavior_adaptation
 │   ├── dialogue_dataset_creation
 │   ├── utils.py
 │   └── value_measurement
 ├── requirements.txt
 ├── scripts
-│   ├── values_measures_classification.py
-│   └── values_measures_compute_all_results.py
 ├── setup.cfg
 ├── setup.py
-├── sglang_test.py
-├── temp.txt
 ├── understanding
-│   ├── __init__.py
-│   ├── avg_scores_computation.py
-│   ├── batch_prediction.py
-│   ├── constant.py
-│   ├── llm_evaluation.py
-│   ├── persona_chat_evaluation.py
-│   ├── similarity_computation.py
-│   ├── single_results_computation.py
-│   └── utils.py
 ├── values_results
-│   ├── DeepSeek-V3
-│   ├── Llama3.1-70B-Instruct
-│   ├── Llama3.1-8B-Instruct
-│   ├── QwQ-32B
-│   ├── QwQ-32B_no_reasoning
-│   ├── Qwen2.5-72B-Instruct
-│   ├── Qwen2.5-7B-Instruct
-│   └── overall_confidence.csv
-└── vllm_test.py
+```
+
+## Dataset Generation
+
+The dataset consisting of 1000 generated dialogues [dataset](https://github.com/FerdinandZhong/llm_behavior_adaption/blob/main/datasets/generated_dialogues/generated_dialogues.jsonl) is open for usage.
+
+Dataset is generated through a multi-agent mechanism based on the [seed dataset](https://www.kaggle.com/datasets/ravindrasinghrana/employeedataset/data)
+
+![Figure: Dataset Generation](https://github.com/FerdinandZhong/llm_behavior_adaption/blob/main/images/DataGen.png)
+
+
+Code details are listed in the directory `llm_behavior_adaptation/dialogue_dataset_creation`
+
+## Behavior Adaptation Evaluation
+
+The code for evaluation is listed in the directory `llm_behavior_adaptation/value_measurement`
+
+* Query Models: `llm_behavior_adaptation/value_measurement/values_prediction.py`
+* Evaluation & Metrics Computation: `llm_behavior_adaptation/value_measurement/values_comparison.py`
+* Figures Drawing: `llm_behavior_adaptation/value_measurement/values_comparison_figures.py`
+
+
+## Citation
+```
+@misc{zhong2025evaluatingllmadaptationsociodemographic,
+      title={Evaluating LLM Adaptation to Sociodemographic Factors: User Profile vs. Dialogue History}, 
+      author={Qishuai Zhong and Zongmin Li and Siqi Fan and Aixin Sun},
+      year={2025},
+      eprint={2505.21362},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2505.21362}, 
+}
 ```
