@@ -327,15 +327,6 @@ def plot_divergence_comparison(
             label=f"{labels[mi]}",
         )
 
-        # Add value labels with dynamic positioning
-        # for idx, val in enumerate(values[mi]):
-        #     if not np.isnan(val):
-        #         x_pos = val + (0.02 if val >= 0 else -0.02)
-        #         ha = 'left' if val >= 0 else 'right'
-        #         ax.text(x_pos, bars[idx].get_y() + bar_width/2,
-        #                 f'{val:.2f}',
-        #                 va='center', ha=ha,
-        #                 fontsize=12, color=colors[mi])
 
     # Styling improvements
     ax.set_yticks(group_positions)
