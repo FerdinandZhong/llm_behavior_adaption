@@ -28,7 +28,7 @@ The dataset consisting of 1000 generated dialogues [dataset](https://github.com/
 
 Dataset is generated through a multi-agent mechanism based on the [seed dataset](https://www.kaggle.com/datasets/ravindrasinghrana/employeedataset/data)
 
-![Figure: Dataset Generation](https://github.com/FerdinandZhong/llm_behavior_adaption/blob/main/images/DataGen.png)
+![Figure: Dataset Generation](https://anonymous.4open.science/r/llm_behavior_adaption-4591/images/DataGen.png)
 
 
 Code details are listed in the directory `llm_behavior_adaptation/dialogue_dataset_creation`

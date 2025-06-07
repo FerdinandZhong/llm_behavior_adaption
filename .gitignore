@@ -178,3 +178,4 @@ datasets/**.json
 !datasets/recruitment_data.csv
 !datasets/generated_dialogues/first_1000_rows.jsonl
 single_selection_outputs/**
+results_jsons/**
