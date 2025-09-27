@@ -327,7 +327,6 @@ def plot_divergence_comparison(
             label=f"{labels[mi]}",
         )
 
-
     # Styling improvements
     ax.set_yticks(group_positions)
     ax.set_yticklabels(sorted_groups, fontsize=22, rotation=30)

@@ -1,5 +1,4 @@
-"""Measurement utils file
-"""
+"""Measurement utils file"""
 
 import numpy as np
 import pycountry

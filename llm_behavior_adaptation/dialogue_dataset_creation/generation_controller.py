@@ -17,7 +17,10 @@ from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller impor
     DialogueGenerator,
 )
 
+from ..utils import register_logger
+
 logger = logging.getLogger(__name__)
+register_logger(logger)
 
 
 class DatasetGenerationController:
@@ -105,6 +108,12 @@ class DatasetGenerationController:
             help="The ending row of the seed dataset",
         )
         parser.add_argument(
+            "--ending-row",
+            type=int,
+            default=-1,
+            help="The ending row of the seed dataset",
+        )
+        parser.add_argument(
             "--user-simulator",
             type=str,
             default="gpt-4o",
@@ -121,12 +130,6 @@ class DatasetGenerationController:
             type=str,
             default=None,
             help="The name of the out-of-character (OOC) detector. Defaults to None.",
-        )
-        parser.add_argument(
-            "--ooc-detector-type",
-            type=str,
-            default="llm",
-            help="The type of the out-of-character (OOC) detector. Defaults to None.",
         )
         parser.add_argument(
             "--user-simulator-generation-parameters",
@@ -194,13 +197,12 @@ class DatasetGenerationController:
         openai_client = AsyncOpenAI(api_key=args.openai_api_key)
         # ooc_detector = cls._get_ooc_detector(args.ooc_detector_name)
         dialogue_generator = DialogueGenerator(
+            prompts_folder=args.prompts_folder,
             user_simulator=args.user_simulator,
             chatbot=args.chatbot,
             ooc_detector=args.ooc_detector_name,
-            ooc_detector_type=args.ooc_detector_type,
+            dialogue_reviewer=args.dialogue_reviewer,
             openai_client=openai_client,
-            user_simulator_generation_parameters=args.user_simulator_generation_parameters,
-            chatbot_generation_parameters=args.chatbot_generation_parameters,
             dialogue_runs_threshold=args.dialogue_runs_threshold,
             verbose=args.verbose,
         )

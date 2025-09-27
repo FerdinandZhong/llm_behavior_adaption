@@ -6,26 +6,18 @@ import json
 import logging
 import os
 from copy import deepcopy
+from typing import Dict, Literal
 
 from openai import AsyncOpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from tqdm import tqdm
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
-    CHATBOT_SYSTEM_PROMPT,
-    CONVERSATION_TEMPLATE_STRING,
-    DIALOGUE_RUNS_THRESHOLD,
-    LLM_BASED_OOC_DETECTION_PROMPT,
-    PROFILE_TEMPLATE,
-    USER_SIMULATOR_INITIAL_PROMPT_MESSAGES,
-    USER_SIMULATOR_SUBSEQUENT_PROMPT_MESSAGES,
-)
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    render_template,
-    retrieve_user_profile,
-)
+from ..utils import register_logger
+from .generation_utils import load_json_folder, render_json, retrieve_user_profile_wvs
 
 logger = logging.getLogger(__name__)
+register_logger(logger)
 
 
 class DialogueRun(BaseModel):
@@ -42,298 +34,366 @@ class DialogueRun(BaseModel):
         ]
 
 
+class ChatMessage(BaseModel):
+    speaker: Literal["user", "chatbot"] = Field(..., description="Message author")
+    text: str = Field(..., min_length=1, description="Message content")
+
+    @staticmethod
+    def convert_to_openai_history(run) -> list[dict[str, str]]:
+        """Return this message as a single OpenAI chat message."""
+        role = "user" if run["speaker"] == "user" else "assistant"
+        return [{"role": role, "content": run["text"]}]
+
+
 class DialogueGenerator:
     def __init__(
         self,
-        user_simulator="gpt-4o",
-        chatbot="gpt-4o",
-        ooc_detector=None,
-        ooc_detector_type="llm",
+        prompts_folder: str,
+        user_simulator="gpt-5",
+        chatbot="gpt-4.1-mini",
+        ooc_detector="o4-mini",
+        dialogue_reviewer="gpt-5-mini",
         openai_client=None,
-        user_simulator_generation_parameters=None,
+        user_simulator_generation_paramters: Dict = {
+            "reasoning_effort": "low",
+            "verbosity": "low",
+        },
         chatbot_generation_parameters=None,
-        dialogue_runs_threshold: int = DIALOGUE_RUNS_THRESHOLD,
+        ooc_detector_parameters: Dict = {
+            "reasoning_effort": "low",
+            "response_format": {"type": "json_object"},
+        },
+        dialogue_reviewer_parameters: Dict = {
+            "reasoning_effort": "low",
+            "verbosity": "low",
+            "response_format": {"type": "json_object"},
+        },
+        dialogue_runs_threshold: int = 10,
         verbose: int = 0,
     ) -> None:
-        """
-        Initialize the conversation management system with specified components.
+        # --- init properties / fields ---
+        self._dialogue_history: list = []
 
-        Args:
-            user_simulator (str, optional): The model used as a user simulator. Defaults to "gpt-4o".
-            chatbot (str, optional): The model used for chatbot interactions. Defaults to "gpt-4o".
-            ooc_detector (optional): The out-of-character (OOC) detection mechanism. Defaults to None.
-            ooc_detector_type (optional, str): The OOC detector type. Defaults to llm.
-            openai_client (optional): An OpenAI client instance for API interactions. If None, a default
-                `AsyncOpenAI` client is instantiated using the API key from the environment. Defaults to None.
-            user_simulator_generation_parameters (dict, optional): Parameters for generating responses
-                from the user simulator model. Defaults to an empty dictionary.
-            chatbot_generation_parameters (dict, optional): Parameters for generating chatbot responses.
-                Defaults to an empty dictionary.
-            dialogue_runs_threshold (int, optional): The maximum number of dialogue runs allowed
-                before termination or reinitialization. Defaults to `DIALOGUE_RUNS_THRESHOLD`.
-            verbose (int, optional): Logging verbosity level.
-                0 = Only log errors.
-                1 = Log all outputs (truncated to 20 tokens). Defaults to 0.
-
-        Attributes:
-            _dialogue_history (list): A record of the dialogue exchanges between the simulator and the chatbot.
-            _openai_client (AsyncOpenAI): The OpenAI client instance for handling API requests.
-            _user_simulator (str): The user simulator model identifier.
-            _chatbot (str): The chatbot model identifier.
-            _ooc_detector: The mechanism used for detecting out-of-character responses.
-            _response_format (dict): The format expected for responses, defaulting to JSON objects.
-            _user_profile (str): The rendered user profile based on the seed row data.
-            _user_simulator_generation_parameters (dict): Parameters for customizing user simulator outputs.
-            _chatbot_generation_parameters (dict): Parameters for customizing chatbot outputs.
-            _conversation_history (list): A history of the full conversation sequence.
-            _dialogue_runs_threshold (int): The threshold for dialogue runs before a specified action.
-
-        Returns:
-            None
-        """
-        self._dialogue_history = []
+        # OpenAI client
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("api_key")
         if openai_client is None:
-            self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"])
+            if not api_key:
+                raise RuntimeError(
+                    "Missing OPENAI_API_KEY (or 'api_key') in environment."
+                )
+            self._openai_client = AsyncOpenAI(api_key=api_key)
         else:
             self._openai_client = openai_client
-        self._user_simulator = user_simulator
-        self._chatbot = chatbot
-        self._ooc_detector = ooc_detector
-        self._response_format = {"type": "json_object"}
 
-        self._user_simulator_generation_parameters = (
-            {}
-            if user_simulator_generation_parameters is None
-            else user_simulator_generation_parameters
-        )
-        self._chatbot_generation_parameters = (
-            {}
-            if chatbot_generation_parameters is None
-            else chatbot_generation_parameters
-        )
-        self._conversation_history = []
-        self._dialogue_runs_threshold = dialogue_runs_threshold
-        self._verbose = verbose
-        if ooc_detector_type == "llm":
-            self.ooc_detection = self._llm_ooc_detection
-        else:
-            self.ooc_detection = None  # TODO
+        # Model ids
+        self._user_simulator: str = user_simulator
+        self._chatbot: str = chatbot
+        self._ooc_detector: str = ooc_detector
+        self._dialogue_reviewer: str = dialogue_reviewer
 
-    # Getters
+        # Response format (exposed via .response_format)
+        self._response_format: dict = {"type": "json_object"}
+
+        # Safe copy helpers for dict defaults
+        def _safe_params(passed: dict = None, fallback: dict = None) -> dict:
+            if passed is not None:
+                return dict(passed)
+            return dict(fallback) if fallback is not None else {}
+
+        self._user_simulator_generation_parameters: dict = _safe_params(
+            user_simulator_generation_paramters,
+            {"reasoning_effort": "low", "verbosity": "low"},
+        )
+        self._chatbot_generation_parameters: dict = _safe_params(
+            chatbot_generation_parameters, {}
+        )
+        self._ooc_detector_parameters: dict = _safe_params(
+            ooc_detector_parameters,
+            {
+                "reasoning_effort": "low",
+                "verbosity": "low",
+                "response_format": {"type": "json_object"},
+            },
+        )
+        self._dialogue_reviewer_parameters: dict = _safe_params(
+            dialogue_reviewer_parameters,
+            {
+                "reasoning_effort": "low",
+                "verbosity": "low",
+                "response_format": {"type": "json_object"},
+            },
+        )
+
+        self._dialogue_runs_threshold: int = int(dialogue_runs_threshold)
+        self._verbose: int = int(verbose)
+
+        # Prompts
+        self._prompts_folder: str = str(prompts_folder)
+        try:
+            self._prompts: dict = load_json_folder(folder=self._prompts_folder)
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to load prompts from '{self._prompts_folder}': {e}"
+            ) from e
+        if not isinstance(self._prompts, dict):
+            raise TypeError(
+                f"load_json_folder('{self._prompts_folder}') must return a dict; got {type(self._prompts)!r}"
+            )
+
+    # --- properties / helpers ---
     @property
-    def dialogue_history(self):
+    def dialogue_history(self) -> list:
         return self._dialogue_history
+
+    def reset_dialogue_history(self) -> None:
+        self._dialogue_history = []
 
     @property
     def openai_client(self):
         return self._openai_client
 
     @property
-    def user_simulator(self):
+    def user_simulator(self) -> str:
         return self._user_simulator
 
     @property
-    def chatbot(self):
+    def chatbot(self) -> str:
         return self._chatbot
 
     @property
-    def ooc_detector(self):
+    def ooc_detector(self) -> str:
         return self._ooc_detector
 
     @property
-    def response_format(self):
-        return self._response_format
+    def dialogue_reviewer(self) -> str:
+        return self._dialogue_reviewer
 
     @property
-    def user_simulator_generation_parameters(self):
+    def response_format(self) -> dict:
+        return self._response_format
+
+    # Back-compat alias (original typo)
+    @property
+    def user_simulator_generation_paramters(self) -> dict:
+        return self._user_simulator_generation_parameters
+
+    # Correct spelling alias
+    @property
+    def user_simulator_generation_parameters(self) -> dict:
         return self._user_simulator_generation_parameters
 
     @property
-    def chatbot_generation_parameters(self):
+    def chatbot_generation_parameters(self) -> dict:
         return self._chatbot_generation_parameters
 
     @property
-    def conversation_history(self):
-        return self._conversation_history
-
-    def add_to_conversation_history(self, dialogue_run):
-        self._conversation_history.append(dialogue_run)
-
-    @conversation_history.setter
-    def conversation_history(self, new_list):
-        self._conversation_history = new_list
+    def ooc_detector_parameters(self) -> dict:
+        return self._ooc_detector_parameters
 
     @property
-    def dialogue_runs_threshold(self):
+    def dialogue_reviewer_parameters(self) -> dict:
+        return self._dialogue_reviewer_parameters
+
+    @property
+    def dialogue_runs_threshold(self) -> int:
         return self._dialogue_runs_threshold
 
-    async def _init_dialogue(self, user_profile):
-        prompt_for_simulator = deepcopy(USER_SIMULATOR_INITIAL_PROMPT_MESSAGES)
-        prompt_for_simulator[1]["content"] = prompt_for_simulator[1]["content"].format(
+    @property
+    def verbose(self) -> int:
+        return self._verbose
+
+    @property
+    def prompts_folder(self) -> str:
+        return self._prompts_folder
+
+    @property
+    def prompts(self) -> dict:
+        return self._prompts
+
+    def _prompt(self, key: str) -> list[dict]:
+        try:
+            return deepcopy(self.prompts[key])
+        except KeyError as e:
+            raise KeyError(f"Missing prompt '{key}' in {self._prompts_folder}") from e
+
+    def _history_as_openai(self) -> list[dict[str, str]]:
+        msgs = []
+        for turn in self.dialogue_history:
+            role = "user" if turn["speaker"] == "user" else "assistant"
+            msgs.append({"role": role, "content": turn["text"]})
+        return msgs
+
+    # -------- LLM calls --------
+    async def _init_dialogue(self, user_profile: str) -> str:
+        init_prompt = self._prompt("user_simulator_initial_prompt")
+        init_prompt[1]["content"] = init_prompt[1]["content"].format(
             user_details=user_profile
         )
-        chat_completion_sample = await self.openai_client.chat.completions.create(
+        resp = await self.openai_client.chat.completions.create(
             model=self.user_simulator,
-            messages=prompt_for_simulator,
-            response_format=self.response_format,
-            **self.user_simulator_generation_parameters
+            messages=init_prompt,
+            **self.user_simulator_generation_paramters,
         )
+        return resp.choices[0].message.content
 
-        return json.loads(chat_completion_sample.choices[0].message.content)[
-            "proposed_question"
-        ]
-
-    async def _followup_question(self, user_profile):
-        formatted_conversation_history = []
-        for run in self.conversation_history:
-            formatted_conversation_history.append(
-                run.convert_to_user_simulator_format()
-            )
-
-        prompt_for_simulator = deepcopy(USER_SIMULATOR_SUBSEQUENT_PROMPT_MESSAGES)
-        prompt_for_simulator[1]["content"] = prompt_for_simulator[1]["content"].format(
-            conversation_history=render_template(
-                CONVERSATION_TEMPLATE_STRING,
-                conversation_history=formatted_conversation_history,
-            )
-        )
-        prompt_for_simulator[2]["content"] = prompt_for_simulator[2]["content"].format(
-            user_details=user_profile
-        )
-
-        chat_completion_sample = await self.openai_client.chat.completions.create(
-            model=self.user_simulator,
-            messages=prompt_for_simulator,
-            response_format=self.response_format,
-            **self.user_simulator_generation_parameters
-        )
-
-        return json.loads(chat_completion_sample.choices[0].message.content)
-
-    async def _query_chatbot(self, proposed_question):
-        conversation_history_for_chatbot = [CHATBOT_SYSTEM_PROMPT]
-        for run in self.conversation_history:
-            conversation_history_for_chatbot += run.convert_to_openai_history()
-
-        conversation_history_for_chatbot.append(
-            {"role": "user", "content": proposed_question}
-        )
-
-        chatbot_answer = await self.openai_client.chat.completions.create(
-            model=self.chatbot,
-            messages=conversation_history_for_chatbot,
-            **self.chatbot_generation_parameters
-        )
-
-        return chatbot_answer.choices[0].message.content
-
-    async def _llm_ooc_detection(self, user_profile, proposed_question):
-        ooc_detector_prompt = deepcopy(LLM_BASED_OOC_DETECTION_PROMPT)
-
-        ooc_detector_prompt[1]["content"] = ooc_detector_prompt[1]["content"].format(
-            user_details=user_profile, question=proposed_question
-        )
-
-        detection_result = await self.openai_client.chat.completions.create(
-            model=self.ooc_detector,
-            messages=ooc_detector_prompt,
-            response_format={"type": "json_object"},
-        )
-
-        return json.loads(detection_result.choices[0].message.content)
-
-    async def dialogue_generation(self, seed_row):
+    async def _llm_ooc_detection(
+        self, user_profile: str, proposed_question: str
+    ) -> dict:
         """
-        Asynchronously manages the dialogue generation process between the user simulator
-        and the chatbot, maintaining a history of dialogue exchanges.
+        Returns JSON like: {"has_out_of_context": bool, "reason": "<string or empty>"}
+        (No rewriting here.)
+        """
+        prompt = self._prompt("ooc_detector_prompt")
+        prompt[1]["content"] = prompt[1]["content"].format(
+            user_details=user_profile, generated_question=proposed_question
+        )
+        det = await self.openai_client.chat.completions.create(
+            model=self.ooc_detector,
+            messages=prompt,
+            **self.ooc_detector_parameters,  # includes response_format={"type":"json_object"}
+        )
+        # JSON mode constrains output to valid JSON parseable string. :contentReference[oaicite:1]{index=1}
+        return json.loads(det.choices[0].message.content)
 
-        This method initiates a conversation, processes follow-up interactions, and
-        applies optional out-of-character (OOC) detection. The process continues until
-        the dialogue history exceeds the predefined threshold or the conversation is terminated.
+    async def _rewrite_question(
+        self, user_profile: str, last_user_question: str, ooc_reason: str
+    ) -> str:
+        """
+        Rewrites the last user question using the OOC reason + full dialogue + user profile.
+        """
+        history_str = render_json(self.dialogue_history)
+        prompt = self._prompt("user_simulator_rewriter_prompt")
+        # Typical layout: [system,...] indices may vary based on your prompt file
+        prompt[1]["content"] = prompt[1]["content"].format(
+            conversation_history=history_str
+        )
+        prompt[2]["content"] = prompt[2]["content"].format(user_details=user_profile)
+        prompt[3]["content"] = prompt[3]["content"].format(
+            user_last_message=last_user_question
+        )
+        prompt[4]["content"] = prompt[4]["content"].format(expert_review=ooc_reason)
 
-        Args:
-            seed_row (Dict): The seed data used to retrieve and render the user's profile.
+        resp = await self.openai_client.chat.completions.create(
+            model=self.user_simulator,  # reuse the simulator to rewrite
+            messages=prompt,
+            **self.user_simulator_generation_paramters,
+        )
+        return resp.choices[0].message.content
 
-        Returns:
-            list: The complete conversation history, represented as a list of `DialogueRun` objects.
+    async def _review_dialogue(self) -> dict:
+        history_str = render_json(self.dialogue_history)
+        prompt = self._prompt("dialogue_reviewer_prompt")
+        prompt[1]["content"] = prompt[1]["content"].format(
+            conversation_history=history_str
+        )
+        resp = await self.openai_client.chat.completions.create(
+            model=self.dialogue_reviewer,
+            messages=prompt,
+            **self.dialogue_reviewer_parameters,  # includes JSON mode
+        )
+        return json.loads(resp.choices[0].message.content)
 
-        Workflow:
-            1. Starts the dialogue with an initial question and retrieves the chatbot's response.
-            2. Appends the interaction to the conversation history.
-            3. Continues generating follow-up questions using the user simulator.
-            4. Checks for conversation termination conditions:
-            - If the user simulator signals to end the conversation.
-            - If OOC detection is enabled and the proposed question is flagged as OOC.
-            5. Fetches chatbot responses for valid follow-up questions and updates the conversation history.
-            6. Stops when the conversation history length exceeds the threshold or the conversation ends.
+    async def _followup_question(self, user_profile: str) -> str:
+        history_str = render_json(self.dialogue_history)
+        prompt = self._prompt("user_simulator_subsequent_prompt")
+        prompt[1]["content"] = prompt[1]["content"].format(
+            conversation_history=history_str
+        )
+        prompt[2]["content"] = prompt[2]["content"].format(user_details=user_profile)
+        resp = await self.openai_client.chat.completions.create(
+            model=self.user_simulator,
+            messages=prompt,
+            **self.user_simulator_generation_paramters,
+        )
+        return resp.choices[0].message.content
 
-        Raises:
-            Exception: Propagates exceptions that occur during asynchronous operations like
-                    `_init_dialogue` or `_query_chatbot`.
+    async def _query_chatbot(self, proposed_question: str) -> str:
+        msgs = self._history_as_openai()
+        msgs.append({"role": "user", "content": proposed_question})
+        resp = await self.openai_client.chat.completions.create(
+            model=self.chatbot,
+            messages=msgs,
+            **(self.chatbot_generation_parameters or {}),
+        )
+        return resp.choices[0].message.content
 
-        Example:
-            conversation = await self.dialogue_generation()
-            for dialogue in conversation:
-                print(f"User: {dialogue.user_content}, Chatbot: {dialogue.chatbot_content}")
+    def append_to_dialogue(self, proposed_question: str, chatbot_answer: str) -> None:
+        user_turn = ChatMessage(speaker="user", text=proposed_question)
+        bot_turn = ChatMessage(speaker="chatbot", text=chatbot_answer)
+        self.dialogue_history.append(user_turn.model_dump())
+        self.dialogue_history.append(bot_turn.model_dump())
+
+    # -------- Orchestration --------
+    async def dialogue_generation(self, seed_row: Dict) -> list:
+        """
+        Adds a separate OOC detector (reason only) + user_simulator_rewriter step.
         """
         if self._verbose == 1:
             logger.info("Starting dialogue generation process.")
 
-        user_profile = render_template(
-            PROFILE_TEMPLATE, profile_data=retrieve_user_profile(seed_row)
-        )
-        self.conversation_history = []
+        user_profile = render_json(json_input=retrieve_user_profile_wvs(seed_row))
+        self.reset_dialogue_history()
+
         try:
-            # Initialize tqdm progress bar
             with tqdm(
                 total=self.dialogue_runs_threshold,
                 desc="Dialogue Generation",
                 unit="turn",
             ) as pbar:
-                # Start initial dialogue
+                # ---- Initial turn ----
                 first_question = await self._init_dialogue(user_profile=user_profile)
+
+                det = await self._llm_ooc_detection(
+                    user_profile=user_profile, proposed_question=first_question
+                )
+                if det.get("has_out_of_context"):
+                    reason = det.get("reason", "")
+                    if self._verbose == 1:
+                        logger.warning(
+                            "OOC detected on initial question. Reason: %s", reason[:200]
+                        )
+                    # rewrite (instead of detector rewriting directly)
+                    first_question = await self._rewrite_question(
+                        user_profile=user_profile,
+                        last_user_question=first_question,
+                        ooc_reason=reason,
+                    )
+
                 first_answer = await self._query_chatbot(first_question)
 
                 if self._verbose == 1:
                     logger.info("User: %s", " ".join(first_question.split()[:20]))
                     logger.info("Chatbot: %s", " ".join(first_answer.split()[:20]))
 
-                # Record initial dialogue exchange
-                self.add_to_conversation_history(
-                    DialogueRun(
-                        user_content=first_question, chatbot_content=first_answer
-                    )
-                )
+                self.append_to_dialogue(first_question, first_answer)
                 pbar.update(1)
 
-                # Continue generating follow-up dialogues
-                while len(self.conversation_history) < self.dialogue_runs_threshold:
-                    user_simulation = await self._followup_question(
+                # ---- Loop ----
+                while len(self.dialogue_history) < self.dialogue_runs_threshold:
+                    review = await self._review_dialogue()
+                    if review.get("end_conversation"):
+                        if self._verbose == 1:
+                            logger.info("Conversation ended by reviewer.")
+                        return self.dialogue_history
+
+                    proposed_question = await self._followup_question(
                         user_profile=user_profile
                     )
 
-                    if user_simulation["end_conversation"]:
+                    det = await self._llm_ooc_detection(
+                        user_profile=user_profile, proposed_question=proposed_question
+                    )
+                    if det.get("has_out_of_context"):
+                        reason = det.get("reason", "")
                         if self._verbose == 1:
-                            logger.info("Conversation ended by user simulation.")
-                        return self.conversation_history
-
-                    proposed_question = user_simulation["proposed_question"]
-
-                    if self.ooc_detector is not None:
-                        detection_result = await self.ooc_detection(
-                            user_profile, proposed_question
+                            logger.warning(
+                                "OOC detected on follow-up. Reason: %s", reason[:200]
+                            )
+                        proposed_question = await self._rewrite_question(
+                            user_profile=user_profile,
+                            last_user_question=proposed_question,
+                            ooc_reason=reason,
                         )
-                        if detection_result["has_out_of_context"]:
-                            logger.warning(
-                                "OOC detected: %s",
-                                " ".join(proposed_question.split()),
-                            )
-                            logger.warning(
-                                "New proposed question: %s",
-                                " ".join(detection_result["updated_question"].split()),
-                            )
-                            proposed_question = detection_result["updated_question"]
-                        # return self.conversation_history
 
                     chatbot_answer = await self._query_chatbot(proposed_question)
 
@@ -345,18 +405,13 @@ class DialogueGenerator:
                             "Chatbot: %s", " ".join(chatbot_answer.split()[:20])
                         )
 
-                    # Update conversation history
-                    self.add_to_conversation_history(
-                        DialogueRun(
-                            user_content=proposed_question,
-                            chatbot_content=chatbot_answer,
-                        )
-                    )
+                    self.append_to_dialogue(proposed_question, chatbot_answer)
                     pbar.update(1)
 
             if self._verbose == 1:
                 logger.info("Dialogue generation process completed.")
-            return self.conversation_history
+            return self.dialogue_history
+
         except Exception as e:
             logger.error("An error occurred: %s", str(e))
             raise
