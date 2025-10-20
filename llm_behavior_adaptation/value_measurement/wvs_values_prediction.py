@@ -465,7 +465,7 @@ class ValuesPredictionController:
                     }
                     if not self.reasoning
                     else Omit()
-                )
+                ),
             )
             content = full_chat_response.choices[0].message.content
             print(content)

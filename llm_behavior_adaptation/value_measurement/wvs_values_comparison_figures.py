@@ -240,7 +240,6 @@ def plot_divergence_comparison_radar(
         )
 
 
-
 def display_comparison(
     model_list,
     scenario: str = "ba_user",
@@ -252,17 +251,22 @@ def display_comparison(
     baselines = []
     for model_label in model_list:
         try:
-            with open(f"wvs_values_results/{model_label}/experiments_results.json", "r", encoding="utf-8") as jl_file:
+            with open(
+                f"wvs_values_results/{model_label}/experiments_results.json",
+                "r",
+                encoding="utf-8",
+            ) as jl_file:
                 if model_label.lower() == "human":
                     experiments_results = json.load(jl_file)[attribute]
                 else:
-                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
+                        attribute
+                    ]
                 datasets.append(experiments_results["group_distances"])
                 baselines.append(experiments_results["baseline"])
         except Exception as e:
             print(model_label)
             print(str(e))
-    
 
     os.makedirs(f"wvs_images/{scenario}/", exist_ok=True)
 
