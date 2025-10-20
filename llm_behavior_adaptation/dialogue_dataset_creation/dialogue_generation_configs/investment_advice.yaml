@@ -6,7 +6,7 @@ seed_dataset_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
 starting_row: 700
 ending_row: 1000
 
-prompts_folder: "llm_behavior_adaptation/dialogue_dataset_creation/prompts/career_advice"
+prompts_folder: "llm_behavior_adaptation/dialogue_dataset_creation/prompts/investment_advice"
 
 # Models
 models:
@@ -33,6 +33,6 @@ params:
 dialogue_runs_threshold: 5
 
 # Output
-output_file_path: "datasets/wvs_generated_dialogues/career_advice/sampled_700_1000.jsonl"
+output_file_path: "datasets/wvs_generated_dialogues/investment_advice/sampled_700_1000.jsonl"
 storage_step: 5   # write every 50 rows
 verbose: 0

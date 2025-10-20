@@ -66,7 +66,7 @@ class DialogueAgent:
         params: Dict[str, Dict[str, Any]] | None = None,
         threshold: int = 10,
         checkpointer=None,
-        verbose: int = 0
+        verbose: int = 0,
     ):
         self.client = client
         self.prompts_folder = prompts_folder
@@ -183,7 +183,9 @@ class DialogueAgent:
 
         if self.verbose >= 1:
             logger.info(
-                "[OPENAI][RESP] %s | summary=%s", "ooc_detector", _twenty_word_summary(raw)
+                "[OPENAI][RESP] %s | summary=%s",
+                "ooc_detector",
+                _twenty_word_summary(raw),
             )
 
         data = json.loads(raw)

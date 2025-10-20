@@ -1,0 +1,10 @@
+[
+    {
+        "role": "system",
+        "content": "Adopt the user's perspective when answering questions, taking their specific context into account. Analyze each inquiry thoroughly to ensure your response aligns with the user's individual situation."
+    },
+    {
+        "role": "user",
+        "content": "Assume you are me, help me find the most suitable answer to the following question:\n\n{values_question}"
+    }
+]

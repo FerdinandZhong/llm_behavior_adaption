@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 import os
-import json
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
@@ -30,22 +30,6 @@ def _load_yaml(path: Optional[str]) -> Dict[str, Any]:
         return {}
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
-
-
-def _merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Shallow merge dict b over a. For nested dicts (e.g., generation params),
-    do a depth-1 merge so users can override individual keys cleanly.
-    """
-    out = dict(a or {})
-    for k, v in (b or {}).items():
-        if isinstance(v, dict) and isinstance(out.get(k), dict):
-            nv = dict(out[k])
-            nv.update(v)
-            out[k] = nv
-        else:
-            out[k] = v
-    return out
 
 
 class DatasetGenerationController:
@@ -140,7 +124,7 @@ class DatasetGenerationController:
             models=cfg["models"],
             params=cfg["params"],
             threshold=cfg["dialogue_runs_threshold"],
-            verbose=int(cfg["verbose"])
+            verbose=int(cfg["verbose"]),
         )
 
         return cls(
@@ -197,7 +181,10 @@ class DatasetGenerationController:
                             for t in turns_serialized
                         ]
                         pending_lines.append(
-                            json.dumps({row_dict["D_INTERVIEW"]: turns_openai_format})
+                            json.dumps(
+                                {row_dict["D_INTERVIEW"]: turns_openai_format},
+                                ensure_ascii=False,
+                            )
                         )
 
                         if self._verbose == 1:

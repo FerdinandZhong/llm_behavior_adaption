@@ -128,13 +128,11 @@ def plot_divergence_comparison_radar(
     datasets,
     baselines,
     labels,
-    attribute: str,
     figsize=(16, 16),
     output_path=None,
     csv_path=None,
     cmap="tab20",
     label_pad=-5,
-    scenario="BA_user",
 ):
     """
     Visualize divergence comparisons as relative ratios over baseline across multiple models using a radar chart,
@@ -242,220 +240,69 @@ def plot_divergence_comparison_radar(
         )
 
 
-def plot_divergence_comparison(
-    datasets,
-    baselines,
-    labels,
-    attribute: str,
-    figsize=(16, 24),
-    output_path=None,
-    group_spacing=1.5,
-    cmap="tab20",
-):
-    """
-    Visualize divergence comparisons as relative ratios over baseline across multiple models.
-
-    Parameters:
-        datasets (list of lists): Multiple divergence datasets
-        baselines (list): Baseline values for each model
-        labels (list): Model names
-        figsize (tuple): Figure dimensions
-        output_path (str): Optional path to save the image
-        group_spacing (float): Vertical space between comparison groups (default: 1.5)
-    """
-    # Validation
-    if not len(datasets) == len(baselines) == len(labels):
-        raise ValueError("All input lists must have equal length")
-
-    # Extract baselines and prepare data
-    baselines = [b["overall_baseline"] for b in baselines]
-    n_models = len(datasets)
-
-    # Collect and sort groups
-    all_groups = set()
-    for data in datasets:
-        for item in data:
-            group_name = item["compared_groups"].replace("--", " vs ")
-            if "unknown" not in group_name.lower():  # Ignore groups with "unknown"
-                all_groups.add(group_name)
-
-    # Enhanced sorting: < groups first, then numeric groups, then others
-    def sort_key(group):
-        if "<" in group:
-            return (0, group)
-        return (1, group)
-
-    sorted_groups = sorted(all_groups, key=sort_key)
-    group_indices = {g: i for i, g in enumerate(sorted_groups)}
-
-    # Prepare values matrix
-    n_groups = len(sorted_groups)
-    print(n_groups)
-    values = np.full((n_models, len(sorted_groups)), np.nan)
-    for mi, data in enumerate(datasets):
-        base = baselines[mi]
-        for item in data:
-            group = item["compared_groups"].replace("--", " vs ")
-            if "unknown" not in group.lower():  # Skip "unknown" groups
-                div = item["compared_details"]["average_divergence"]
-                values[mi, group_indices[group]] = div / base
-
-    # Plot configuration
-    plt.figure(figsize=figsize)
-    ax = plt.gca()
-    cmap = get_cmap(cmap)
-    colors = [cmap(i % 20) for i in range(n_models)]
-
-    # Dynamic spacing based on number of models
-    group_positions = np.arange(n_groups) * group_spacing  # Main change here
-
-    # Modified bar positioning
-    total_width = min(1.2, 0.6 + 0.1 * len(datasets))
-    bar_width = total_width / len(datasets)
-
-    # Plot bars for each model
-    for mi in range(len(datasets)):
-        # Adjusted position calculation using group_spacing
-        x_pos = group_positions - total_width / 2 + bar_width / 2 + mi * bar_width
-
-        bars = ax.barh(
-            x_pos,
-            values[mi],
-            height=bar_width,  # Height relative to group spacing
-            color=colors[mi],
-            alpha=0.85,
-            label=f"{labels[mi]}",
-        )
-
-    # Styling improvements
-    ax.set_yticks(group_positions)
-    ax.set_yticklabels(sorted_groups, fontsize=22, rotation=30)
-    ax.invert_yaxis()
-    ax.xaxis.grid(True, linestyle="--", alpha=0.4)
-
-    # Baseline markers
-    for mi in range(n_models):
-        ax.axvline(1.0, color=colors[mi], linestyle=":", alpha=0.7, lw=2)
-
-    # Labels and titles
-    ax.set_xlabel("Relative Ratio of Divergence over Baseline", fontsize=22)
-    ax.set_ylabel("Group Comparisons", fontsize=22)
-    ax.set_title(
-        f"Divergence Comparison ({attribute.capitalize()})", fontsize=24, pad=20
-    )
-
-    # Enhanced legend
-    ax.legend(
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.15),
-        ncol=min(4, n_models),
-        fontsize=22,
-        frameon=False,
-    )
-
-    # Final adjustments
-    plt.xticks(fontsize=18)
-    max_val = np.nanmax(np.abs(values)) * 1.1
-    plt.xlim(-0.1 if np.any(values < 0) else 0, max_val)
-    plt.tight_layout()
-
-    # Save to file if output path is specified
-    if output_path:
-        plt.savefig(output_path, bbox_inches="tight", dpi=300)
-
-    # plt.show()
-
 
 def display_comparison(
     model_list,
-    scenario: str = "BA_user",
+    scenario: str = "ba_user",
     attribute: str = "age",
-    group_spacing=1.25,
     cmap="tab20",
-    extra_rules=None,
-    use_radar=True,
     specific_name=None,
 ):
     datasets = []
     baselines = []
     for model_label in model_list:
         try:
-            with open(
-                f"../values_results/{model_label}/vsm/{scenario}/{attribute}.jsonl", "r"
-            ) as jl_file:
-                dataset = []
-                for result in jl_file.readlines():
-                    result = json.loads(result)
-                    if extra_rules is not None:
-                        # if result["compared_groups"].startswith(extra_rule):
-                        #     dataset.append(result)
-                        for rule in extra_rules:
-                            if rule in result["compared_groups"]:
-                                dataset.append(result)
-                    else:
-                        dataset.append(result)
-                datasets.append(dataset)
-            with open(
-                f"../values_results/{model_label}/vsm/{scenario}/{attribute}_baseline.json",
-                "r",
-            ) as j_file:
-                baselines.append(json.load(j_file))
+            with open(f"wvs_values_results/{model_label}/experiments_results.json", "r", encoding="utf-8") as jl_file:
+                if model_label.lower() == "human":
+                    experiments_results = json.load(jl_file)[attribute]
+                else:
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
+                datasets.append(experiments_results["group_distances"])
+                baselines.append(experiments_results["baseline"])
         except Exception as e:
             print(model_label)
             print(str(e))
+    
 
-    os.makedirs(f"../images/{scenario}/", exist_ok=True)
+    os.makedirs(f"wvs_images/{scenario}/", exist_ok=True)
 
     output_path = (
-        f"../images/{scenario}/{specific_name}.pdf"
+        f"wvs_images/{scenario}/{specific_name}.pdf"
         if specific_name is not None
-        else f"../images/{scenario}/{attribute}.pdf"
+        else f"wvs_images/{scenario}/{attribute}.pdf"
     )
     csv_path = (
-        f"../images/{scenario}/{specific_name}.csv"
+        f"wvs_images/{scenario}/{specific_name}.csv"
         if specific_name is not None
-        else f"../images/{scenario}/{attribute}.csv"
+        else f"wvs_images/{scenario}/{attribute}.csv"
     )
 
-    if use_radar:
-        plot_divergence_comparison_radar(
-            datasets=datasets,
-            baselines=baselines,
-            labels=model_list,
-            attribute=attribute,
-            output_path=output_path,
-            csv_path=csv_path,
-            cmap=cmap,
-            scenario=scenario,
-        )
-    else:
-        plot_divergence_comparison(
-            datasets=datasets,
-            baselines=baselines,
-            labels=model_list,
-            attribute=attribute,
-            output_path=output_path,
-            group_spacing=group_spacing,
-            cmap=cmap,
-        )
+    plot_divergence_comparison_radar(
+        datasets=datasets,
+        baselines=baselines,
+        labels=model_list,
+        output_path=output_path,
+        csv_path=csv_path,
+        cmap=cmap,
+    )
 
 
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="age",
-#     scenario="BA_dialogue",
-#     # extra_rules=["<30", ">60"],
-#     specific_name="BA_dialogue_age_radar",
-# )
+display_comparison(
+    [
+        "Human",
+        "Llama-3.1-8B-Instruct",
+        "Llama-3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        # "QwQ-32B",
+    ],
+    cmap="tab10",
+    attribute="highest_level_of_education",
+    scenario="ba_user",
+    # extra_rules=["<30", ">60"],
+    specific_name="ba_user_education_radar",
+)
 
 # display_comparison(
 #     [
