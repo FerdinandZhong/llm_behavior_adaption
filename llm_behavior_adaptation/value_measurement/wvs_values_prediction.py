@@ -141,8 +141,6 @@ class ValuesPredictionController:
                             "schema": Response.model_json_schema(),  # noqa: F821
                         },
                     }
-                    if not self.reasoning
-                    else Omit()
                 ),
                 extra_body={
                     "provider": {
@@ -424,51 +422,44 @@ class ValuesPredictionController:
     def _prompt(self, key: str) -> list[dict]:
         if key not in self.prompts:
             raise KeyError(f"Missing prompt '{key}'")
-        if self.reasoning:
-            key = f"{key}_reasoning"
+        # if self.reasoning:
+        #     key = f"{key}_reasoning"
         return deepcopy(self.prompts[key])
 
     async def _llm_output_processing(self, full_messages, reasoning=None):
         # 1) Try to parse JSON
         try:
             if reasoning:
-                reasoning_response = await self.query_llm(
+                full_chat_response = await self.query_llm(
                     messages=full_messages,
                     temperature=0.6,  # default setting for reasoning model
-                    max_tokens=4096,
+                    max_tokens=2048,
                 )
 
-                reasoning_content = reasoning_response.choices[
-                    0
-                ].message.reasoning_content
+                # reasoning_response = await self.query_llm(
+                #     messages=full_messages,
+                #     temperature=0.6,  # default setting for reasoning model
+                #     max_tokens=4096,
+                # )
 
-                full_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": f"<think>\n{reasoning_content}\n</think>\n",
-                    },
-                    {
-                        "role": "user",
-                        "content": '## Output Format\nReturn a single JSON object with *exactly* the following two fields, in this order:\n- "option_id": An integer indicating the selected option.\n- "reason": A string offering the rationale for your selection.\n\nNo other fields are permitted in the response. Keys must maintain the order specified:\n\n{\n  "option_id": int,\n  "reason": str\n}',
-                    },
-                )
-                print(reasoning_response)
-            full_chat_response = await self.query_llm(
-                messages=full_messages,
-                response_format=(
-                    {
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": "option_response",
-                            "schema": Response.model_json_schema(),  # noqa: F821
-                        },
-                    }
-                    if not self.reasoning
-                    else Omit()
-                ),
-            )
+                # reasoning_content = reasoning_response.choices[
+                #     0
+                # ].message.reasoning_content
+
+                # full_messages.append(
+                #     {
+                #         "role": "assistant",
+                #         "content": f"<think>\n{reasoning_content}\n</think>\n",
+                #     },
+                #     {
+                #         "role": "user",
+                #         "content": '## Output Format\nReturn a single JSON object with *exactly* the following two fields, in this order:\n- "option_id": An integer indicating the selected option.\n- "reason": A string offering the rationale for your selection.\n\nNo other fields are permitted in the response. Keys must maintain the order specified:\n\n{\n  "option_id": int,\n  "reason": str\n}',
+                #     },
+                # )
+                # print(reasoning_response)
+            else:
+                full_chat_response = await self.query_llm(messages=full_messages)
             content = full_chat_response.choices[0].message.content
-            print(content)
             json_output = json.loads(content)
         except UnicodeDecodeError:
             logger.warning("Error decoding as json: %s", content)
@@ -483,6 +474,9 @@ class ValuesPredictionController:
             reason_for_selection = json_output.get("reason", "")
 
             if reasoning:
+                reasoning_content = full_chat_response.choices[
+                    0
+                ].message.reasoning_content
                 reason_for_selection = (
                     f"reasoning:{reasoning_content}\n\n{reason_for_selection}"
                 )

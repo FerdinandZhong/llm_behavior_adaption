@@ -843,6 +843,7 @@ class ValuesComparison:
         }
 
     def compute_results_against_human(self):
+        """Model results vs Human results"""
         human_results_distributions = (
             self.user_value_dataset.astype({"D_INTERVIEW": str})
             .groupby("D_INTERVIEW", as_index=True)  # handles duplicates explicitly
@@ -883,6 +884,16 @@ class ValuesComparison:
                     "n_effective_users": baseline_core["n_effective_users"],
                 },
             }
+
+            results_dict[f"{results_type}_against_human"]["ratio"] = round(
+                results_dict[f"{results_type}_against_human"]["distance"][
+                    "avg_divergence"
+                ]
+                / results_dict[f"{results_type}_against_human"]["baseline"][
+                    "avg_divergence"
+                ],
+                3,
+            )
 
         return results_dict
 
@@ -1031,10 +1042,11 @@ if __name__ == "__main__":
                     "distance": vc.cross_datasets_divergences_id_based(topic),
                     "baseline": vc.cross_datasets_divergences_baseline_id_based(topic),
                 }
-                cross_datasets_results[topic] = {
-                    "distance": vc.cross_datasets_divergences_id_based(topic),
-                    "baseline": vc.cross_datasets_divergences_baseline_id_based(topic),
-                }
+                cross_datasets_results[topic]["ratio"] = round(
+                    cross_datasets_results[topic]["distance"]["avg_divergence"]
+                    / cross_datasets_results[topic]["baseline"]["avg_divergence"],
+                    3,
+                )
 
             final_outputs["cross_datasets_results"] = cross_datasets_results
 

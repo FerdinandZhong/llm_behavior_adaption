@@ -1,12 +1,14 @@
 import json
 import os
+import re
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.cm import get_cmap
-from sklearn.manifold import TSNE
+from matplotlib.patches import Rectangle
 
 mpl.rcParams["font.family"] = "arial"
 
@@ -59,68 +61,6 @@ def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
         print(f"Plot saved to {output_path}")
 
     # Show the plot
-    plt.show()
-
-
-def visualize_tsne_groups(groups, perplexity=30, learning_rate=200, random_state=42):
-    """
-    Visualize 4 groups of probability distributions using t-SNE.
-
-    Parameters:
-        groups (list of np.ndarray): A list of 4 arrays, where each array represents a group.
-                                     Each array has shape [n_samples, 5], where n_samples is between 200 and 300.
-        perplexity (float): t-SNE perplexity parameter.
-        learning_rate (float): t-SNE learning rate.
-        random_state (int): Random seed for reproducibility.
-
-    Returns:
-        None (displays a 2D scatter plot with groups highlighted).
-    """
-    # Combine all groups into a single array
-    combined_data = np.vstack(groups)  # Shape: [total_samples, 5]
-
-    # Create labels for each group
-    labels = np.concatenate([np.full(len(group), i) for i, group in enumerate(groups)])
-
-    # Apply t-SNE
-    tsne = TSNE(
-        n_components=2,
-        perplexity=perplexity,
-        learning_rate=learning_rate,
-        random_state=random_state,
-    )
-    embedded_data = tsne.fit_transform(combined_data)
-
-    # Plot the results
-    plt.figure(figsize=(10, 8))
-    colors = plt.cm.tab10.colors[:4]  # Use 4 distinct colors for the groups
-    for i in range(4):
-        # Scatter plot for each group
-        group_indices = labels == i
-        plt.scatter(
-            embedded_data[group_indices, 0],
-            embedded_data[group_indices, 1],
-            color=colors[i],
-            label=f"Group {i+1}",
-            alpha=0.6,
-        )
-
-        # Plot group centroid
-        group_center = np.mean(embedded_data[group_indices], axis=0)
-        plt.scatter(
-            group_center[0],
-            group_center[1],
-            color=colors[i],
-            edgecolor="black",
-            s=200,
-            marker="X",
-        )
-
-    plt.title("t-SNE Visualization of 4 Groups")
-    plt.xlabel("t-SNE Component 1")
-    plt.ylabel("t-SNE Component 2")
-    plt.legend()
-    plt.grid(alpha=0.3)
     plt.show()
 
 
@@ -240,6 +180,205 @@ def plot_divergence_comparison_radar(
         )
 
 
+def plot_divergence_comparison_heatmap(
+    *,
+    datasets: Sequence[Sequence[Dict]],
+    baselines: Sequence[Dict],
+    labels: Sequence[str],
+    figsize: Tuple[int, int] = (12, 6),
+    output_path: Optional[str] = None,
+    csv_path: Optional[str] = None,
+    cmap: str = "viridis",
+    darker_is_larger: bool = False,
+    emphasize_label: Optional[str] = "Human",
+    # ---- General ordering controls ----
+    sort_by_defined_order: bool = True,
+    defined_order: Optional[Sequence[str]] = None,
+    pair_normalizer: Optional[Callable[[str], Tuple[str, str]]] = None,
+    order_pairs: Optional[
+        Callable[[List[str]], List[str]]
+    ] = None,  # full custom column order
+    # ---- Presentation ----
+    annotate: bool = True,  # show numbers in cells by default
+    annotate_fontsize: int = 9,
+    fmt: str = ".2f",  # number formatting (2 decimals)
+    grid: bool = True,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+) -> pd.DataFrame:
+    """
+    General heatmap for divergence comparisons (ratio over baseline) across models.
+
+    Inputs mirror your radar function:
+      - datasets: list of per-model lists. Each item is a dict like:
+          {"compared_groups": "A--B" or "A vs B",
+           "compared_details": {"average_divergence": float}}
+      - baselines: list of dicts with key "overall_baseline" (one per model)
+      - labels: list of model names
+
+    Ordering & parsing:
+      - defined_order: optional sequence defining left/right token order for sorting pairs
+      - sort_by_defined_order: if True, columns sorted by left then right token
+      - pair_normalizer: optional function(raw_str) -> (left_token, right_token)
+      - order_pairs: optional function that returns a custom ordered list of pairs (overrides defined_order)
+
+    Display:
+      - darker_is_larger: reverse colormap so larger = darker
+      - emphasize_label: keep this row first and draw an outline
+      - annotate: write values in cells using `fmt` (default '.2f') with auto-contrast text
+      - grid: dotted minor gridlines
+      - vmin/vmax: fix color scale; None = auto min/max
+
+    Returns:
+      - DataFrame of ratios (rows=models, columns=group pairs).
+    """
+    if not (len(datasets) == len(baselines) == len(labels)):
+        raise ValueError("datasets, baselines, and labels must have equal length")
+
+    # ---- Pair parsing & normalization ----
+    _pair_re = re.compile(r"\s*(.*?)\s*(?:vs|--)\s*(.*?)\s*$", flags=re.IGNORECASE)
+
+    def _default_normalizer(raw: str) -> Tuple[str, str]:
+        m = _pair_re.match(raw)
+        if not m:
+            s = raw.strip()
+            return (s, s)
+        a, b = m.group(1).strip(), m.group(2).strip()
+        return a, b
+
+    norm = pair_normalizer or _default_normalizer
+
+    def _canon_pair(raw: str) -> str:
+        a, b = norm(raw.replace("--", " vs "))
+        return f"{a} vs {b}"
+
+    # ---- Gather pairs ----
+    all_pairs = set()
+    for data in datasets:
+        for item in data:
+            p = _canon_pair(item["compared_groups"])
+            if "unknown" not in p.lower():
+                all_pairs.add(p)
+    pairs = sorted(all_pairs)  # provisional
+
+    # ---- Column ordering ----
+    if order_pairs is not None:
+        pairs = order_pairs(pairs)
+    elif sort_by_defined_order:
+
+        def token_rank(tok: str) -> Tuple[int, str]:
+            if defined_order is None:
+                return (0, tok)  # alpha fallback
+            try:
+                return (defined_order.index(tok), tok)
+            except ValueError:
+                return (len(defined_order), tok)
+
+        def _pair_key(p: str) -> Tuple[Tuple[int, str], Tuple[int, str], str]:
+            a, b = norm(p)
+            return (token_rank(a), token_rank(b), p)
+
+        pairs = sorted(pairs, key=_pair_key)
+
+    # ---- Build ratio matrix ----
+    n_models, n_cols = len(datasets), len(pairs)
+    ratios = np.zeros((n_models, n_cols), dtype=float)
+    base_vals = [float(b["overall_baseline"]) for b in baselines]
+    p2idx = {p: j for j, p in enumerate(pairs)}
+
+    for mi, data in enumerate(datasets):
+        base = base_vals[mi]
+        for item in data:
+            p = _canon_pair(item["compared_groups"])
+            if p in p2idx:
+                j = p2idx[p]
+                div = float(item["compared_details"]["average_divergence"])
+                ratios[mi, j] = div / base if base != 0 else np.nan
+
+    mat = pd.DataFrame(ratios, index=list(labels), columns=pairs)
+
+    # Emphasize row (e.g., Human)
+    if emphasize_label in mat.index:
+        mat = mat.loc[
+            [emphasize_label] + [r for r in mat.index if r != emphasize_label], :
+        ]
+
+    # CSV export
+    if csv_path:
+        out = pd.DataFrame({"Group": mat.columns})
+        for r in mat.index:
+            out[r] = mat.loc[r].to_numpy()
+        out.to_csv(csv_path, index=False)
+
+    # Colormap & scaling
+    cm = get_cmap(cmap)
+    if darker_is_larger:
+        try:
+            cm = get_cmap(cmap + "_r")
+        except ValueError:
+            cm = cm.reversed()
+    if vmin is None:
+        vmin = float(np.nanmin(mat.values))
+    if vmax is None:
+        vmax = float(np.nanmax(mat.values))
+
+    # ---- Plot ----
+    plt.figure(figsize=figsize)
+    im = plt.imshow(mat.values, aspect="auto", cmap=cm, vmin=vmin, vmax=vmax)
+
+    plt.yticks(range(mat.shape[0]), mat.index)
+    plt.xticks(range(mat.shape[1]), mat.columns, rotation=45, ha="right")
+
+    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)
+    # cbar.set_label("Ratio over baseline", rotation=90)
+
+    if emphasize_label in mat.index:
+        r = list(mat.index).index(emphasize_label)
+        plt.gca().add_patch(
+            Rectangle((-0.5, r - 0.5), mat.shape[1], 1, fill=False, lw=2)
+        )
+
+    if grid:
+        ax = plt.gca()
+        ax.set_xticks(np.arange(-0.5, mat.shape[1], 1), minor=True)
+        ax.set_yticks(np.arange(-0.5, mat.shape[0], 1), minor=True)
+        ax.grid(which="minor", linestyle=":", linewidth=0.5)
+
+    # ---- Inline annotations (2 decimals by default) ----
+    if annotate:
+        arr = mat.values
+        # Normalize for auto-contrast
+        norm_arr = (arr - vmin) / (vmax - vmin + 1e-12)
+        for i in range(arr.shape[0]):
+            for j in range(arr.shape[1]):
+                val = arr[i, j]
+                if np.isnan(val):
+                    txt = "NaN"
+                else:
+                    txt = format(val, fmt)
+                # light text on dark cells, dark text on light cells
+                color = "white" if norm_arr[i, j] > 0.6 else "black"
+                plt.text(
+                    j,
+                    i,
+                    txt,
+                    ha="center",
+                    va="center",
+                    fontsize=annotate_fontsize,
+                    color=color,
+                )
+
+    # plt.title("Divergence Comparison — Heatmap (ratio over baseline)")
+    # plt.xlabel("Group pair")
+    # plt.ylabel("Model")
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, bbox_inches="tight", dpi=300)
+
+    return mat
+
+
 def display_comparison(
     model_list,
     scenario: str = "ba_user",
@@ -291,7 +430,88 @@ def display_comparison(
     )
 
 
-display_comparison(
+def display_comparison_heatmap(
+    model_list,
+    scenario: str = "ba_user",
+    attribute: str = "age",
+    cmap="tab20",
+    specific_name=None,
+    defined_order=None,
+):
+    """For generating heatmap figure
+
+    Args:
+        model_list (_type_): _description_
+        scenario (str, optional): _description_. Defaults to "ba_user".
+        attribute (str, optional): _description_. Defaults to "age".
+        cmap (str, optional): _description_. Defaults to "tab20".
+        specific_name (_type_, optional): _description_. Defaults to None.
+        defined_order (_type_, optional): _description_. Defaults to None.
+    """
+    datasets = []
+    baselines = []
+    for model_label in model_list:
+        try:
+            with open(
+                f"wvs_values_results/{model_label}/experiments_results.json",
+                "r",
+                encoding="utf-8",
+            ) as jl_file:
+                if model_label.lower() == "human":
+                    experiments_results = json.load(jl_file)[attribute]
+                else:
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
+                        attribute
+                    ]
+                datasets.append(experiments_results["group_distances"])
+                baselines.append(experiments_results["baseline"])
+        except Exception as e:
+            print(model_label)
+            print(str(e))
+
+    os.makedirs(f"wvs_images/{scenario}/", exist_ok=True)
+
+    output_path = (
+        f"wvs_images/{scenario}/{specific_name}_heatmap.pdf"
+        if specific_name is not None
+        else f"wvs_images/{scenario}/{attribute}_heatmap.pdf"
+    )
+    # csv_path = (
+    #     f"wvs_images/{scenario}/{specific_name}.csv"
+    #     if specific_name is not None
+    #     else f"wvs_images/{scenario}/{attribute}.csv"
+    # )
+
+    plot_divergence_comparison_heatmap(
+        datasets=datasets,
+        baselines=baselines,
+        labels=model_list,
+        cmap=cmap,
+        darker_is_larger=True,
+        emphasize_label="Human",
+        sort_by_defined_order=True,
+        defined_order=defined_order,
+        output_path=output_path,
+    )
+
+
+# display_comparison(
+#     [
+#         "Human",
+#         "Llama-3.1-8B-Instruct",
+#         "Llama-3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         # "QwQ-32B",
+#     ],
+#     cmap="tab10",
+#     attribute="highest_level_of_education",
+#     scenario="ba_user",
+#     # extra_rules=["<30", ">60"],
+#     specific_name="ba_user_education_radar",
+# )
+display_comparison_heatmap(
     [
         "Human",
         "Llama-3.1-8B-Instruct",
@@ -301,11 +521,61 @@ display_comparison(
         "Qwen2.5-72B-Instruct",
         # "QwQ-32B",
     ],
-    cmap="tab10",
+    cmap="viridis",
+    attribute="age",
+    scenario="ba_user",
+    # extra_rules=["<30", ">60"],
+    specific_name="ba_user_age",
+    defined_order=["<30", "30-40", "40-50", "50-60", ">50"],
+)
+
+
+display_comparison_heatmap(
+    [
+        "Human",
+        "Llama-3.1-8B-Instruct",
+        "Llama-3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        # "QwQ-32B",
+    ],
+    cmap="viridis",
     attribute="highest_level_of_education",
     scenario="ba_user",
     # extra_rules=["<30", ">60"],
-    specific_name="ba_user_education_radar",
+    specific_name="ba_user_education",
+    defined_order=[
+        "Basic education",
+        "High school & equivalent",
+        "Short-cycle tertiary",
+        "Bachelor",
+        "Master’s & Doctoral",
+    ],
+)
+
+display_comparison_heatmap(
+    [
+        "Human",
+        "Llama-3.1-8B-Instruct",
+        "Llama-3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        # "QwQ-32B",
+    ],
+    cmap="viridis",
+    attribute="socioeconomic_status",
+    scenario="ba_user",
+    # extra_rules=["<30", ">60"],
+    specific_name="ba_user_socioeconomic_status",
+    defined_order=[
+        "Lower class",
+        "Working class",
+        "Lower middle class",
+        "Upper middle class",
+        "Upper class",
+    ],
 )
 
 # display_comparison(
