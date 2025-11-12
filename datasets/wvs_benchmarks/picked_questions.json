@@ -1,0 +1,464 @@
+{
+  "Social Values, Norms, Stereotypes": {
+    "Q2": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very important' and 4 meaning 'Not at all important', how important are friends in your life?",
+      "category": "Social Values, Norms, Stereotypes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q3": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very important' and 4 meaning 'Not at all important', how important is leisure time in your life?",
+      "category": "Social Values, Norms, Stereotypes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q5": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very important' and 4 meaning 'Not at all important', how important is work in your life?",
+      "category": "Social Values, Norms, Stereotypes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q31": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Strongly agree' and 4 meaning 'Strongly disagree', how strongly do you agree or disagree with the following statement: On the whole, men make better business executives than women do?",
+      "category": "Social Values, Norms, Stereotypes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q33": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Strongly agree' and 5 meaning 'Strongly disagree', how strongly do you agree or disagree with the following statement: When jobs are scarce, men should have more right to a job than women?",
+      "category": "Social Values, Norms, Stereotypes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Social Capital, Trust and Organizational Membership": {
+    "Q59": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Trust completely' and 4 meaning 'Do not trust at all', how much do you trust people in this group: your neighborhood?",
+      "category": "Social Capital, Trust and Organizational Membership",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q61": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Trust completely' and 4 meaning 'Do not trust at all', how much do you trust people in this group: people you meet for the first time?",
+      "category": "Social Capital, Trust and Organizational Membership",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q69": {
+      "question": "On a scale of 1 to 4, 1 meaning 'A great deal' and 4 meaning 'None at all', how much confidence do you have in the following organization: The police?",
+      "category": "Social Capital, Trust and Organizational Membership",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q75": {
+      "question": "On a scale of 1 to 4, 1 meaning 'A great deal' and 4 meaning 'None at all', how much confidence do you have in the following organization: Universities?",
+      "category": "Social Capital, Trust and Organizational Membership",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q76": {
+      "question": "On a scale of 1 to 4, 1 meaning 'A great deal' and 4 meaning 'None at all', how much confidence do you have in the following organization: Elections?",
+      "category": "Social Capital, Trust and Organizational Membership",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Economic Values": {
+    "Q106": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Incomes should be made more equal' and 10 meaning 'There should be greater incentives for individual effort', where does your opinion fall?",
+      "category": "Economic Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q107": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Private ownership of business and industry should be increased' and 10 meaning 'Government ownership of business and industry should be increased', where does your opinion fall?",
+      "category": "Economic Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q108": {
+      "question": "On a scale of 1 to 10, 1 meaning 'The government should take more responsibility to ensure that everyone is provided for' and 10 meaning 'People should take more responsibility to provide for themselves', where does your opinion fall?",
+      "category": "Economic Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q109": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Competition is good' and 10 meaning 'Competition is harmful', where does your opinion fall?",
+      "category": "Economic Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q110": {
+      "question": "On a scale of 1 to 10, 1 meaning 'In the long run, hard work usually brings a better life' and 10 meaning 'Hard work doesn't generally bring success - it's more a matter of luck and connections', where does your opinion fall?",
+      "category": "Economic Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Perceptions of Corruption": {
+    "Q112": {
+      "question": "On a scale of 1 to 10, 1 meaning 'There is no corruption in your country' and 10 meaning 'There is abundant corruption in your country', what are your views on corruption in your country?",
+      "category": "Perceptions of Corruption",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q113": {
+      "question": "On a scale of 1 to 4, 1 meaning 'None of them' and 4 meaning 'All of them', in the following group of people, how many do you think are involved in corruption: State authorities?",
+      "category": "Perceptions of Corruption",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q116": {
+      "question": "On a scale of 1 to 4, 1 meaning 'None of them' and 4 meaning 'All of them', in the following group of people, how many do you think are involved in corruption: Civil service providers (police, judiciary, civil servants, doctors, teachers)?",
+      "category": "Perceptions of Corruption",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q118": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Never' and 4 meaning 'Always', how often do you think ordinary people like yourself or people from your neighborhood have to pay a bribe, give a gift, or do a favor for local officials and service providers (like police officers, lawyers, doctors, teachers and civil servants in your community) in order to get the services you need?",
+      "category": "Perceptions of Corruption",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q119": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Strongly agree' and 5 meaning 'Strongly disagree', how strongly do you agree or disagree with the following statement: \"on the whole, women are less corrupt than men\"? ",
+      "category": "Perceptions of Corruption",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Perceptions of Migration": {
+    "Q121": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Very bad' and 5 meaning 'Very good', how would you evaluate the impact of immigrants on the development of your country?",
+      "category": "Perceptions of Migration",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    },
+    "Q122": {
+      "question": "On a scale of 0 to 2, 0 meaning 'Disagree' and 2 meaning 'Agree', do you agree or disagree with the following statement as it pertains to the effects of immigration on development in this country: Immigration fills important job vacancies?",
+      "category": "Perceptions of Migration",
+      "use_case": "value",
+      "answer_scale_min": 0,
+      "answer_scale_max": 2,
+      "answer_data_type": "ordinal"
+    },
+    "Q126": {
+      "question": "On a scale of 0 to 2, 0 meaning 'Disagree' and 2 meaning 'Agree', do you agree or disagree with the following statement as it pertains to the effects of immigration on development in this country: Immigration increases the risks of terrorism?",
+      "category": "Perceptions of Migration",
+      "use_case": "value",
+      "answer_scale_min": 0,
+      "answer_scale_max": 2,
+      "answer_data_type": "ordinal"
+    },
+    "Q128": {
+      "question": "On a scale of 0 to 2, 0 meaning 'Disagree' and 2 meaning 'Agree', do you agree or disagree with the following statement at it pertains to the effects of immigration on development in this country: Immigration increases unemployment?",
+      "category": "Perceptions of Migration",
+      "use_case": "value",
+      "answer_scale_min": 0,
+      "answer_scale_max": 2,
+      "answer_data_type": "ordinal"
+    },
+    "Q130": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Let anyone come who wants to' and 4 meaning 'Prohibit people coming here from other countries', which of the following actions do you think the government should implement regarding people from other countries coming here for work?",
+      "category": "Perceptions of Migration",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Perceptions of Security": {
+    "Q131": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very Secure' and 4 meaning 'Not at all secure', how secure do you feel these days in your neighborhood?",
+      "category": "Perceptions of Security",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q132": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very Frequently' and 4 meaning 'Not at all frequently', how often do the following things occur in your neighborhood: Robberies?",
+      "category": "Perceptions of Security",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q134": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very Frequently' and 4 meaning 'Not at all frequently', how often do the following things occur in your neighborhood: Police or military interfere with people's private life?",
+      "category": "Perceptions of Security",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q143": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very much' and 4 meaning 'Not at all', how worried are you about not being able to give your children a good education?",
+      "category": "Perceptions of Security",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q146": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very much' and 4 meaning 'Not at all', how worried are you about the following situation: A war involving your country?",
+      "category": "Perceptions of Security",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Perceptions about Science and Technology": {
+    "Q158": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Completely disagree' and 10 meaning 'Completely agree', how much do you agree or disagree with the following statement: Science and technology are making our lives healthier, easier, and more comfortable?",
+      "category": "Perceptions about Science and Technology",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q160": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Completely disagree' and 10 meaning 'Completely agree', how much do you agree or disagree with the following statement: We depend too much on science and not enough on faith?",
+      "category": "Perceptions about Science and Technology",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q161": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Completely disagree' and 10 meaning 'Completely agree', how much do you agree or disagree with the following statement: One of the bad effects of science is that it breaks down people's ideas of right and wrong?",
+      "category": "Perceptions about Science and Technology",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q162": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Completely disagree' and 10 meaning 'Completely agree', how much do you agree or disagree with the following statement: It is not important for me to know about science in my daily life?",
+      "category": "Perceptions about Science and Technology",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q163": {
+      "question": "On a scale of 1 to 10, 1 meaning 'A lot worse off' and 10 meaning 'A lot better off', do you think science and technology have improved or worsened the world?",
+      "category": "Perceptions about Science and Technology",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Religious Values": {
+    "Q164": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Not at all important' and 10 meaning 'Very important', how important do you think God is in your life?",
+      "category": "Religious Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q169": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Strongly agree' and 4 meaning 'Strongly disagree', how strongly do you agree or disagree with the following statement: Whenever science and religion conflict, religion is always right?",
+      "category": "Religious Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q170": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Strongly agree' and 4 meaning 'Strongly disagree', how strongly do you agree or disagree with the following statement: The only acceptable religion is my religion?",
+      "category": "Religious Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q171": {
+      "question": "On a scale of 1 to 7, 1 meaning 'More than once a week' and 7 meaning 'Never, practically never', how often do you currently attend religious ceremonies, excluding events like weddings and funerals?",
+      "category": "Religious Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 7,
+      "answer_data_type": "ordinal"
+    },
+    "Q172": {
+      "question": "On a scale of 1 to 8, 1 meaning 'Several times a day' and 8 meaning 'Never, practically never', how often do you pray these days, excluding events like weddings and funerals?",
+      "category": "Religious Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 8,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Ethical Values": {
+    "Q179": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Never justifiable' and 10 meaning 'Always justifiable', how justifiable is it to steal property?",
+      "category": "Ethical Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q185": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Never justifiable' and 10 meaning 'Always justifiable', how justifiable is divorce?",
+      "category": "Ethical Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q193": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Never justifiable' and 10 meaning 'Always justifiable', how justifiable is having casual sex?",
+      "category": "Ethical Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q194": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Never justifiable' and 10 meaning 'Always justifiable', how justifiable is political violence?",
+      "category": "Ethical Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q197": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Definitely should have the right' and 4 meaning 'Definitely should not have the right', do you think that your country's government should or should not have the right to monitor all e-mails and any other information exchanged on the Internet?",
+      "category": "Ethical Values",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Political Interest and Political Participation": {
+    "Q203": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Daily' and 5 meaning 'Never', how often do you use the following to obtain information: Radio news?",
+      "category": "Political Interest and Political Participation",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    },
+    "Q205": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Daily' and 5 meaning 'Never', how often do you use the following to obtain information: Email?",
+      "category": "Political Interest and Political Participation",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    },
+    "Q206": {
+      "question": "On a scale of 1 to 5, 1 meaning 'Daily' and 5 meaning 'Never', how often you use the following to obtain information: Internet?",
+      "category": "Political Interest and Political Participation",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 5,
+      "answer_data_type": "ordinal"
+    },
+    "Q226": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very often' and 4 meaning 'Not at all often', in your opinion, how often do TV news favor the governing party in this country's election?",
+      "category": "Political Interest and Political Participation",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q233": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very often' and 4 meaning 'Not at all often', in your opinion, how often do women have equal opportunities to run the office in this country?",
+      "category": "Political Interest and Political Participation",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  },
+  "Political Culture and Political Regimes": {
+    "Q237": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very good' and 4 meaning 'Very bad', how do you view the following political system as a way of governing this country: Having the army rule?",
+      "category": "Political Culture and Political Regimes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q238": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very good' and 4 meaning 'Very bad', how do you view the following political system as a way of governing this country: Having a democratic political system?",
+      "category": "Political Culture and Political Regimes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q252": {
+      "question": "On a scale of 1 to 10, 1 meaning 'Not satisfied at all' and 10 meaning 'Completely satisfied', how satisfied are you with how the political system is functioning in your country these days?",
+      "category": "Political Culture and Political Regimes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 10,
+      "answer_data_type": "ordinal"
+    },
+    "Q253": {
+      "question": "On a scale of 1 to 4, 1 meaning 'A great deal of respect' and 4 meaning 'No respect at all', how much respect do you feel there is for individual human rights in this country today?",
+      "category": "Political Culture and Political Regimes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    },
+    "Q257": {
+      "question": "On a scale of 1 to 4, 1 meaning 'Very close' and 4 meaning 'Not close at all', how close do you feel to your country?",
+      "category": "Political Culture and Political Regimes",
+      "use_case": "value",
+      "answer_scale_min": 1,
+      "answer_scale_max": 4,
+      "answer_data_type": "ordinal"
+    }
+  }
+}
