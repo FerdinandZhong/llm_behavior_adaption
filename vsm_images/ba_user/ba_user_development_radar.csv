@@ -1,0 +1,7 @@
+Group_Full,Group,Llama3.1-8B-Instruct,Llama3.1-70B-Instruct,DeepSeek-V3,Qwen2.5-7B-Instruct,Qwen2.5-72B-Instruct,QwQ-32B
+Developed vs Developing,DEVD vs DEV,1.3333333333333333,2.0,,,2.6666666666666665,
+Developed vs Third World,DEVD vs TW,4.0,4.0,,,4.0,
+Developed vs Unknown,DEVD vs Unknown,1.3333333333333333,2.0,,,2.6666666666666665,
+Developing vs Third World,DEV vs TW,2.6666666666666665,2.0,,,1.3333333333333333,
+Developing vs Unknown,DEV vs Unknown,0.0,0.0,,,0.0,
+Third World vs Unknown,TW vs Unknown,2.6666666666666665,2.0,,,1.3333333333333333,

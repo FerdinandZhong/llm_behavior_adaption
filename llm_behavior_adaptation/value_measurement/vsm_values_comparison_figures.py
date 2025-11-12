@@ -112,7 +112,8 @@ def compare_models_stats(ratio_dict):
     Returns:
         List[Dict[str, Any]] sorted by mean ratio (ascending)
     """
-    mean_vals = {model: np.mean(ratios) for model, ratios in ratio_dict.items()}
+    mean_vals = {model: np.nanmean(ratios) for model, ratios in ratio_dict.items()}
+    print(mean_vals)
     best_model = min(mean_vals, key=mean_vals.get)
     best_ratios = np.array(ratio_dict[best_model])
 
@@ -133,7 +134,7 @@ def compare_models_stats(ratio_dict):
             # Paired Cohen's d
             diffs = ratios - best_ratios
             denom = np.std(diffs, ddof=0)
-            d_val = float(np.mean(diffs) / denom) if denom != 0 else 0.0
+            d_val = float(np.nanmean(diffs) / denom) if denom != 0 else 0.0
 
         results.append(
             {
@@ -148,230 +149,6 @@ def compare_models_stats(ratio_dict):
     # Sort by mean_ratio ascending
     return sorted(results, key=lambda x: x["mean_ratio"])
 
-
-def plot_pairwise_map_only(
-    datasets: List[Dict],
-    model_names: Optional[List[str]] = None,
-    *,
-    metric_key: str = "ratios",  # "ratios" (recommended) or "divergences"
-    pairwise_test: str = "ttest",  # "ttest" or "wilcoxon"
-    correction: str = "holm",
-    do_omnibus: bool = True,
-    title: str = "Pairwise comparison map",
-    output_dir: str = ".",
-    prefix: str = "pairmap",
-    dpi: int = 300,
-):
-    """
-    Build a single pairwise comparison map for multiple models using per-user metrics.
-    Upper triangle: -log10(Holm-corrected p) heatmap
-    Lower triangle: Δ-median (row - col) with blue/red color overlay
-    Diagonal: model medians
-    """
-    k = len(datasets)
-    if k < 2:
-        raise ValueError("Need at least two models.")
-
-    if model_names is None:
-        model_names = [f"M{i+1}" for i in range(k)]
-
-    # 1) Align users across all models
-    def get_ids(m):
-        return m["user_ids"]
-
-    common = set(get_ids(datasets[0]))
-    for m in datasets[1:]:
-        common &= set(get_ids(m))
-    common = sorted(common)
-    if not common:
-        raise ValueError("No overlapping user_ids across models.")
-
-    # 2) Build matrix X: rows=users, cols=models
-    X = np.zeros((len(common), k), dtype=float)
-    for j, m in enumerate(datasets):
-        ids = m["user_ids"]
-        vals = m[metric_key]
-        if len(ids) != len(vals):
-            raise ValueError(
-                f"Model {j} has mismatched lengths for user_ids and {metric_key}."
-            )
-        idx_map = {u: i for i, u in enumerate(ids)}
-        X[:, j] = [vals[idx_map[u]] for u in common]
-
-    # 3) Summaries
-    med = np.median(X, axis=0)
-
-    # 4) Optional omnibus test (Friedman)
-    omnibus = None
-    if do_omnibus:
-        stat, p = friedmanchisquare(*[X[:, i] for i in range(k)])
-        omnibus = {"test": "Friedman", "stat": float(stat), "p": float(p)}
-
-    # 5) Pairwise tests + Δ-median
-    pairs = list(combinations(range(k), 2))
-    p_raw, dmed = [], []
-    for i, j in pairs:
-        xi, xj = X[:, i], X[:, j]
-        if pairwise_test == "ttest":
-            _, p = ttest_rel(xi, xj)
-        elif pairwise_test == "wilcoxon":
-            try:
-                _, p = wilcoxon(xi, xj, zero_method="zsplit", alternative="two-sided")
-            except ValueError:
-                _, p = ttest_rel(xi, xj)
-        else:
-            raise ValueError("pairwise_test must be 'ttest' or 'wilcoxon'")
-        p_raw.append(p)
-        dmed.append(
-            float(np.median(xi) - np.median(xj))
-        )  # lower = better (row better if negative)
-
-    # Holm step-down correction
-    if correction != "holm":
-        raise ValueError("Only 'holm' correction is implemented.")
-    m_tests = len(p_raw)
-    order = np.argsort(p_raw)
-    p_corr = np.empty_like(np.array(p_raw), dtype=float)
-    for rank, idx in enumerate(order):
-        p_corr[idx] = min((m_tests - rank) * p_raw[idx], 1.0)
-
-    # 6) Matrices for plotting
-    logp_mat = np.zeros((k, k), dtype=float)
-    dmed_mat = np.zeros((k, k), dtype=float)
-    for idx, (i, j) in enumerate(pairs):
-        lp = -math.log10(max(p_corr[idx], 1e-300))
-        logp_mat[i, j] = lp
-        logp_mat[j, i] = lp
-        dmed_mat[i, j] = dmed[idx]  # row - col
-        dmed_mat[j, i] = -dmed[idx]
-
-    # 7) Figure
-    os.makedirs(output_dir, exist_ok=True)
-    fig = plt.figure(figsize=(6.8, 6.2))
-    plt.title(title)
-
-    # Upper triangle heatmap: -log10 p
-    im1 = plt.imshow(logp_mat)  # default colormap
-    cb = plt.colorbar(im1, fraction=0.046, pad=0.04)
-    cb.set_label("-log10(Holm-corrected p)")
-
-    # Lower triangle color overlay for Δ-median using blue-white-red
-    # Symmetric normalization around 0 using 95th percentile for stability
-    lower_vals = dmed_mat[np.tril_indices(k, -1)]
-    vmax = np.percentile(np.abs(lower_vals), 95) if lower_vals.size else 1.0
-    vmax = max(vmax, 1e-6)
-    norm = Normalize(vmin=-vmax, vmax=vmax)
-    cmap = plt.get_cmap("bwr")  # blue (better) to red (worse)
-
-    for i in range(k):
-        for j in range(k):
-            if i > j:
-                color = cmap(norm(dmed_mat[i, j]))
-                # semi-transparent rectangle
-                plt.gca().add_patch(
-                    plt.Rectangle((j - 0.5, i - 0.5), 1, 1, color=color, alpha=0.45)
-                )
-
-    # Ticks
-    plt.xticks(range(k), model_names, rotation=30, ha="right")
-    plt.yticks(range(k), model_names)
-
-    # Text annotations
-    for i in range(k):
-        for j in range(k):
-            if i == j:
-                txt = f"med={med[i]:.3f}"
-            elif i < j:
-                p_disp = 10 ** (-logp_mat[i, j]) if logp_mat[i, j] > 0 else 1.0
-                stars = (
-                    "***"
-                    if p_disp < 1e-3
-                    else ("**" if p_disp < 1e-2 else ("*" if p_disp < 5e-2 else ""))
-                )
-                txt = f"p={p_disp:.1e}\n{stars}"
-            else:
-                txt = f"Δ={dmed_mat[i, j]:+.3f}"
-            plt.text(j, i, txt, ha="center", va="center", fontsize=8)
-
-    plt.tight_layout()
-    png = os.path.join(output_dir, f"{prefix}_{metric_key}.png")
-    pdf = os.path.join(output_dir, f"{prefix}_{metric_key}.pdf")
-    plt.savefig(png, dpi=dpi)
-    plt.savefig(pdf)
-    plt.close(fig)
-
-    # 8) Pack results
-    pairwise = []
-    for idx, (i, j) in enumerate(pairs):
-        pairwise.append(
-            {
-                "i": i,
-                "j": j,
-                "name_i": model_names[i],
-                "name_j": model_names[j],
-                "p_raw": float(p_raw[idx]),
-                "p_corr": float(p_corr[idx]),
-                "delta_median": float(dmed[idx]),
-            }
-        )
-
-    return {
-        "aligned_user_count": len(common),
-        "omnibus": omnibus,
-        "pairwise": pairwise,
-        "files": {"png": png, "pdf": pdf},
-    }
-
-
-def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
-    """
-    Plots user divergence with error bars and a baseline, and optionally saves the plot.
-
-    Parameters:
-        data (list): A list of dictionaries containing group comparison data.
-        baseline (float): The baseline value for average user divergence.
-        output_path (str, optional): Path to save the plot as a PNG file. If None, the plot is not saved.
-    """
-    # Extract values
-    groups = [item["compared_groups"] for item in data]
-    avg_divergence = [
-        item["compared_details"]["average_user_divergence"] for item in data
-    ]
-    std_divergence = [item["compared_details"]["std_user_divergence"] for item in data]
-
-    # Plot
-    plt.figure(figsize=(12, 6))
-    x = np.arange(len(groups))  # Numeric positions for groups
-    plt.errorbar(
-        x,
-        avg_divergence,
-        yerr=std_divergence,
-        fmt="o",
-        capsize=5,
-        label="Average Divergence",
-    )
-
-    # Add baseline
-    plt.axhline(
-        y=baseline, color="red", linestyle="--", label=f"Baseline ({baseline:.3f})"
-    )
-
-    # Customize plot
-    plt.xticks(x, groups, rotation=45, ha="right")
-    plt.xlabel("Compared Groups")
-    plt.ylabel("Average User Divergence")
-    plt.title(f"Average User Divergence ({formula}) with Baseline")
-    plt.legend()
-    plt.grid(axis="y", linestyle="--", alpha=0.7)
-    plt.tight_layout()
-
-    # Save the plot if output_path is provided
-    if output_path:
-        plt.savefig(output_path, format="png", dpi=300)
-        print(f"Plot saved to {output_path}")
-
-    # Show the plot
-    plt.show()
 
 
 def plot_divergence_comparison_radar(
@@ -795,7 +572,7 @@ def display_comparison(
     for model_label in model_list:
         try:
             with open(
-                f"wvs_values_results/{model_label}/experiments_results.json",
+                f"values_results/{model_label}/experiments_results.json",
                 "r",
                 encoding="utf-8",
             ) as jl_file:
@@ -811,17 +588,17 @@ def display_comparison(
             print(model_label)
             print(str(e))
 
-    os.makedirs(f"wvs_images/{scenario}/", exist_ok=True)
+    os.makedirs(f"vsm_images/{scenario}/", exist_ok=True)
 
     output_path = (
-        f"wvs_images/{scenario}/{specific_name}.pdf"
+        f"vsm_images/{scenario}/{specific_name}.pdf"
         if specific_name is not None
-        else f"wvs_images/{scenario}/{attribute}.pdf"
+        else f"vsm_images/{scenario}/{attribute}.pdf"
     )
     csv_path = (
-        f"wvs_images/{scenario}/{specific_name}.csv"
+        f"vsm_images/{scenario}/{specific_name}.csv"
         if specific_name is not None
-        else f"wvs_images/{scenario}/{attribute}.csv"
+        else f"vsm_images/{scenario}/{attribute}.csv"
     )
 
     plot_divergence_comparison_radar(
@@ -860,7 +637,7 @@ def display_comparison_heatmap(
     for model_label in model_list:
         try:
             with open(
-                f"wvs_values_results/{model_label}/experiments_results.json",
+                f"values_results/{model_label}/experiments_results.json",
                 "r",
                 encoding="utf-8",
             ) as jl_file:
@@ -876,17 +653,17 @@ def display_comparison_heatmap(
             print(model_label)
             print(str(e))
 
-    os.makedirs(f"wvs_images/{scenario}/", exist_ok=True)
+    os.makedirs(f"vsm_images/{scenario}/", exist_ok=True)
 
     output_path = (
-        f"wvs_images/{scenario}/{specific_name}_heatmap.pdf"
+        f"vsm_images/{scenario}/{specific_name}_heatmap.pdf"
         if specific_name is not None
-        else f"wvs_images/{scenario}/{attribute}_heatmap.pdf"
+        else f"vsm_images/{scenario}/{attribute}_heatmap.pdf"
     )
     # csv_path = (
-    #     f"wvs_images/{scenario}/{specific_name}.csv"
+    #     f"vsm_images/{scenario}/{specific_name}.csv"
     #     if specific_name is not None
-    #     else f"wvs_images/{scenario}/{attribute}.csv"
+    #     else f"vsm_images/{scenario}/{attribute}.csv"
     # )
 
     plot_divergence_comparison_heatmap(
@@ -902,7 +679,7 @@ def display_comparison_heatmap(
     )
 
 
-def display_model_consistency_comparison(model_list, dialogue_topic: str = "career"):
+def display_model_consistency_comparison(model_list):
     """For generating heatmap figure
 
     Args:
@@ -912,13 +689,11 @@ def display_model_consistency_comparison(model_list, dialogue_topic: str = "care
     for model_label in model_list:
         try:
             with open(
-                f"wvs_values_results/{model_label}/experiments_results.json",
+                f"values_results/{model_label}/experiments_results_2.json",
                 "r",
                 encoding="utf-8",
             ) as jl_file:
-                experiments_results = json.load(jl_file)["cross_datasets_results"][
-                    dialogue_topic
-                ]
+                experiments_results = json.load(jl_file)["cross_datasets_results"]
                 ratio_dict[model_label] = experiments_results["per_user"]["ratios"]
         except Exception as e:
             print(model_label)
@@ -926,374 +701,111 @@ def display_model_consistency_comparison(model_list, dialogue_topic: str = "care
 
     model_comparison_stats = compare_models_stats(ratio_dict=ratio_dict)
 
-    os.makedirs("wvs_images/consistency_comparison/", exist_ok=True)
-
     with open(
-        f"wvs_images/consistency_comparison/{dialogue_topic}_comparison_results.json",
+        "vsm_images/consistency_comparison/consistency_comparison_results_2.json",
         "w",
         encoding="utf-8",
     ) as c_f:
         json.dump(model_comparison_stats, c_f, indent=2)
 
-    # plot_pairwise_comparison_heatmap_aligned(ratio_dict)
-
-    # output_path = f"wvs_images/consistency_comparison/{dialogue_topic}_heatmap.pdf"
-
-    # stats = plot_pairwise_map_only(
-    #     datasets=datasets,
-    #     model_names=model_list,
-    #     output_dir="wvs_images/consistency_comparison/",
-    # )
-
-    # print(stats["omnibus"])
-
-    # plot_divergence_comparison_heatmap(
-    #     datasets=datasets,
-    #     baselines=baselines,
-    #     labels=model_list,
-    #     cmap=cmap,
-    #     darker_is_larger=True,
-    #     emphasize_label="Human",
-    #     sort_by_defined_order=True,
-    #     defined_order=defined_order,
-    #     output_path=output_path,
-    # )
+    
 
 
 edu_group_to_abbrev = {
-    "Basic education": "BE",
-    "High school & equivalent": "HS",
-    "Short-cycle tertiary": "SCT",
-    "Bachelor": "BA",
-    "Master’s & Doctoral": "MD",
+    "High School": "HS",
+    "Bachelor's Degree": "BD",
+    "Master's Degree": "MD",
+    "PhD": "PHD"
 }
 
-occupation_group_to_abbrev = {
-    "Clerical & Sales": "CS",
-    "Skilled & Semi-Skilled": "SS",
-    "Service & Labor": "SL",
-    "Managerial / Professional": "MP",
-    "Agricultural Related": "AG",
-    "Unemployed / No Job": "NJ",
+dev_group_to_abbrev = {
+  "Developing": "DEV",
+  "Developed": "DEVD",
+  "Third World": "TW"
 }
 
-socioeconomic_group_to_abbrev_class = {
-    "Lower class": "LC",
-    "Working class": "WC",
-    "Lower middle class": "LMC",
-    "Upper middle class": "UMC",
-    "Upper class": "UC",
-    # "not sure" intentionally omitted; it will be filtered by unknown_groups
-}
 
 display_model_consistency_comparison(
     [
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
         "DeepSeek-V3",
         "Qwen2.5-7B-Instruct",
         "Qwen2.5-72B-Instruct",
         "QwQ-32B",
     ],
-    dialogue_topic="career",
-)
-
-display_model_consistency_comparison(
-    [
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    dialogue_topic="investment",
 )
 
 # BA User
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="highest_level_of_education",
-    scenario="ba_user",
-    specific_name="ba_user_education_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=edu_group_to_abbrev,
-)
 
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="age",
-    scenario="ba_user",
-    specific_name="ba_user_age_radar",
-    # pair_label_fontsize=14,
-)
-
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="socioeconomic_status",
-    scenario="ba_user",
-    specific_name="ba_user_socioeconomic_status_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=socioeconomic_group_to_abbrev_class,
-)
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="occupation_group",
-    scenario="ba_user",
-    specific_name="ba_user_occupation_group_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=occupation_group_to_abbrev,
-)
-
-# Career Dialogue
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="highest_level_of_education",
-    scenario="ba_dialogue_career",
-    specific_name="ba_dialogue_career_education_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=edu_group_to_abbrev,
-)
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="age",
-    scenario="ba_dialogue_career",
-    specific_name="ba_dialogue_career_age_radar",
-    # pair_label_fontsize=14,
-)
-
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="socioeconomic_status",
-    scenario="ba_dialogue_career",
-    specific_name="ba_dialogue_career_socioeconomic_status_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=socioeconomic_group_to_abbrev_class,
-)
-
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="occupation_group",
-    scenario="ba_dialogue_career",
-    specific_name="ba_dialogue_career_occupation_group_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=occupation_group_to_abbrev,
-)
-
-# Investment Dialogue
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="highest_level_of_education",
-    scenario="ba_dialogue_investment",
-    specific_name="ba_dialogue_investment_education_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=edu_group_to_abbrev,
-)
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="age",
-    scenario="ba_dialogue_investment",
-    specific_name="ba_dialogue_investment_age_radar",
-    # pair_label_fontsize=14,
-)
-
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="socioeconomic_status",
-    scenario="ba_dialogue_investment",
-    specific_name="ba_dialogue_investment_socioeconomic_status_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=socioeconomic_group_to_abbrev_class,
-)
-
-display_comparison(
-    [
-        "Human",
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    cmap="tab10",
-    attribute="occupation_group",
-    scenario="ba_dialogue_investment",
-    specific_name="ba_dialogue_investment_occupation_group_radar",
-    # pair_label_fontsize=14,
-    group_to_abbrev=occupation_group_to_abbrev,
-)
-
-# display_comparison_heatmap(
+# display_comparison(
 #     [
-#         "Human",
-#         "Llama-3.1-8B-Instruct",
-#         "Llama-3.1-70B-Instruct",
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
 #         "DeepSeek-V3",
 #         "Qwen2.5-7B-Instruct",
 #         "Qwen2.5-72B-Instruct",
 #         "QwQ-32B",
 #     ],
-#     cmap="viridis",
-#     attribute="age",
+#     cmap="tab10",
+#     attribute="Age",
 #     scenario="ba_user",
 #     specific_name="ba_user_age_radar",
-#     defined_order=["<30", "30-40", "40-50", "50-60", ">60"],
+#     # pair_label_fontsize=14,
 # )
 
 
-# display_comparison_heatmap(
+# display_comparison(
 #     [
-#         "Human",
-#         "Llama-3.1-8B-Instruct",
-#         "Llama-3.1-70B-Instruct",
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
 #         "DeepSeek-V3",
 #         "Qwen2.5-7B-Instruct",
 #         "Qwen2.5-72B-Instruct",
-#         # "QwQ-32B",
+#         "QwQ-32B",
 #     ],
-#     cmap="viridis",
-#     attribute="highest_level_of_education",
+#     cmap="tab10",
+#     attribute="Education Level",
 #     scenario="ba_user",
-#     # extra_rules=["<30", ">60"],
-#     specific_name="ba_user_education",
-#     defined_order=[
-#         "Basic education",
-#         "High school & equivalent",
-#         "Short-cycle tertiary",
-#         "Bachelor",
-#         "Master’s & Doctoral",
-#     ],
+#     specific_name="ba_user_education_radar",
+#     # pair_label_fontsize=14,
+#     group_to_abbrev=edu_group_to_abbrev,
 # )
 
-# display_comparison_heatmap(
+display_comparison(
+    [
+        "Llama3.1-8B-Instruct",
+        "Llama3.1-70B-Instruct",
+        "DeepSeek-V3",
+        "Qwen2.5-7B-Instruct",
+        "Qwen2.5-72B-Instruct",
+        "QwQ-32B",
+    ],
+    cmap="tab10",
+    attribute="Development",
+    scenario="ba_user",
+    specific_name="ba_user_development_radar",
+    # pair_label_fontsize=14,
+    group_to_abbrev=dev_group_to_abbrev,
+)
+
+
+# # Career Dialogue
+# display_comparison(
 #     [
-#         "Human",
-#         "Llama-3.1-8B-Instruct",
-#         "Llama-3.1-70B-Instruct",
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
 #         "DeepSeek-V3",
 #         "Qwen2.5-7B-Instruct",
 #         "Qwen2.5-72B-Instruct",
-#         # "QwQ-32B",
+#         "QwQ-32B",
 #     ],
-#     cmap="viridis",
-#     attribute="socioeconomic_status",
-#     scenario="ba_user",
-#     # extra_rules=["<30", ">60"],
-#     specific_name="ba_user_socioeconomic_status",
-#     defined_order=[
-#         "Lower class",
-#         "Working class",
-#         "Lower middle class",
-#         "Upper middle class",
-#         "Upper class",
-#     ],
+#     cmap="tab10",
+#     attribute="Education Level",
+#     scenario="ba_dialogue_career",
+#     specific_name="ba_dialogue_education_radar",
+#     # pair_label_fontsize=14,
+#     group_to_abbrev=edu_group_to_abbrev,
 # )
 
 # display_comparison(
@@ -1305,44 +817,11 @@ display_comparison(
 #         "Qwen2.5-72B-Instruct",
 #         "QwQ-32B",
 #     ],
-#     group_spacing=1.75,
 #     cmap="tab10",
-#     attribute="age",
-#     scenario="BA_user",
-#     # extra_rules=["<30", ">60"],
-#     specific_name="BA_user_age_radar",
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="education",
-#     scenario="BA_dialogue",
-#     specific_name="BA_dialogue_education_radar",
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="education",
-#     scenario="BA_user",
-#     specific_name="BA_user_education_radar",
+#     attribute="Age",
+#     scenario="ba_dialogue_career",
+#     specific_name="ba_dialogue_career_age_radar",
+#     # pair_label_fontsize=14,
 # )
 
 
@@ -1355,89 +834,12 @@ display_comparison(
 #         "Qwen2.5-72B-Instruct",
 #         "QwQ-32B",
 #     ],
-#     group_spacing=1.5,
 #     cmap="tab10",
-#     attribute="development_level",
-#     scenario="BA_dialogue",
-#     specific_name="BA_dialogue_development_level_radar",
-# )
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="development_level",
-#     scenario="BA_user",
-#     specific_name="BA_user_development_level_radar",
+#     attribute="Development",
+#     scenario="ba_dialogue_career",
+#     specific_name="ba_dialogue_career_development_radar",
+#     # pair_label_fontsize=14,
+#     group_to_abbrev=dev_group_to_abbrev,
 # )
 
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="position_level",
-#     scenario="BA_user",
-#     specific_name="BA_user_position_level_radar",
-# )
 
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.5,
-#     cmap="tab10",
-#     attribute="position_level",
-#     scenario="BA_dialogue",
-#     specific_name="BA_dialogue_position_level_radar",
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="job_category",
-#     scenario="BA_user",
-#     specific_name="BA_user_job_category_radar",
-#     # extra_rules=["Business", "Science"]
-# )
-
-# display_comparison(
-#     [
-#         "Llama3.1-8B-Instruct",
-#         "Llama3.1-70B-Instruct",
-#         "DeepSeek-V3",
-#         "Qwen2.5-7B-Instruct",
-#         "Qwen2.5-72B-Instruct",
-#         "QwQ-32B",
-#     ],
-#     group_spacing=1.75,
-#     cmap="tab10",
-#     attribute="job_category",
-#     scenario="BA_dialogue",
-#     specific_name="BA_dialogue_job_category_radar",
-# )

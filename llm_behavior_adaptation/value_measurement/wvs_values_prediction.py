@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import yaml
-from openai import AsyncOpenAI, Omit
+from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
@@ -57,6 +57,7 @@ class ValuesPredictionController:
         llm_server: str = "llm_platform",
         reasoning: bool = False,
         run_mode: str = "both",
+        extra_body: Dict = None,
     ) -> None:
         """
         Initialize the ValuesPredictionController.
@@ -142,16 +143,7 @@ class ValuesPredictionController:
                         },
                     }
                 ),
-                extra_body={
-                    "provider": {
-                        "only": [
-                            "deepinfra/bf16",
-                            "nebius/fp8",
-                            "siliconflow/fp8",
-                        ],
-                    }
-                    # {"sort": "price"}
-                },
+                extra_body=extra_body,
             )
         else:
             self.query_llm = partial(
@@ -165,9 +157,8 @@ class ValuesPredictionController:
                             "schema": Response.model_json_schema(),  # noqa: F821
                         },
                     }
-                    if not self.reasoning
-                    else Omit()
                 ),
+                **extra_body,
             )
         self.llm_server = llm_server
 
@@ -373,7 +364,7 @@ class ValuesPredictionController:
         llm_server = cfg.get("llm_server", "llm_platform")
 
         # Preserve your previous heuristic for base_url selection
-        if "gpt" in evaluated_model:
+        if "gpt" in evaluated_model and "oss" not in evaluated_model:
             openai_client = AsyncOpenAI(api_key=api_key)
         else:
             base_url = (
@@ -398,6 +389,7 @@ class ValuesPredictionController:
             verbose=int(cfg.get("verbose", 0) or 0),
             reasoning=bool(cfg.get("reasoning", False)),
             run_mode=(cfg.get("run_mode") or "both"),
+            extra_body=(cfg.get("extra_body") or None),
         )
 
     # ---------- Orchestration ----------
@@ -422,8 +414,6 @@ class ValuesPredictionController:
     def _prompt(self, key: str) -> list[dict]:
         if key not in self.prompts:
             raise KeyError(f"Missing prompt '{key}'")
-        # if self.reasoning:
-        #     key = f"{key}_reasoning"
         return deepcopy(self.prompts[key])
 
     async def _llm_output_processing(self, full_messages, reasoning=None):
@@ -433,30 +423,9 @@ class ValuesPredictionController:
                 full_chat_response = await self.query_llm(
                     messages=full_messages,
                     temperature=0.6,  # default setting for reasoning model
-                    max_tokens=2048,
+                    max_completion_tokens=2048,
                 )
 
-                # reasoning_response = await self.query_llm(
-                #     messages=full_messages,
-                #     temperature=0.6,  # default setting for reasoning model
-                #     max_tokens=4096,
-                # )
-
-                # reasoning_content = reasoning_response.choices[
-                #     0
-                # ].message.reasoning_content
-
-                # full_messages.append(
-                #     {
-                #         "role": "assistant",
-                #         "content": f"<think>\n{reasoning_content}\n</think>\n",
-                #     },
-                #     {
-                #         "role": "user",
-                #         "content": '## Output Format\nReturn a single JSON object with *exactly* the following two fields, in this order:\n- "option_id": An integer indicating the selected option.\n- "reason": A string offering the rationale for your selection.\n\nNo other fields are permitted in the response. Keys must maintain the order specified:\n\n{\n  "option_id": int,\n  "reason": str\n}',
-                #     },
-                # )
-                # print(reasoning_response)
             else:
                 full_chat_response = await self.query_llm(messages=full_messages)
             content = full_chat_response.choices[0].message.content
@@ -474,9 +443,12 @@ class ValuesPredictionController:
             reason_for_selection = json_output.get("reason", "")
 
             if reasoning:
-                reasoning_content = full_chat_response.choices[
-                    0
-                ].message.reasoning_content
+                if self.llm_server == "llm_platform":
+                    reasoning_content = full_chat_response.choices[0].message.reasoning
+                else:
+                    reasoning_content = full_chat_response.choices[
+                        0
+                    ].message.reasoning_content
                 reason_for_selection = (
                     f"reasoning:{reasoning_content}\n\n{reason_for_selection}"
                 )

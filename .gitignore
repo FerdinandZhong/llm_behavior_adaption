@@ -186,7 +186,6 @@ datasets/wvs_generated_dialogues/**
 !datasets/wvs_generated_dialogues/investment_advice/all_samples.jsonl
 !datasets/wvs_generated_dialogues/career_advice/all_samples.jsonl
 llm_behavior_adaptation/value_measurement/values_prediction_configs/**
-wvs_images/**
 
 wvs_values_results/*
 
@@ -195,3 +194,6 @@ wvs_values_results/*
 
 # …and keep only files named total_1000.jsonl
 !wvs_values_results/**/total_1000.jsonl
+
+vsm_images/**/**2.json
+values_results/**/**2.json

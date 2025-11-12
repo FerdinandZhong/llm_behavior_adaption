@@ -261,6 +261,45 @@ def emd_distance(
     return float(d)
 
 
+def emd_distance_vsm(
+    a: List[int],
+    b: List[int],
+    normalize: bool = True,
+    *,
+    skip_out_of_range: bool = True,
+) -> float:
+    """Compute normalized EMD (L1 on ordinal scales) between two answer vectors.
+    Assumes caller filtered out NaN/None/inf vectors; still guards per-question.
+    """
+    d = 0.0
+    for av, bv in zip(a, b):
+        lo = 1
+        hi = 5
+
+        # per-question guard (should rarely trigger after prefilter)
+        if not (_is_finite_scalar(av) and _is_finite_scalar(bv)):
+            continue
+
+        try:
+            ai = int(float(av))
+            bi = int(float(bv))
+        except Exception as e:
+            print(str(e))
+            continue
+
+        if skip_out_of_range:
+            if not (lo <= ai <= hi and lo <= bi <= hi):
+                continue
+        else:
+            ai = min(hi, max(lo, ai))
+            bi = min(hi, max(lo, bi))
+
+        diff = abs(ai - bi)
+        d += (diff / (hi - lo)) if (normalize and hi > lo) else diff
+
+    return float(d)
+
+
 def emd_medoid_skip_nan(
     vectors: Sequence[Mapping[str, Any]],
     question_metadata: Mapping[str, Mapping[str, Any]],
@@ -393,5 +432,45 @@ def componentwise_centroid(
             med = min(hi, max(lo, med))
 
         centroid[q] = med
+
+    return centroid
+
+
+def componentwise_centroid_vsm(
+    vectors: Sequence[List[int]],
+) -> List[int]:
+    """
+    Compute the component-wise centroid for a cluster:
+    - per question, take the median of valid answers;
+    - when there are two middle values, take their average and round();
+    - clamp the result to [answer_scale_min, answer_scale_max].
+
+    Returns:
+        Dict[qid, int]: centroid answer per question.
+    """
+    centroid: List[int] = []
+
+    questions_length = len(vectors[0])
+
+    lo = 1
+    hi = 5
+    for q_idx in range(questions_length):
+        vals = [vector[q_idx] for vector in vectors]
+
+        if not vals:
+            continue
+
+        vals = np.sort(np.asarray(vals, dtype=int))
+        m = len(vals)
+        if m % 2 == 1:
+            med = int(vals[m // 2])
+        else:
+            # always use "round" for the tie
+            lower = int(vals[m // 2 - 1])
+            upper = int(vals[m // 2])
+            med = int(round((lower + upper) / 2))
+            med = min(hi, max(lo, med))
+
+        centroid.append(med)
 
     return centroid

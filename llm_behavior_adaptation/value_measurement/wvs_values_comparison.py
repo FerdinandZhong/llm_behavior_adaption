@@ -6,7 +6,7 @@ import random
 import sys
 from collections import OrderedDict
 from copy import deepcopy
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional
 
 import numpy as np
 import pandas as pd
@@ -359,6 +359,60 @@ class ValuesComparison:
                 ordered["Unknown"] = grouped["Unknown"]
             return ordered
 
+        if target_col.lower() == "occupation_group":
+            bins_to_labels = OrderedDict(
+                {
+                    "Clerical & Sales": [
+                        "Clerical",
+                        "Sales",
+                    ],
+                    "Skilled & Semi-Skilled": [
+                        "Skilled worker",
+                        "Semi-skilled worker",
+                    ],
+                    "Service & Labor": [
+                        "Service",
+                        "Unskilled worker",
+                    ],
+                    "Managerial / Professional": [
+                        "Higher administrative",
+                        "Professional and technical",
+                    ],
+                    "Agricultural Related": [
+                        "Farm worker",
+                        "Farm owner, farm manager",
+                    ],
+                    "No Job": [
+                        "Never had a job",
+                    ],
+                }
+            )
+            # Reverse lookup: raw label -> bin name (exact match)
+            label_to_bin = {
+                lbl: bin_name
+                for bin_name, labels in bins_to_labels.items()
+                for lbl in labels
+            }
+            tmp_col = "_occupation_bin"
+            df = self.user_profile_dataset.copy()
+            df[tmp_col] = df[target_col].map(label_to_bin)
+
+            if include_unknown:
+                df[tmp_col] = df[tmp_col].fillna("Unknown")
+
+            grouped = (
+                df.dropna(subset=[tmp_col])
+                .groupby(tmp_col, sort=False)
+                .apply(lambda x: x.index.tolist())
+                .to_dict()
+            )
+
+            # Keep bins in the desired order, append Unknown last (if any)
+            ordered = {k: grouped[k] for k in bins_to_labels.keys() if k in grouped}
+            if include_unknown and "Unknown" in grouped:
+                ordered["Unknown"] = grouped["Unknown"]
+            return ordered
+
         # --- Fallback: group by the raw values of the target column ---
         grouped = (
             df.groupby(target_col, sort=False)
@@ -366,6 +420,94 @@ class ValuesComparison:
             .to_dict()
         )
         return grouped
+
+    def _rank_average(self, a: np.ndarray) -> np.ndarray:
+        """
+        Return average ranks (1..n) for array a, handling ties.
+        """
+        order = np.argsort(a, kind="mergesort")
+        ranks = np.empty_like(order, dtype=float)
+        ranks[order] = np.arange(1, a.size + 1, dtype=float)
+
+        # Handle ties by averaging ranks for equal values
+        # Find run starts/ends of equal values in sorted array
+        sorted_a = a[order]
+        diffs = np.concatenate(([True], sorted_a[1:] != sorted_a[:-1], [True]))
+        boundaries = np.flatnonzero(diffs)
+        for i in range(len(boundaries) - 1):
+            start, end = boundaries[i], boundaries[i + 1]
+            if end - start > 1:  # tie block
+                avg_rank = ranks[order][start:end].mean()
+                ranks[order][start:end] = avg_rank
+        return ranks
+
+    def _vector_correlation(
+        self,
+        human_result: Iterable[float],
+        model_result: Iterable[float],
+        method: Literal["pearson", "spearman"] = "pearson",
+        nan_policy: Literal["raise", "omit"] = "omit",
+    ) -> float:
+        """
+        Compute correlation between two dictionaries mapping question IDs to numeric answers.
+
+        Args:
+            human_result: Dict like {"Q1": number, ...}. Considered the reference (ground truth).
+            model_result: Dict like {"Q1": number, ...}. Compared against the human result.
+            method: "pearson" (linear correlation; scale/shift invariant) or
+                    "spearman" (rank correlation; robust to monotonic nonlinearities).
+            nan_policy:
+                - "raise": error if any NaN/inf present
+                - "omit": drop pairs where either side is NaN/inf
+
+        Behavior:
+            - Uses only the intersection of keys present in BOTH dicts.
+            - If fewer than 2 valid pairs remain, returns np.nan.
+            - Different attribute ranges (e.g., 0–10 vs 0–5) do NOT affect Pearson/Spearman.
+
+        Returns:
+            Correlation coefficient in [-1, 1], or np.nan if undefined.
+        """
+        if not human_result or not model_result:
+            return float("nan")
+
+        keys = sorted(set(human_result.keys()) & set(model_result.keys()))
+        if len(keys) < 2:
+            return float("nan")
+
+        # Convert to aligned numeric arrays
+        try:
+            x = np.array([float(human_result[k]) for k in keys], dtype=float)
+            y = np.array([float(model_result[k]) for k in keys], dtype=float)
+        except Exception as e:
+            raise ValueError(f"All values must be numeric-castable. Error: {e}") from e
+
+        # Handle NaNs/inf
+        mask = np.isfinite(x) & np.isfinite(y)
+        if nan_policy == "raise" and not np.all(mask):
+            bad_idx = [keys[i] for i in np.where(~mask)[0]]
+            raise ValueError(f"NaN or inf at keys: {bad_idx}")
+        elif nan_policy == "omit":
+            x, y = x[mask], y[mask]
+            if x.size < 2:
+                return float("nan")
+
+        if method == "spearman":
+            x = self._rank_average(x)
+            y = self._rank_average(y)
+
+        # Guard constant vectors
+        if np.allclose(x, x[0]) or np.allclose(y, y[0]):
+            return float("nan")
+
+        # Numerically stable Pearson correlation
+        x_dev = x - x.mean()
+        y_dev = y - y.mean()
+        denom = np.sqrt(np.dot(x_dev, x_dev) * np.dot(y_dev, y_dev))
+        if denom == 0:
+            return float("nan")
+        r = float(np.dot(x_dev, y_dev) / denom)
+        return max(-1.0, min(1.0, r))
 
     def _get_user_id_list_for_groups(
         self, target_col: str, include_unknown: bool = False
@@ -444,6 +586,62 @@ class ValuesComparison:
             }
 
             tmp_col = "_edu_bin"
+            df = self.user_profile_dataset.copy()
+            df[tmp_col] = df[target_col].map(label_to_bin)
+
+            if include_unknown:
+                df[tmp_col] = df[tmp_col].fillna("Unknown")
+
+            grouped = (
+                df.dropna(subset=[tmp_col])
+                .groupby(tmp_col, sort=False)
+                .apply(lambda x: [str(d_id) for d_id in x["D_INTERVIEW"].tolist()])
+                .to_dict()
+            )
+
+            # Keep bins in desired order; append Unknown last (if any)
+            ordered = {k: grouped[k] for k in bins_to_labels.keys() if k in grouped}
+            if include_unknown and "Unknown" in grouped:
+                ordered["Unknown"] = grouped["Unknown"]
+            return ordered
+
+        # Occupation
+        if target_col == "occupation_group":
+            bins_to_labels = OrderedDict(
+                {
+                    "Clerical & Sales": [
+                        "Clerical",
+                        "Sales",
+                    ],
+                    "Skilled & Semi-Skilled": [
+                        "Skilled worker",
+                        "Semi-skilled worker",
+                    ],
+                    "Service & Labor": [
+                        "Service",
+                        "Unskilled worker",
+                    ],
+                    "Managerial / Professional": [
+                        "Higher administrative",
+                        "Professional and technical",
+                    ],
+                    "Agricultural Related": [
+                        "Farm worker",
+                        "Farm owner, farm manager",
+                    ],
+                    "No Job": [
+                        "Never had a job",
+                    ],
+                }
+            )
+            # Reverse lookup: raw label -> bin name (exact match)
+            label_to_bin = {
+                lbl: bin_name
+                for bin_name, labels in bins_to_labels.items()
+                for lbl in labels
+            }
+
+            tmp_col = "_occupation_bin"
             df = self.user_profile_dataset.copy()
             df[tmp_col] = df[target_col].map(label_to_bin)
 
@@ -659,14 +857,25 @@ class ValuesComparison:
         """
         Core computation for ID-matched divergences between two datasets A and B.
         Always shows a tqdm progress bar.
-        """
-        from tqdm import tqdm
 
+        Returns:
+            {
+            "user_ids": [uid, ...],                       # deterministic order
+            "per_user_divergences": [float, ...],          # aligned with user_ids
+            "per_user_map": {uid: float, ...},             # convenience mapping
+            "divergences": [float, ...],                   # same as per_user_divergences
+            "n_pairs": int,
+            "n_users_only": int,
+            "n_dialogues_only": int,
+            }
+        """
         a_ids = set(dist_a.keys())
         b_ids = set(dist_b.keys())
-        common_ids = list(set(ids) if ids is not None else (a_ids & b_ids))
+        base_ids = set(ids) if ids is not None else (a_ids & b_ids)
+        common_ids = sorted(base_ids)  # <- deterministic ordering
 
-        divergences: List[float] = []
+        per_user_divergences: List[float] = []
+        per_user_map: Dict[str, float] = {}
 
         for uid in tqdm(
             common_ids,
@@ -679,10 +888,52 @@ class ValuesComparison:
             b = dist_b.get(uid)
             if a is None or b is None:
                 continue
-            divergences.append(emd_distance(a, b, self.all_questions))
+            d = emd_distance(a, b, self.all_questions)
+            per_user_divergences.append(d)
+            per_user_map[uid] = d
 
         return {
-            "divergences": divergences,
+            "user_ids": common_ids,
+            "per_user_divergences": per_user_divergences,
+            "per_user_map": per_user_map,
+            "divergences": per_user_divergences,  # kept for backward compat
+            "n_pairs": len(common_ids),
+            "n_users_only": len(a_ids - b_ids),
+            "n_dialogues_only": len(b_ids - a_ids),
+        }
+
+    def _compute_id_matched_correlation(
+        self,
+        dist_a: Mapping[str, Mapping[str, int]],
+        dist_b: Mapping[str, Mapping[str, int]],
+        ids: Optional[Iterable[str]] = None,
+        method: Literal["pearson", "spearman"] = "pearson",
+    ) -> Dict[str, object]:
+        """
+        Core computation for ID-matched divergences between two datasets A and B.
+        Always shows a tqdm progress bar.
+        """
+        a_ids = set(dist_a.keys())
+        b_ids = set(dist_b.keys())
+        common_ids = list(set(ids) if ids is not None else (a_ids & b_ids))
+
+        correlations: List[float] = []
+
+        for uid in tqdm(
+            common_ids,
+            total=len(common_ids),
+            desc=f"{method.capitalize()} Correlation (ID-matched A↔B)",
+            unit="id",
+            leave=False,
+        ):
+            a = dist_a.get(uid)
+            b = dist_b.get(uid)
+            if a is None or b is None:
+                continue
+            correlations.append(self._vector_correlation(a, b, method))
+
+        return {
+            "correlations": correlations,
             "n_pairs": len(common_ids),
             "n_users_only": len(a_ids - b_ids),  # kept for backward compat
             "n_dialogues_only": len(b_ids - a_ids),  # kept for backward compat
@@ -695,39 +946,51 @@ class ValuesComparison:
         *,
         picks: int = 2,
         exclude_self: bool = True,
+        seed: int = 42,  # <- NEW: deterministic seed
         rng: Optional[random.Random] = None,
     ) -> Dict[str, object]:
         """
         Baseline: for each id in A, compare to `picks` random ids from B (prefer non-self),
         average the distances per id, then return per-id means and counts.
         Always shows a tqdm progress bar.
+
+        Returns:
+            {
+            "user_ids": [uid, ...],                        # users for which baseline was computed
+            "per_user_means": [float, ...],                # aligned with user_ids
+            "per_user_map": {uid: float, ...},             # convenience mapping
+            "n_users": int,
+            "n_dialogue_pool": int,
+            "n_effective_users": int,
+            }
         """
-        from tqdm import tqdm
-
+        # deterministic RNG + deterministic ordering of IDs/candidates
         if rng is None:
-            rng = random
+            rng = random.Random(seed)
 
-        a_ids = list(dist_a.keys())
-        b_ids_all = list(dist_b.keys())
+        a_ids_all = sorted(dist_a.keys())
+        b_ids_all = sorted(dist_b.keys())
 
         per_user_means: List[float] = []
+        per_user_map: Dict[str, float] = []
+        user_ids_effective: List[str] = []
 
-        # Show an immediate (possibly zero-length) bar for clarity
         progress_iter = tqdm(
-            a_ids,
-            total=len(a_ids),
+            a_ids_all,
+            total=len(a_ids_all),
             desc="Baseline EMD (A vs random B)",
             unit="id",
             leave=False,
         )
 
         if not b_ids_all:
-            # still consume the iterator to render a completed bar
             for _ in progress_iter:
                 pass
             return {
-                "per_user_means": per_user_means,
-                "n_users": len(a_ids),
+                "user_ids": [],
+                "per_user_means": [],
+                "per_user_map": {},
+                "n_users": len(a_ids_all),
                 "n_dialogue_pool": 0,
                 "n_effective_users": 0,
             }
@@ -744,7 +1007,7 @@ class ValuesComparison:
                     # No candidate at all for this uid
                     continue
 
-            # Sample B ids
+            # Sample B ids (deterministic given seed + sorted candidates)
             if len(candidates) >= picks:
                 match_ids = rng.sample(candidates, picks)  # without replacement
             else:
@@ -757,11 +1020,17 @@ class ValuesComparison:
                 b_dist = dist_b[bid]
                 dists.append(emd_distance(a_dist, b_dist, self.all_questions))
 
-            per_user_means.append(float(np.mean(dists)))
+            mean_d = float(np.mean(dists))
+            per_user_means.append(mean_d)
+            user_ids_effective.append(uid)
+
+        per_user_map = {uid: m for uid, m in zip(user_ids_effective, per_user_means)}
 
         return {
+            "user_ids": user_ids_effective,
             "per_user_means": per_user_means,
-            "n_users": len(a_ids),
+            "per_user_map": per_user_map,
+            "n_users": len(a_ids_all),
             "n_dialogue_pool": len(b_ids_all),
             "n_effective_users": len(per_user_means),
         }
@@ -777,12 +1046,11 @@ class ValuesComparison:
             getattr(self, dialogue_attr)
         )
 
-        # Compute core results first (no I/O)
         core = self._compute_id_matched_divergences(
             user_distributions, dialogue_distributions
         )
 
-        divergences: List[float] = core["divergences"]
+        divergences: List[float] = core["per_user_divergences"]
         if not divergences:
             return {
                 "avg_divergence": float("nan"),
@@ -790,6 +1058,9 @@ class ValuesComparison:
                 "n_pairs": core["n_pairs"],
                 "n_users_only": core["n_users_only"],
                 "n_dialogues_only": core["n_dialogues_only"],
+                "user_ids": core["user_ids"],
+                # "per_user_divergences": [],
+                "per_user_map": {},
             }
 
         return {
@@ -798,30 +1069,35 @@ class ValuesComparison:
             "n_pairs": core["n_pairs"],
             "n_users_only": core["n_users_only"],
             "n_dialogues_only": core["n_dialogues_only"],
+            # NEW: expose per-user
+            "user_ids": core["user_ids"],
+            # "per_user_divergences": divergences,
+            "per_user_map": core["per_user_map"],
         }
 
     def cross_datasets_divergences_baseline_id_based(
         self,
         dialogue_type: str,
+        *,
+        seed: int = 42,  # <- NEW: pass a fixed seed so it’s consistent across models
     ):
         """
         Baseline: for each user, compare to 2 random dialogue users (preferring j != i),
-        average the two EMDs, then aggregate mean/std across users. Includes optional progress bar.
+        average the two EMDs, then aggregate mean/std across users. Includes progress bar.
         """
-        # Build id -> {qid: option_id} dicts
         user_distributions = self._pick_model_results_option_id(self.ba_user_results)
         dialogue_attr = f"ba_dialogue_{dialogue_type}_results"
         dialogue_distributions = self._pick_model_results_option_id(
             getattr(self, dialogue_attr)
         )
 
-        # Core computation (no I/O)
         core = self._compute_baseline_two_random_matches(
             user_distributions,
             dialogue_distributions,
             picks=2,
             exclude_self=True,
-            rng=random,
+            seed=seed,  # <- deterministic random baseline
+            rng=None,  # let function build rng from seed
         )
 
         per_user_means: List[float] = core["per_user_means"]
@@ -832,6 +1108,9 @@ class ValuesComparison:
                 "n_users": core["n_users"],
                 "n_dialogue_pool": core["n_dialogue_pool"],
                 "n_effective_users": core["n_effective_users"],
+                "user_ids": core["user_ids"],
+                # "per_user_baselines": [],
+                "per_user_map": {},
             }
 
         return {
@@ -840,6 +1119,10 @@ class ValuesComparison:
             "n_users": core["n_users"],
             "n_dialogue_pool": core["n_dialogue_pool"],
             "n_effective_users": core["n_effective_users"],
+            # NEW: expose per-user
+            "user_ids": core["user_ids"],
+            # "per_user_baselines": per_user_means,
+            "per_user_map": core["per_user_map"],
         }
 
     def compute_results_against_human(self):
@@ -868,13 +1151,28 @@ class ValuesComparison:
             )
             baseline_per_user_means: List[float] = baseline_core["per_user_means"]
 
+            pearson_correlations = self._compute_id_matched_correlation(
+                human_results_distributions,
+                self._pick_model_results_option_id(
+                    getattr(self, f"{results_type}_results")
+                ),
+                method="pearson",
+            )
+            spearman_correlations = self._compute_id_matched_correlation(
+                human_results_distributions,
+                self._pick_model_results_option_id(
+                    getattr(self, f"{results_type}_results")
+                ),
+                method="spearman",
+            )
+
             results_dict[f"{results_type}_against_human"] = {
                 "distance": {
                     "avg_divergence": float(np.mean(divergences)),
                     "std_divergence": float(np.std(divergences)),
-                    "n_users": core["n_pairs"],
-                    "n_dialogue_pool": core["n_users_only"],
-                    "n_effective_users": core["n_dialogues_only"],
+                    "n_pairs": core["n_pairs"],
+                    "n_user_only": core["n_users_only"],
+                    "n_dialogue_only": core["n_dialogues_only"],
                 },
                 "baseline": {
                     "avg_divergence": float(np.mean(baseline_per_user_means)),
@@ -894,6 +1192,34 @@ class ValuesComparison:
                 ],
                 3,
             )
+
+            results_dict[f"{results_type}_against_human"][
+                "correlation_with_human_pearson"
+            ] = {
+                "avg_correlation": float(
+                    np.nanmean(pearson_correlations["correlations"])
+                ),
+                "median_correlation": float(
+                    np.nanmedian(pearson_correlations["correlations"])
+                ),
+                "n_pairs": pearson_correlations["n_pairs"],
+                "n_users_only": pearson_correlations["n_users_only"],
+                "n_dialogues_only": pearson_correlations["n_dialogues_only"],
+            }
+
+            results_dict[f"{results_type}_against_human"][
+                "correlation_with_human_spearman"
+            ] = {
+                "avg_correlation": float(
+                    np.nanmean(spearman_correlations["correlations"])
+                ),
+                "median_correlation": float(
+                    np.nanmedian(spearman_correlations["correlations"])
+                ),
+                "n_users": spearman_correlations["n_pairs"],
+                "n_users_only": spearman_correlations["n_users_only"],
+                "n_dialogues_only": spearman_correlations["n_dialogues_only"],
+            }
 
         return results_dict
 
@@ -921,8 +1247,6 @@ class ValuesComparison:
             for q_key, q_selection in user_answers.items():
                 one_user_answers[q_key] = q_selection["option_id"]
             all_samples.append(one_user_answers)
-
-        print(all_samples[:2])
 
         global_centroid = componentwise_centroid(all_samples, self.all_questions)
 
@@ -1038,15 +1362,40 @@ if __name__ == "__main__":
 
             cross_datasets_results = {}
             for topic in ["career", "investment"]:
-                cross_datasets_results[topic] = {
-                    "distance": vc.cross_datasets_divergences_id_based(topic),
-                    "baseline": vc.cross_datasets_divergences_baseline_id_based(topic),
-                }
-                cross_datasets_results[topic]["ratio"] = round(
-                    cross_datasets_results[topic]["distance"]["avg_divergence"]
-                    / cross_datasets_results[topic]["baseline"]["avg_divergence"],
-                    3,
+                dist_res = vc.cross_datasets_divergences_id_based(topic)
+                base_res = vc.cross_datasets_divergences_baseline_id_based(
+                    topic, seed=42
                 )
+
+                # Build per-user ratios aligned by intersection of ids
+                ids_dist = set(dist_res.pop("user_ids"))
+                ids_base = set(base_res.pop("user_ids"))
+                common = sorted(ids_dist & ids_base)
+
+                dist_user_map = dist_res.pop("per_user_map")
+                per_user_div = [dist_user_map[uid] for uid in common]
+
+                base_user_map = base_res.pop("per_user_map")
+                per_user_base = [base_user_map[uid] for uid in common]
+                per_user_ratio = [
+                    d / b if b != 0 else float("nan")
+                    for d, b in zip(per_user_div, per_user_base)
+                ]
+
+                cross_datasets_results[topic] = {
+                    "distance": dist_res,
+                    "baseline": base_res,
+                    "ratio": round(
+                        dist_res["avg_divergence"] / base_res["avg_divergence"], 3
+                    ),
+                    # NEW: per-user outputs for downstream stats (paired t-test etc.)
+                    "per_user": {
+                        "user_ids": common,
+                        "divergences": per_user_div,
+                        # "baselines": per_user_base,
+                        "ratios": per_user_ratio,
+                    },
+                }
 
             final_outputs["cross_datasets_results"] = cross_datasets_results
 
