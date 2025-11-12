@@ -24,9 +24,9 @@ Repository for paper `Evaluating LLM Adaptation to Sociodemographic Factors: Use
 
 ## Dataset Generation
 
-The dataset consisting of 1000 generated dialogues [dataset](https://github.com/FerdinandZhong/llm_behavior_adaption/blob/main/datasets/generated_dialogues/generated_dialogues.jsonl) is open for usage.
+The dataset consisting of 1000 generated dialogues [dataset](https://anonymous.4open.science/r/llm_behavior_adaption-4591/datasets/generated_dialogues/generated_dialogues.jsonl) is open for usage.
 
-Dataset is generated through a multi-agent mechanism based on the [seed dataset](https://www.kaggle.com/datasets/wvs_benchmarks/sampled_demographic_features.csv)
+Dataset is generated through a multi-agent mechanism based on the [seed dataset](https://anonymous.4open.science/r/llm_behavior_adaption-4591/datasets/wvs_benchmarks/sampled_demographic_features.csv)
 
 ![Figure: Dataset Generation](https://anonymous.4open.science/r/llm_behavior_adaption-4591/images/DataGen.png)
 
