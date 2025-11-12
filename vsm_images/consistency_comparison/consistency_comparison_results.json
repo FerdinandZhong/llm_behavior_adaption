@@ -1,0 +1,44 @@
+[
+  {
+    "model": "Qwen2.5-72B-Instruct",
+    "mean_ratio": 0.9470332039096543,
+    "std_ratio": 0.3574642835896848,
+    "p_vs_best": null,
+    "cohen_d_vs_best": null
+  },
+  {
+    "model": "DeepSeek-V3",
+    "mean_ratio": 0.9976765301863599,
+    "std_ratio": 0.32392793937959496,
+    "p_vs_best": 0.00015530977316019932,
+    "cohen_d_vs_best": 0.10517465328197353
+  },
+  {
+    "model": "QwQ-32B",
+    "mean_ratio": 0.9996424324471539,
+    "std_ratio": 0.42718477355016204,
+    "p_vs_best": 0.012263859019748002,
+    "cohen_d_vs_best": 0.09579663148080197
+  },
+  {
+    "model": "Llama3.1-8B-Instruct",
+    "mean_ratio": 1.0063676624388158,
+    "std_ratio": 0.2985940155274265,
+    "p_vs_best": 1.1851944605826405e-05,
+    "cohen_d_vs_best": 0.1265545971403298
+  },
+  {
+    "model": "Qwen2.5-7B-Instruct",
+    "mean_ratio": 1.017537748183152,
+    "std_ratio": 0.3147348529493015,
+    "p_vs_best": 8.255042331788955e-08,
+    "cohen_d_vs_best": 0.15232518661276714
+  },
+  {
+    "model": "Llama3.1-70B-Instruct",
+    "mean_ratio": 1.0257608367162265,
+    "std_ratio": 0.3394129669333965,
+    "p_vs_best": 4.1567047285441344e-08,
+    "cohen_d_vs_best": 0.164068294617961
+  }
+]

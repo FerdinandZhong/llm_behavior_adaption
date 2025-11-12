@@ -1,5 +1,4 @@
-"""values prediction
-"""
+"""values prediction"""
 
 import argparse
 import asyncio

@@ -1,5 +1,4 @@
-"""Generated Questions Evaluation
-"""
+"""Generated Questions Evaluation"""
 
 import argparse
 import asyncio

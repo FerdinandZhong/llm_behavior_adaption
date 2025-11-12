@@ -1,10 +1,9 @@
-"""Measurement utils file
-"""
+"""Measurement utils file"""
 
 import numpy as np
 import pycountry
 import pycountry_convert as pc
-from transformers import pipeline
+# from transformers import pipeline
 
 from llm_behavior_adaptation.value_measurement.constant import (
     COUNTRY_TO_CULTURE,

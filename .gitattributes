@@ -12,3 +12,5 @@ datasets/generated_dialogues/first_1000_rows.jsonl filter=lfs diff=lfs merge=lfs
 values_results/ filter=lfs diff=lfs merge=lfs -text
 datasets/seed_dataset.csv filter=lfs diff=lfs merge=lfs -text
 datasets/generated_dialogues/generated_dialogues.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/wvs_generated_dialogues/career_advice/all_samples.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/wvs_generated_dialogues/investment_advice/all_samples.jsonl filter=lfs diff=lfs merge=lfs -text
