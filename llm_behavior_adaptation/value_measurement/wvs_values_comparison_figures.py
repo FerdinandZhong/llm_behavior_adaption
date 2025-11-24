@@ -382,64 +382,52 @@ def plot_divergence_comparison_radar(
     output_path=None,
     csv_path=None,
     cmap="tab20",
-    label_pad=-5,  # kept for backward compatibility (no effect now)
     *,
-    pair_label_fontsize=None,  # if None: auto
-    label_radius_pad=0.12,  # how far beyond max radius to place labels (fraction)
-    label_outline=True,  # add white outline to label text
-    group_to_abbrev=None,  # e.g., {"Lower class": "LC", ...}
-    unknown_groups=("not sure",),  # filter these (case-insensitive) at draw time
+    pair_label_fontsize=None,
+    label_radius_pad=0.01, # Changed: Reduced from 0.05 to 0.01 for closer fit
+    label_outline=True,
+    group_to_abbrev=None,
+    unknown_groups=("not sure",),
 ):
     """
-    Radar chart for ratio-over-baseline divergences.
-    - Inputs are reordered so 'Human' is first (if present).
-    - Keeps original groups (no merging).
-    - Filters pairs that include any label in `unknown_groups`.
-    - Uses abbreviations for spoke labels if `group_to_abbrev` provided.
+    Optimized Radar chart.
+    - Labels are attached closely to the outer line.
     """
 
     # ---- Validation ----
     if not (len(datasets) == len(baselines) == len(labels)):
         raise ValueError("All input lists must have equal length")
 
-    # ---- Reorder models so 'Human' is first (others keep relative order) ----
+    # ---- Reorder models so 'Human' is first ----
     if "Human" in labels:
         h_idx = labels.index("Human")
         order = [h_idx] + [i for i in range(len(labels)) if i != h_idx]
         labels = [labels[i] for i in order]
         baselines = [baselines[i] for i in order]
         datasets = [datasets[i] for i in order]
-    # else: keep as-is
 
     # ---- Baselines & model count ----
     baselines = [b["overall_baseline"] for b in baselines]
     n_models = len(datasets)
-
-    # Prepare unknown set for quick match
     unknown_set = {u.strip().lower() for u in (unknown_groups or ())}
 
+    # ---- Helper functions ----
     def _canon_pair_full(s: str) -> str:
-        """Normalize to 'A vs B' (full names)."""
         return s.replace("--", " vs ").strip()
 
     def _split_pair(pair_full: str):
-        """Return (left, right) full labels; right can be None if no separator."""
         if " vs " in pair_full:
             l, r = pair_full.split(" vs ", 1)
             return l.strip(), r.strip()
         return pair_full.strip(), None
 
     def _is_unknown_pair(pair_full: str) -> bool:
-        """True if any side is in unknown_set (case-insensitive)."""
         l, r = _split_pair(pair_full)
-        if l and l.lower() in unknown_set:
-            return True
-        if r and r.lower() in unknown_set:
+        if (l and l.lower() in unknown_set) or (r and r.lower() in unknown_set):
             return True
         return False
 
     def _pair_to_abbrev(pair_full: str) -> str:
-        """Convert 'A vs B' -> 'ABBR(A) vs ABBR(B)' if mapping provided."""
         if not group_to_abbrev:
             return pair_full
         l, r = _split_pair(pair_full)
@@ -449,7 +437,7 @@ def plot_divergence_comparison_radar(
         ra = group_to_abbrev.get(r, r)
         return f"{la} vs {ra}"
 
-    # ---- Collect unique FULL group pairs (skip unknown) ----
+    # ---- Collect unique FULL group pairs ----
     all_pairs_full = set()
     for data in datasets:
         for item in data:
@@ -461,7 +449,11 @@ def plot_divergence_comparison_radar(
     sorted_pairs_full = sorted(all_pairs_full)
     n_groups = len(sorted_pairs_full)
 
-    # ---- Values (ratios), indexed by FULL pairs ----
+    if n_groups == 0:
+        print("Warning: No valid groups found to plot.")
+        return None, None
+
+    # ---- Values (ratios) ----
     values = np.zeros((n_models, n_groups))
     for mi, data in enumerate(datasets):
         base = baselines[mi]
@@ -473,10 +465,9 @@ def plot_divergence_comparison_radar(
             div = float(item["compared_details"]["average_divergence"])
             values[mi, j] = div / base if base != 0 else np.nan
 
-    # ---- Display labels (abbrev if given) ----
     display_pairs = [_pair_to_abbrev(p) for p in sorted_pairs_full]
 
-    # ---- CSV export (Human first in columns) ----
+    # ---- CSV export ----
     if csv_path:
         data_dict = {"Group_Full": sorted_pairs_full, "Group": display_pairs}
         for mi in range(n_models):
@@ -485,98 +476,92 @@ def plot_divergence_comparison_radar(
 
     # ---- Radar scaffold ----
     angles = np.linspace(0, 2 * np.pi, n_groups, endpoint=False).tolist()
-    angles += angles[:1]  # close
+    angles += angles[:1]
 
     fig, ax = plt.subplots(figsize=figsize, subplot_kw=dict(polar=True))
     cmap_obj = get_cmap(cmap)
     colors = [cmap_obj(i % max(1, getattr(cmap_obj, "N", 20))) for i in range(n_models)]
 
-    # ---- Draw series (plot others first, then Human last so it's on top) ----
+    # ---- Draw series ----
     human_present = len(labels) > 0 and labels[0] == "Human"
-    # others (indices 1..end) first
     start_idx = 1 if human_present else 0
     for mi in range(start_idx, n_models):
         row = list(values[mi]) + [values[mi][0]]
-        ax.plot(
-            angles, row, color=colors[mi], linewidth=1.8, label=labels[mi], zorder=3
-        )
+        ax.plot(angles, row, color=colors[mi], linewidth=1.8, label=labels[mi], zorder=3)
         ax.fill(angles, row, color=colors[mi], alpha=0.18, zorder=2)
 
-    # Human last (on top)
     if human_present:
         hrow = list(values[0]) + [values[0][0]]
-        ax.plot(
-            angles, hrow, color=colors[0], linewidth=3.2, label=labels[0], zorder=10
-        )
+        ax.plot(angles, hrow, color=colors[0], linewidth=3.2, label=labels[0], zorder=10)
         ax.scatter(angles[:-1], values[0], color=colors[0], s=45, zorder=11)
         ax.fill(angles, hrow, color=colors[0], alpha=0.35, zorder=5)
 
-    # ---- Radius & ticks ----
+    # ---- Limits ----
     max_val = np.nanmax(values)
     if not np.isfinite(max_val) or max_val <= 0:
         max_val = 1.0
-    outer_radius = max_val * (1.0 + max(label_radius_pad, 0.06))
-    ax.set_ylim(0, outer_radius)
+    
+    limit_val = max_val * 1.02
+    ax.set_ylim(0, limit_val)
 
-    yticks = np.linspace(0, max_val, num=int(np.ceil(max_val)) + 1)
+    yticks = np.linspace(0, max_val, num=5)
     ax.set_yticks(yticks)
-    ax.set_yticklabels([f"{y:.1f}" for y in yticks], fontsize=12)
+    ax.set_yticklabels([f"{y:.2f}" if y < 1 else f"{y:.1f}" for y in yticks], fontsize=12)
 
-    # ---- Spoke labels (outside) ----
+    # ---- Font & Labels ----
     if pair_label_fontsize is None:
-        pair_label_fontsize = max(10, int(28 - 0.7 * n_groups))
-    ax.set_xticks([])
+        # Changed: Significantly boosted base font size and minimum floor
+        # Was: max(16, 34 - ...), Now: max(22, 45 - ...)
+        pair_label_fontsize = max(22, int(45 - 0.8 * n_groups))
 
-    r_label = max_val * (1.0 + label_radius_pad)
-    effects = (
-        [pe.withStroke(linewidth=3, foreground="white")] if label_outline else None
-    )
+    ax.set_xticks([])
+    
+    # Changed: Apply the negative padding to pull text inside/onto the line
+    r_label_pos = limit_val * (1.0 + label_radius_pad)
+    
+    # Changed: Thicker white stroke (4) to ensure legibility when overlapping lines
+    effects = [pe.withStroke(linewidth=4, foreground="white")] if label_outline else None
 
     for angle, txt in zip(angles[:-1], display_pairs):
         a = (angle + np.pi) % (2 * np.pi) - np.pi
-        ha = (
-            "left"
-            if (-np.pi / 2 < a < np.pi / 2)
-            else ("center" if abs(a) == np.pi / 2 else "right")
-        )
+        ha = "left" if (-np.pi / 2 < a < np.pi / 2) else ("center" if abs(a) == np.pi / 2 else "right")
+
+        # Dynamic VA to ensure the text "hugs" the line
+        if abs(a) < np.pi / 8:    # Top
+            va = 'bottom'
+        elif abs(a) > 7*np.pi/8:  # Bottom
+            va = 'top'
+        else:                     # Sides
+            va = 'center'
+
         ax.text(
             angle,
-            r_label,
+            r_label_pos,
             txt,
             ha=ha,
-            va="center",
+            va=va,
             fontsize=pair_label_fontsize,
             path_effects=effects,
+            weight='bold',
+            clip_on=False 
         )
 
+    ax.spines['polar'].set_visible(False)
+    ax.grid(color='#AAAAAA', linestyle='--', alpha=0.7)
     plt.tight_layout()
 
-    # ---- Save figure ----
     if output_path:
         plt.savefig(output_path, bbox_inches="tight", dpi=300)
 
-    # ---- Legend (Human first) ----
+    # ---- Legend ----
     leg_handles, leg_labels = ax.get_legend_handles_labels()
-    # Build label->handle (use last occurrence) and then order by our 'labels' list
     handle_by_label = {lab: h for h, lab in zip(leg_handles, leg_labels)}
     ordered_handles = [handle_by_label[lab] for lab in labels if lab in handle_by_label]
-
     legend_fig, legend_ax = plt.subplots(figsize=(14, 1))
     legend_ax.axis("off")
-    legend_ax.legend(
-        ordered_handles,
-        labels,  # already Human-first
-        loc="center",
-        fontsize=30,
-        frameon=False,
-        ncol=min(7, n_models),
-    )
+    legend_ax.legend(ordered_handles, labels, loc="center", fontsize=30, frameon=False, ncol=min(7, n_models))
     if output_path:
-        legend_fig.savefig(
-            output_path.replace(".pdf", "_legend.pdf").replace(".png", "_legend.png"),
-            bbox_inches="tight",
-            dpi=300,
-        )
+        legend_fig.savefig(output_path.replace(".pdf", "_legend.pdf").replace(".png", "_legend.png"), bbox_inches="tight", dpi=300)
 
     return fig, ax
 
@@ -986,29 +971,29 @@ socioeconomic_group_to_abbrev_class = {
     # "not sure" intentionally omitted; it will be filtered by unknown_groups
 }
 
-display_model_consistency_comparison(
-    [
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    dialogue_topic="career",
-)
+# display_model_consistency_comparison(
+#     [
+#         "Llama-3.1-8B-Instruct",
+#         "Llama-3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     dialogue_topic="career",
+# )
 
-display_model_consistency_comparison(
-    [
-        "Llama-3.1-8B-Instruct",
-        "Llama-3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    dialogue_topic="investment",
-)
+# display_model_consistency_comparison(
+#     [
+#         "Llama-3.1-8B-Instruct",
+#         "Llama-3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     dialogue_topic="investment",
+# )
 
 # BA User
 display_comparison(
