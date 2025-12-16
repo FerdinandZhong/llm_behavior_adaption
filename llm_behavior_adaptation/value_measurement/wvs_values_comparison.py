@@ -13,10 +13,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from llm_behavior_adaptation.utils import register_logger
-from llm_behavior_adaptation.value_measurement.formulas import (
-    componentwise_centroid,
-    emd_distance,
-)
+from llm_behavior_adaptation.value_measurement.formulas import componentwise_centroid, emd_distance
 
 logger = logging.getLogger(__name__)
 register_logger(logger)
@@ -95,9 +92,7 @@ class ValuesComparison:
         for _, q_list in picked_questions.items():
             self._all_questions.update(q_list)
 
-        self._user_value_dataset = user_value_dataset[
-            ["D_INTERVIEW"] + list(self.all_questions.keys())
-        ]
+        self._user_value_dataset = user_value_dataset[["D_INTERVIEW"] + list(self.all_questions.keys())]
 
     # ----------------------
     # Properties
@@ -242,19 +237,13 @@ class ValuesComparison:
         user_profile_dataset = _read_csv(args.user_profile_dataset)
         user_value_dataset = _read_csv(args.user_value_dataset)
 
-        with open(
-            f"{DATASET_DIR}/picked_questions.json", "r", encoding="utf-8"
-        ) as picked_question_f:
+        with open(f"{DATASET_DIR}/picked_questions.json", "r", encoding="utf-8") as picked_question_f:
             picked_questions = json.load(picked_question_f)
 
         ba_user_results = _process_model_outputs(load_jsonl_file(args.ba_user_results))
-        ba_dialogue_career_results = _process_model_outputs(
-            load_jsonl_file(args.ba_dialogue_career_results)
-        )
+        ba_dialogue_career_results = _process_model_outputs(load_jsonl_file(args.ba_dialogue_career_results))
 
-        ba_dialogue_investment_results = _process_model_outputs(
-            load_jsonl_file(args.ba_dialogue_investment_results)
-        )
+        ba_dialogue_investment_results = _process_model_outputs(load_jsonl_file(args.ba_dialogue_investment_results))
 
         return cls(
             user_profile_dataset=user_profile_dataset,
@@ -267,9 +256,7 @@ class ValuesComparison:
             verbose=args.verbose,
         )
 
-    def _get_index_list_for_groups(
-        self, target_col: str, include_unknown: bool = False
-    ) -> Dict[str, List[int]]:
+    def _get_index_list_for_groups(self, target_col: str, include_unknown: bool = False) -> Dict[str, List[int]]:
         """
         Get grouped indices for a target column from self.user_profile_dataset.
 
@@ -299,10 +286,7 @@ class ValuesComparison:
             df[tmp_col] = pd.cut(df[target_col], bins=bins, labels=labels, right=False)
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
             # Keep label order
             return {lab: grouped[lab] for lab in labels if lab in grouped}
@@ -333,11 +317,7 @@ class ValuesComparison:
                 }
             )
             # Reverse lookup: raw label -> bin name (exact match)
-            label_to_bin = {
-                lbl: bin_name
-                for bin_name, labels in bins_to_labels.items()
-                for lbl in labels
-            }
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
 
             tmp_col = "_edu_bin"
             df = self.user_profile_dataset.copy()
@@ -347,10 +327,7 @@ class ValuesComparison:
                 df[tmp_col] = df[tmp_col].fillna("Unknown")
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
 
             # Keep bins in the desired order, append Unknown last (if any)
@@ -388,11 +365,7 @@ class ValuesComparison:
                 }
             )
             # Reverse lookup: raw label -> bin name (exact match)
-            label_to_bin = {
-                lbl: bin_name
-                for bin_name, labels in bins_to_labels.items()
-                for lbl in labels
-            }
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
             tmp_col = "_occupation_bin"
             df = self.user_profile_dataset.copy()
             df[tmp_col] = df[target_col].map(label_to_bin)
@@ -401,10 +374,7 @@ class ValuesComparison:
                 df[tmp_col] = df[tmp_col].fillna("Unknown")
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
 
             # Keep bins in the desired order, append Unknown last (if any)
@@ -414,11 +384,7 @@ class ValuesComparison:
             return ordered
 
         # --- Fallback: group by the raw values of the target column ---
-        grouped = (
-            df.groupby(target_col, sort=False)
-            .apply(lambda x: x.index.tolist())
-            .to_dict()
-        )
+        grouped = df.groupby(target_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
         return grouped
 
     def _rank_average(self, a: np.ndarray) -> np.ndarray:
@@ -509,9 +475,7 @@ class ValuesComparison:
         r = float(np.dot(x_dev, y_dev) / denom)
         return max(-1.0, min(1.0, r))
 
-    def _get_user_id_list_for_groups(
-        self, target_col: str, include_unknown: bool = False
-    ) -> Dict[str, List[str]]:
+    def _get_user_id_list_for_groups(self, target_col: str, include_unknown: bool = False) -> Dict[str, List[str]]:
         """
         Group user IDs (from D_INTERVIEW) by a target column.
 
@@ -579,11 +543,7 @@ class ValuesComparison:
                 }
             )
             # Reverse lookup: raw label -> bin name (exact match)
-            label_to_bin = {
-                lbl: bin_name
-                for bin_name, labels in bins_to_labels.items()
-                for lbl in labels
-            }
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
 
             tmp_col = "_edu_bin"
             df = self.user_profile_dataset.copy()
@@ -635,11 +595,7 @@ class ValuesComparison:
                 }
             )
             # Reverse lookup: raw label -> bin name (exact match)
-            label_to_bin = {
-                lbl: bin_name
-                for bin_name, labels in bins_to_labels.items()
-                for lbl in labels
-            }
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
 
             tmp_col = "_occupation_bin"
             df = self.user_profile_dataset.copy()
@@ -748,10 +704,7 @@ class ValuesComparison:
         for group_name, key_list in group_dict.items():
             # Use .loc to preserve labels and handle non-integer indexes safely
             group_answers[group_name] = [
-                {
-                    q_key: q_selection["option_id"]
-                    for q_key, q_selection in user_values_dict[k].items()
-                }
+                {q_key: q_selection["option_id"] for q_key, q_selection in user_values_dict[k].items()}
                 for k in key_list
                 if k in user_values_dict
             ]
@@ -843,8 +796,7 @@ class ValuesComparison:
             if user_id in results_only_dict:
                 logger.warning("Duplicate user id: %s", user_id)
             results_only_dict[user_id] = {
-                q_key: q_selection["option_id"]
-                for q_key, q_selection in user_answers.items()
+                q_key: q_selection["option_id"] for q_key, q_selection in user_answers.items()
             }
         return results_only_dict
 
@@ -966,7 +918,7 @@ class ValuesComparison:
         """
         # deterministic RNG + deterministic ordering of IDs/candidates
         if rng is None:
-            rng = random.Random(seed)
+            rng = random.Random(seed)  # noqa: S311
 
         a_ids_all = sorted(dist_a.keys())
         b_ids_all = sorted(dist_b.keys())
@@ -1011,9 +963,7 @@ class ValuesComparison:
             if len(candidates) >= picks:
                 match_ids = rng.sample(candidates, picks)  # without replacement
             else:
-                match_ids = [
-                    rng.choice(candidates) for _ in range(picks)
-                ]  # with replacement
+                match_ids = [rng.choice(candidates) for _ in range(picks)]  # with replacement
 
             dists = []
             for bid in match_ids:
@@ -1042,13 +992,9 @@ class ValuesComparison:
         """Compute the cross dataset pairwise divergences with a progress bar (id-matched)."""
         user_distributions = self._pick_model_results_option_id(self.ba_user_results)
         dialogue_attr = f"ba_dialogue_{dialogue_type}_results"
-        dialogue_distributions = self._pick_model_results_option_id(
-            getattr(self, dialogue_attr)
-        )
+        dialogue_distributions = self._pick_model_results_option_id(getattr(self, dialogue_attr))
 
-        core = self._compute_id_matched_divergences(
-            user_distributions, dialogue_distributions
-        )
+        core = self._compute_id_matched_divergences(user_distributions, dialogue_distributions)
 
         divergences: List[float] = core["per_user_divergences"]
         if not divergences:
@@ -1087,9 +1033,7 @@ class ValuesComparison:
         """
         user_distributions = self._pick_model_results_option_id(self.ba_user_results)
         dialogue_attr = f"ba_dialogue_{dialogue_type}_results"
-        dialogue_distributions = self._pick_model_results_option_id(
-            getattr(self, dialogue_attr)
-        )
+        dialogue_distributions = self._pick_model_results_option_id(getattr(self, dialogue_attr))
 
         core = self._compute_baseline_two_random_matches(
             user_distributions,
@@ -1138,31 +1082,23 @@ class ValuesComparison:
         for results_type in ["ba_user", "ba_dialogue_career", "ba_dialogue_investment"]:
             core = self._compute_id_matched_divergences(
                 human_results_distributions,
-                self._pick_model_results_option_id(
-                    getattr(self, f"{results_type}_results")
-                ),
+                self._pick_model_results_option_id(getattr(self, f"{results_type}_results")),
             )
             divergences: List[float] = core["divergences"]
             baseline_core = self._compute_baseline_two_random_matches(
                 human_results_distributions,
-                self._pick_model_results_option_id(
-                    getattr(self, f"{results_type}_results")
-                ),
+                self._pick_model_results_option_id(getattr(self, f"{results_type}_results")),
             )
             baseline_per_user_means: List[float] = baseline_core["per_user_means"]
 
             pearson_correlations = self._compute_id_matched_correlation(
                 human_results_distributions,
-                self._pick_model_results_option_id(
-                    getattr(self, f"{results_type}_results")
-                ),
+                self._pick_model_results_option_id(getattr(self, f"{results_type}_results")),
                 method="pearson",
             )
             spearman_correlations = self._compute_id_matched_correlation(
                 human_results_distributions,
-                self._pick_model_results_option_id(
-                    getattr(self, f"{results_type}_results")
-                ),
+                self._pick_model_results_option_id(getattr(self, f"{results_type}_results")),
                 method="spearman",
             )
 
@@ -1184,38 +1120,22 @@ class ValuesComparison:
             }
 
             results_dict[f"{results_type}_against_human"]["ratio"] = round(
-                results_dict[f"{results_type}_against_human"]["distance"][
-                    "avg_divergence"
-                ]
-                / results_dict[f"{results_type}_against_human"]["baseline"][
-                    "avg_divergence"
-                ],
+                results_dict[f"{results_type}_against_human"]["distance"]["avg_divergence"]
+                / results_dict[f"{results_type}_against_human"]["baseline"]["avg_divergence"],
                 3,
             )
 
-            results_dict[f"{results_type}_against_human"][
-                "correlation_with_human_pearson"
-            ] = {
-                "avg_correlation": float(
-                    np.nanmean(pearson_correlations["correlations"])
-                ),
-                "median_correlation": float(
-                    np.nanmedian(pearson_correlations["correlations"])
-                ),
+            results_dict[f"{results_type}_against_human"]["correlation_with_human_pearson"] = {
+                "avg_correlation": float(np.nanmean(pearson_correlations["correlations"])),
+                "median_correlation": float(np.nanmedian(pearson_correlations["correlations"])),
                 "n_pairs": pearson_correlations["n_pairs"],
                 "n_users_only": pearson_correlations["n_users_only"],
                 "n_dialogues_only": pearson_correlations["n_dialogues_only"],
             }
 
-            results_dict[f"{results_type}_against_human"][
-                "correlation_with_human_spearman"
-            ] = {
-                "avg_correlation": float(
-                    np.nanmean(spearman_correlations["correlations"])
-                ),
-                "median_correlation": float(
-                    np.nanmedian(spearman_correlations["correlations"])
-                ),
+            results_dict[f"{results_type}_against_human"]["correlation_with_human_spearman"] = {
+                "avg_correlation": float(np.nanmean(spearman_correlations["correlations"])),
+                "median_correlation": float(np.nanmedian(spearman_correlations["correlations"])),
                 "n_users": spearman_correlations["n_pairs"],
                 "n_users_only": spearman_correlations["n_users_only"],
                 "n_dialogues_only": spearman_correlations["n_dialogues_only"],
@@ -1234,9 +1154,7 @@ class ValuesComparison:
 
         return group_centroids
 
-    def compute_attributes_groups_distances(
-        self, results_attribute, show_progress: bool = True
-    ):
+    def compute_attributes_groups_distances(self, results_attribute, show_progress: bool = True):
         """compute group distances for attributes"""
         computed_results = {}
         user_values_dict = getattr(self, results_attribute)
@@ -1250,28 +1168,16 @@ class ValuesComparison:
 
         global_centroid = componentwise_centroid(all_samples, self.all_questions)
 
-        attributes_iter = (
-            tqdm(ATTRIBUTES, desc="Attributes", unit="attr")
-            if show_progress
-            else ATTRIBUTES
-        )
+        attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
         for attribute in attributes_iter:
             id_based_group_dict = self._get_user_id_list_for_groups(attribute)
             grouped_values = self._map_model_results_to_groups(
                 group_dict=id_based_group_dict,
                 user_values_dict=user_values_dict,
             )
-            group_centroids = self._calculate_centroids_among_groups(
-                grouped_output_values=grouped_values
-            )
-            group_distances = self.pairwise_group_emd_list(
-                group_centroids, self.all_questions, normalize=True
-            )
-            bassline = {
-                "overall_baseline": self.baseline_emd(
-                    global_centroid, group_centroids, self.all_questions
-                )
-            }
+            group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+            group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+            bassline = {"overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)}
             computed_results[attribute] = {
                 "baseline": bassline,
                 "group_distances": group_distances,
@@ -1287,28 +1193,16 @@ class ValuesComparison:
 
         global_centroid = componentwise_centroid(all_samples, self.all_questions)
 
-        attributes_iter = (
-            tqdm(ATTRIBUTES, desc="Attributes", unit="attr")
-            if show_progress
-            else ATTRIBUTES
-        )
+        attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
         for attribute in attributes_iter:
             human_group_dict = self._get_index_list_for_groups(attribute)
             grouped_values = self._map_human_values_to_groups(
                 group_dict=human_group_dict,
                 user_values_df=self.user_value_dataset,
             )
-            group_centroids = self._calculate_centroids_among_groups(
-                grouped_output_values=grouped_values
-            )
-            group_distances = self.pairwise_group_emd_list(
-                group_centroids, self.all_questions, normalize=True
-            )
-            bassline = {
-                "overall_baseline": self.baseline_emd(
-                    global_centroid, group_centroids, self.all_questions
-                )
-            }
+            group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+            group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+            bassline = {"overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)}
             computed_results[attribute] = {
                 "baseline": bassline,
                 "group_distances": group_distances,
@@ -1363,9 +1257,7 @@ if __name__ == "__main__":
             cross_datasets_results = {}
             for topic in ["career", "investment"]:
                 dist_res = vc.cross_datasets_divergences_id_based(topic)
-                base_res = vc.cross_datasets_divergences_baseline_id_based(
-                    topic, seed=42
-                )
+                base_res = vc.cross_datasets_divergences_baseline_id_based(topic, seed=42)
 
                 # Build per-user ratios aligned by intersection of ids
                 ids_dist = set(dist_res.pop("user_ids"))
@@ -1377,17 +1269,12 @@ if __name__ == "__main__":
 
                 base_user_map = base_res.pop("per_user_map")
                 per_user_base = [base_user_map[uid] for uid in common]
-                per_user_ratio = [
-                    d / b if b != 0 else float("nan")
-                    for d, b in zip(per_user_div, per_user_base)
-                ]
+                per_user_ratio = [d / b if b != 0 else float("nan") for d, b in zip(per_user_div, per_user_base)]
 
                 cross_datasets_results[topic] = {
                     "distance": dist_res,
                     "baseline": base_res,
-                    "ratio": round(
-                        dist_res["avg_divergence"] / base_res["avg_divergence"], 3
-                    ),
+                    "ratio": round(dist_res["avg_divergence"] / base_res["avg_divergence"], 3),
                     # NEW: per-user outputs for downstream stats (paired t-test etc.)
                     "per_user": {
                         "user_ids": common,
@@ -1407,7 +1294,7 @@ if __name__ == "__main__":
                 json.dump(final_outputs, f, ensure_ascii=False, indent=2)
             logger.info("Wrote results to %s", args.results_output_path)
 
-    except Exception as e:
+    except Exception:
         logger.exception("ValuesComparison run failed.")
         # Non-zero exit for CI/automation visibility
         sys.exit(1)

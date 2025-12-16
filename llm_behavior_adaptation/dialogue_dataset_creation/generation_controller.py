@@ -10,12 +10,8 @@ import pandas as pd
 from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
-    DIALOGUE_RUNS_THRESHOLD,
-)
-from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import (
-    DialogueGenerator,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.constant import DIALOGUE_RUNS_THRESHOLD
+from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import DialogueGenerator
 
 from ..utils import register_logger
 
@@ -189,9 +185,7 @@ class DatasetGenerationController:
             DatasetGeneration: An instance of the class populated with CLI argument values.
         """
         full_dataset = pd.read_csv(args.seed_dataset_path)
-        full_dataset = full_dataset.loc[
-            :, ~full_dataset.columns.str.contains("^Unnamed")
-        ]
+        full_dataset = full_dataset.loc[:, ~full_dataset.columns.str.contains("^Unnamed")]
         seed_dataset = full_dataset[args.starting_row : args.ending_row]
 
         openai_client = AsyncOpenAI(api_key=args.openai_api_key)
@@ -239,18 +233,12 @@ class DatasetGenerationController:
 
                     # Generate dialogue for the current seed row
                     try:
-                        generated_dialogue = (
-                            await self.dialogue_generator.dialogue_generation(
-                                seed_row=row_dict
-                            )
-                        )
+                        generated_dialogue = await self.dialogue_generator.dialogue_generation(seed_row=row_dict)
 
                         all_generated_dialogues.append(
                             {
                                 "index": index,
-                                "generated_dialogue": [
-                                    run.model_dump() for run in generated_dialogue
-                                ],
+                                "generated_dialogue": [run.model_dump() for run in generated_dialogue],
                             }
                         )
 

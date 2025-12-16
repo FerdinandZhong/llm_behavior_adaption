@@ -11,9 +11,7 @@ from .wvs_dataset_constants import JSON_TEMPLATE, PROFILE_KEYS
 
 
 def render_json(json_input: dict) -> str:
-    serialized_json_input = json.dumps(
-        json_input, indent=2, sort_keys=True, ensure_ascii=False
-    )
+    serialized_json_input = json.dumps(json_input, indent=2, sort_keys=True, ensure_ascii=False)
     return Template(JSON_TEMPLATE).render(json_input=serialized_json_input)
 
 

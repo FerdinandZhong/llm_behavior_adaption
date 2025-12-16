@@ -3,12 +3,9 @@
 import numpy as np
 import pycountry
 import pycountry_convert as pc
-# from transformers import pipeline
+from transformers import pipeline
 
-from llm_behavior_adaptation.value_measurement.constant import (
-    COUNTRY_TO_CULTURE,
-    DEVELOPMENT_LEVEL,
-)
+from llm_behavior_adaptation.value_measurement.constant import COUNTRY_TO_CULTURE, DEVELOPMENT_LEVEL
 
 
 def get_continent(country_name):
@@ -129,9 +126,7 @@ class JobClassifier:
     ]
 
     def __init__(self):
-        self.classifier = pipeline(
-            "zero-shot-classification", model="facebook/bart-large-mnli"
-        )
+        self.classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
     def get_classification(self, job_title, attr_name: str):
         """get position level"""

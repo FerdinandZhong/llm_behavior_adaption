@@ -189,9 +189,7 @@ class DialogueAgent:
             )
 
         data = json.loads(raw)
-        state["ooc_reason"] = (
-            data.get("reason") if data.get("has_out_of_context") else None
-        )
+        state["ooc_reason"] = data.get("reason") if data.get("has_out_of_context") else None
         return state
 
     async def rewriter_node(self, state: DGState) -> DGState:
@@ -202,9 +200,7 @@ class DialogueAgent:
         p = self._prompt("user_simulator_rewriter_prompt")
         p[1]["content"] = p[1]["content"].format(conversation_history=hist_str)
         p[2]["content"] = p[2]["content"].format(user_details=state["user_profile"])
-        p[3]["content"] = p[3]["content"].format(
-            user_last_message=state["proposed_question"]
-        )
+        p[3]["content"] = p[3]["content"].format(user_last_message=state["proposed_question"])
         p[4]["content"] = p[4]["content"].format(expert_review=state["ooc_reason"])
 
         r = await self.client.chat.completions.create(
@@ -228,10 +224,7 @@ class DialogueAgent:
 
     async def chatbot_node(self, state: DGState) -> DGState:
         msgs = self._history_as_openai(state["history"])
-        if (
-            msgs[-1]["role"] != "user"
-            or msgs[-1]["content"] != state["proposed_question"]
-        ):
+        if msgs[-1]["role"] != "user" or msgs[-1]["content"] != state["proposed_question"]:
             msgs.append({"role": "system", "content": "Answer the question concisely"})
             msgs.append({"role": "user", "content": state["proposed_question"]})
 
@@ -243,9 +236,7 @@ class DialogueAgent:
         ans = r.choices[0].message.content
 
         if self.verbose >= 1:
-            logger.info(
-                "[OPENAI][RESP] %s | summary=%s", "chatbot", _twenty_word_summary(ans)
-            )
+            logger.info("[OPENAI][RESP] %s | summary=%s", "chatbot", _twenty_word_summary(ans))
 
         state["chatbot_answer"] = ans
         state["history"].append(Turn(speaker="chatbot", text=ans))
@@ -264,15 +255,11 @@ class DialogueAgent:
         raw = r.choices[0].message.content
 
         if self.verbose >= 1:
-            logger.info(
-                "[OPENAI][RESP] %s | summary=%s", "reviewer", _twenty_word_summary(raw)
-            )
+            logger.info("[OPENAI][RESP] %s | summary=%s", "reviewer", _twenty_word_summary(raw))
 
         data = json.loads(raw)
         state["review"] = data
-        state["end"] = bool(data.get("end_conversation")) or (
-            state.get("turns", 0) >= self.threshold
-        )
+        state["end"] = bool(data.get("end_conversation")) or (state.get("turns", 0) >= self.threshold)
         return state
 
     # ---------- Routers ----------

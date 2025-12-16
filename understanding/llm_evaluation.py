@@ -3,7 +3,6 @@ import os
 from copy import deepcopy
 from typing import Dict, List
 
-import openai
 from openai import AsyncOpenAI
 from tqdm import tqdm
 
@@ -64,46 +63,28 @@ async def query_server_in_chunk(
         chunk_original_sentences.append(content)
         if len(chunk_original_sentences) >= chunk_size:
             response_list = await asyncio.gather(
-                *[
-                    _predict(current_content, model_name=model_name)
-                    for current_content in chunk_original_sentences
-                ]
+                *[_predict(current_content, model_name=model_name) for current_content in chunk_original_sentences]
             )
             try:
-                generated_list.extend(
-                    [
-                        [int(index) for index in response.split("\n")]
-                        for response in response_list
-                    ]
-                )
+                generated_list.extend([[int(index) for index in response.split("\n")] for response in response_list])
             except ValueError:
                 generated_list.extend(response_list)
             chunk_original_sentences = []
 
     if len(chunk_original_sentences) > 0:
         response_list = await asyncio.gather(
-            *[
-                _predict(current_content, model_name=model_name)
-                for current_content in chunk_original_sentences
-            ]
+            *[_predict(current_content, model_name=model_name) for current_content in chunk_original_sentences]
         )
 
         try:
-            generated_list.extend(
-                [
-                    [int(index) for index in response.split("\n")]
-                    for response in response_list
-                ]
-            )
+            generated_list.extend([[int(index) for index in response.split("\n")] for response in response_list])
         except ValueError:
             generated_list.extend(response_list)
 
     return generated_list
 
 
-def generate_fewshots_samples(
-    samples_list: List[Dict], tested_user: str = "User 1", selection_num: int = 1
-):
+def generate_fewshots_samples(samples_list: List[Dict], tested_user: str = "User 1", selection_num: int = 1):
     """generate samples for few shots
 
     Args:
@@ -122,21 +103,16 @@ def generate_fewshots_samples(
                     user=tested_user,
                 ),
                 "assistant": "\n".join(
-                    [
-                        str(index)
-                        for index in sample_dict[
-                            f"{tested_user.replace(' ', '').lower()}_gt_index_list"
-                        ]
-                    ][:selection_num]
+                    [str(index) for index in sample_dict[f"{tested_user.replace(' ', '').lower()}_gt_index_list"]][
+                        :selection_num
+                    ]
                 ),
             }
         )
     return few_shots_samples
 
 
-def generate_input_contents(
-    input_rows: List[Dict], tested_user: str = "User 1", selection_num: int = 1
-):
+def generate_input_contents(input_rows: List[Dict], tested_user: str = "User 1", selection_num: int = 1):
     """generate input contents
 
     Args:

@@ -35,9 +35,7 @@ def compute_embeddings(sentences):
         torch.Tensor: Tensor of embeddings.
     """
     # Tokenize and encode sentences to get input IDs and attention masks
-    inputs = tokenizer(
-        sentences, return_tensors="pt", padding=True, truncation=True
-    ).to(device)
+    inputs = tokenizer(sentences, return_tensors="pt", padding=True, truncation=True).to(device)
     with torch.no_grad():
         outputs = model(**inputs)
         embeddings = outputs.last_hidden_state.mean(dim=1)
@@ -101,18 +99,14 @@ def process_dataframe(df, user_name):
     max_sim_scores = []
     avg_max_similarities = []
 
-    for _, row in tqdm(
-        df.iterrows(), desc="Processing rows in DataFrame", total=len(df)
-    ):
+    for _, row in tqdm(df.iterrows(), desc="Processing rows in DataFrame", total=len(df)):
         sentences = row[candidates_column]
         ground_truth_indices = row[ground_truth_column]
 
         # Compute embeddings for each sentence in the cell
         embeddings = compute_embeddings(sentences)
 
-        max_similarities, avg_max_similarity = compute_max_similarities(
-            embeddings, ground_truth_indices
-        )
+        max_similarities, avg_max_similarity = compute_max_similarities(embeddings, ground_truth_indices)
 
         # Store results
         max_sim_scores.append(max_similarities)
@@ -141,9 +135,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     result_csv_path = os.path.join(DATASETS_FOLDER, args.results_csv)
-    existing_df = (
-        pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
-    )
+    existing_df = pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
 
     # Load dataset and set up data for testing
     persona_df = load_dataset()

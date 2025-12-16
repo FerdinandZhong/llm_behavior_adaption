@@ -38,21 +38,13 @@ def process_result_column(row, target_column):
     else:
         try:
             if "[" in target_item and "]" in target_item:
-                return [
-                    int(single_item) for single_item in ast.literal_eval(target_item)
-                ]
+                return [int(single_item) for single_item in ast.literal_eval(target_item)]
             elif "," in target_item:
-                return [
-                    int(single_item.strip()) for single_item in target_item.split(",")
-                ]
+                return [int(single_item.strip()) for single_item in target_item.split(",")]
             elif "." in target_item:
-                return [
-                    int(single_item.strip()) for single_item in target_item.split(".")
-                ]
+                return [int(single_item.strip()) for single_item in target_item.split(".")]
             else:
-                return [
-                    int(single_item.strip()) for single_item in target_item.split("\n")
-                ]
+                return [int(single_item.strip()) for single_item in target_item.split("\n")]
         except Exception:
             logger.warning("Error processing %s with index: %s", target_item, row.name)
             return []
@@ -78,9 +70,7 @@ def process_df(target_df):
         )
         for few_shot_num in [0, 1, 5, 10]:
             target_df_col = f"{user}_{few_shot_num}_results"
-            target_df[target_df_col] = target_df.apply(
-                lambda row: process_result_column(row, target_df_col), axis=1
-            )
+            target_df[target_df_col] = target_df.apply(lambda row: process_result_column(row, target_df_col), axis=1)
 
     return target_df
 
@@ -144,12 +134,8 @@ def get_scores_df(target_df):
             target_df_col = f"{user}_{few_shot_num}_results"
             precision_col = f"{user}_{few_shot_num}_precisions"
             recall_col = f"{user}_{few_shot_num}_recalls"
-            target_df[precision_col] = target_df.apply(
-                lambda row: get_precision(row, target_df_col, gt_col), axis=1
-            )
-            target_df[recall_col] = target_df.apply(
-                lambda row: get_recall(row, target_df_col, gt_col), axis=1
-            )
+            target_df[precision_col] = target_df.apply(lambda row: get_precision(row, target_df_col, gt_col), axis=1)
+            target_df[recall_col] = target_df.apply(lambda row: get_recall(row, target_df_col, gt_col), axis=1)
 
     return target_df
 
@@ -160,12 +146,8 @@ def get_average_scores(target_df):
         for few_shot_num in [0, 1, 5, 10]:
             precision_col = f"{user}_{few_shot_num}_precisions"
             recall_col = f"{user}_{few_shot_num}_recalls"
-            final_results_dict[f"{user}_{few_shot_num}_precision_avg"] = round(
-                target_df[precision_col].mean(), 3
-            )
-            final_results_dict[f"{user}_{few_shot_num}_recall_avg"] = round(
-                target_df[recall_col].mean(), 3
-            )
+            final_results_dict[f"{user}_{few_shot_num}_precision_avg"] = round(target_df[precision_col].mean(), 3)
+            final_results_dict[f"{user}_{few_shot_num}_recall_avg"] = round(target_df[recall_col].mean(), 3)
 
     return final_results_dict
 
@@ -189,9 +171,7 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--csv_name", type=str, help="Results csv", required=True)
-    parser.add_argument(
-        "--scores_json", type=str, help="Output score json", required=True
-    )
+    parser.add_argument("--scores_json", type=str, help="Output score json", required=True)
 
     # Parse the arguments
     args = parser.parse_args()

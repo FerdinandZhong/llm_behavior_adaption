@@ -10,7 +10,6 @@ import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 import seaborn as sns
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
@@ -67,9 +66,7 @@ def plot_pairwise_comparison_heatmap_aligned(model_ratios: dict):
                 d_matrix[i, j] = np.nan
                 label_matrix[i, j] = ""
             else:
-                p, d = compute_p_and_d_with_user_alignment(
-                    model_ratios[models[i]], model_ratios[models[j]]
-                )
+                p, d = compute_p_and_d_with_user_alignment(model_ratios[models[i]], model_ratios[models[j]])
                 pval_matrix[i, j] = p
                 d_matrix[i, j] = d
                 if i < j:
@@ -192,9 +189,7 @@ def plot_pairwise_map_only(
         ids = m["user_ids"]
         vals = m[metric_key]
         if len(ids) != len(vals):
-            raise ValueError(
-                f"Model {j} has mismatched lengths for user_ids and {metric_key}."
-            )
+            raise ValueError(f"Model {j} has mismatched lengths for user_ids and {metric_key}.")
         idx_map = {u: i for i, u in enumerate(ids)}
         X[:, j] = [vals[idx_map[u]] for u in common]
 
@@ -222,9 +217,7 @@ def plot_pairwise_map_only(
         else:
             raise ValueError("pairwise_test must be 'ttest' or 'wilcoxon'")
         p_raw.append(p)
-        dmed.append(
-            float(np.median(xi) - np.median(xj))
-        )  # lower = better (row better if negative)
+        dmed.append(float(np.median(xi) - np.median(xj)))  # lower = better (row better if negative)
 
     # Holm step-down correction
     if correction != "holm":
@@ -268,9 +261,7 @@ def plot_pairwise_map_only(
             if i > j:
                 color = cmap(norm(dmed_mat[i, j]))
                 # semi-transparent rectangle
-                plt.gca().add_patch(
-                    plt.Rectangle((j - 0.5, i - 0.5), 1, 1, color=color, alpha=0.45)
-                )
+                plt.gca().add_patch(plt.Rectangle((j - 0.5, i - 0.5), 1, 1, color=color, alpha=0.45))
 
     # Ticks
     plt.xticks(range(k), model_names, rotation=30, ha="right")
@@ -283,11 +274,7 @@ def plot_pairwise_map_only(
                 txt = f"med={med[i]:.3f}"
             elif i < j:
                 p_disp = 10 ** (-logp_mat[i, j]) if logp_mat[i, j] > 0 else 1.0
-                stars = (
-                    "***"
-                    if p_disp < 1e-3
-                    else ("**" if p_disp < 1e-2 else ("*" if p_disp < 5e-2 else ""))
-                )
+                stars = "***" if p_disp < 1e-3 else ("**" if p_disp < 1e-2 else ("*" if p_disp < 5e-2 else ""))
                 txt = f"p={p_disp:.1e}\n{stars}"
             else:
                 txt = f"Δ={dmed_mat[i, j]:+.3f}"
@@ -334,9 +321,7 @@ def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
     """
     # Extract values
     groups = [item["compared_groups"] for item in data]
-    avg_divergence = [
-        item["compared_details"]["average_user_divergence"] for item in data
-    ]
+    avg_divergence = [item["compared_details"]["average_user_divergence"] for item in data]
     std_divergence = [item["compared_details"]["std_user_divergence"] for item in data]
 
     # Plot
@@ -352,9 +337,7 @@ def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
     )
 
     # Add baseline
-    plt.axhline(
-        y=baseline, color="red", linestyle="--", label=f"Baseline ({baseline:.3f})"
-    )
+    plt.axhline(y=baseline, color="red", linestyle="--", label=f"Baseline ({baseline:.3f})")
 
     # Customize plot
     plt.xticks(x, groups, rotation=45, ha="right")
@@ -384,7 +367,7 @@ def plot_divergence_comparison_radar(
     cmap="tab20",
     *,
     pair_label_fontsize=None,
-    label_radius_pad=0.01, # Changed: Reduced from 0.05 to 0.01 for closer fit
+    label_radius_pad=0.01,  # Changed: Reduced from 0.05 to 0.01 for closer fit
     label_outline=True,
     group_to_abbrev=None,
     unknown_groups=("not sure",),
@@ -500,7 +483,7 @@ def plot_divergence_comparison_radar(
     max_val = np.nanmax(values)
     if not np.isfinite(max_val) or max_val <= 0:
         max_val = 1.0
-    
+
     limit_val = max_val * 1.02
     ax.set_ylim(0, limit_val)
 
@@ -515,10 +498,10 @@ def plot_divergence_comparison_radar(
         pair_label_fontsize = max(22, int(45 - 0.8 * n_groups))
 
     ax.set_xticks([])
-    
+
     # Changed: Apply the negative padding to pull text inside/onto the line
     r_label_pos = limit_val * (1.0 + label_radius_pad)
-    
+
     # Changed: Thicker white stroke (4) to ensure legibility when overlapping lines
     effects = [pe.withStroke(linewidth=4, foreground="white")] if label_outline else None
 
@@ -527,12 +510,12 @@ def plot_divergence_comparison_radar(
         ha = "left" if (-np.pi / 2 < a < np.pi / 2) else ("center" if abs(a) == np.pi / 2 else "right")
 
         # Dynamic VA to ensure the text "hugs" the line
-        if abs(a) < np.pi / 8:    # Top
-            va = 'bottom'
-        elif abs(a) > 7*np.pi/8:  # Bottom
-            va = 'top'
-        else:                     # Sides
-            va = 'center'
+        if abs(a) < np.pi / 8:  # Top
+            va = "bottom"
+        elif abs(a) > 7 * np.pi / 8:  # Bottom
+            va = "top"
+        else:  # Sides
+            va = "center"
 
         ax.text(
             angle,
@@ -542,12 +525,12 @@ def plot_divergence_comparison_radar(
             va=va,
             fontsize=pair_label_fontsize,
             path_effects=effects,
-            weight='bold',
-            clip_on=False 
+            weight="bold",
+            clip_on=False,
         )
 
-    ax.spines['polar'].set_visible(False)
-    ax.grid(color='#AAAAAA', linestyle='--', alpha=0.7)
+    ax.spines["polar"].set_visible(False)
+    ax.grid(color="#AAAAAA", linestyle="--", alpha=0.7)
     plt.tight_layout()
 
     if output_path:
@@ -559,9 +542,20 @@ def plot_divergence_comparison_radar(
     ordered_handles = [handle_by_label[lab] for lab in labels if lab in handle_by_label]
     legend_fig, legend_ax = plt.subplots(figsize=(14, 1))
     legend_ax.axis("off")
-    legend_ax.legend(ordered_handles, labels, loc="center", fontsize=30, frameon=False, ncol=min(7, n_models))
+    legend_ax.legend(
+        ordered_handles,
+        labels,
+        loc="center",
+        fontsize=30,
+        frameon=False,
+        ncol=min(7, n_models),
+    )
     if output_path:
-        legend_fig.savefig(output_path.replace(".pdf", "_legend.pdf").replace(".png", "_legend.png"), bbox_inches="tight", dpi=300)
+        legend_fig.savefig(
+            output_path.replace(".pdf", "_legend.pdf").replace(".png", "_legend.png"),
+            bbox_inches="tight",
+            dpi=300,
+        )
 
     return fig, ax
 
@@ -581,9 +575,7 @@ def plot_divergence_comparison_heatmap(
     sort_by_defined_order: bool = True,
     defined_order: Optional[Sequence[str]] = None,
     pair_normalizer: Optional[Callable[[str], Tuple[str, str]]] = None,
-    order_pairs: Optional[
-        Callable[[List[str]], List[str]]
-    ] = None,  # full custom column order
+    order_pairs: Optional[Callable[[List[str]], List[str]]] = None,  # full custom column order
     # ---- Presentation ----
     annotate: bool = True,  # show numbers in cells by default
     annotate_fontsize: int = 9,
@@ -685,9 +677,7 @@ def plot_divergence_comparison_heatmap(
 
     # Emphasize row (e.g., Human)
     if emphasize_label in mat.index:
-        mat = mat.loc[
-            [emphasize_label] + [r for r in mat.index if r != emphasize_label], :
-        ]
+        mat = mat.loc[[emphasize_label] + [r for r in mat.index if r != emphasize_label], :]
 
     # CSV export
     if csv_path:
@@ -715,14 +705,12 @@ def plot_divergence_comparison_heatmap(
     plt.yticks(range(mat.shape[0]), mat.index)
     plt.xticks(range(mat.shape[1]), mat.columns, rotation=45, ha="right")
 
-    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)
+    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)  # noqa F841
     # cbar.set_label("Ratio over baseline", rotation=90)
 
     if emphasize_label in mat.index:
         r = list(mat.index).index(emphasize_label)
-        plt.gca().add_patch(
-            Rectangle((-0.5, r - 0.5), mat.shape[1], 1, fill=False, lw=2)
-        )
+        plt.gca().add_patch(Rectangle((-0.5, r - 0.5), mat.shape[1], 1, fill=False, lw=2))
 
     if grid:
         ax = plt.gca()
@@ -787,9 +775,7 @@ def display_comparison(
                 if model_label.lower() == "human":
                     experiments_results = json.load(jl_file)[attribute]
                 else:
-                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
-                        attribute
-                    ]
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
                 datasets.append(experiments_results["group_distances"])
                 baselines.append(experiments_results["baseline"])
         except Exception as e:
@@ -852,9 +838,7 @@ def display_comparison_heatmap(
                 if model_label.lower() == "human":
                     experiments_results = json.load(jl_file)[attribute]
                 else:
-                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
-                        attribute
-                    ]
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
                 datasets.append(experiments_results["group_distances"])
                 baselines.append(experiments_results["baseline"])
         except Exception as e:
@@ -901,9 +885,7 @@ def display_model_consistency_comparison(model_list, dialogue_topic: str = "care
                 "r",
                 encoding="utf-8",
             ) as jl_file:
-                experiments_results = json.load(jl_file)["cross_datasets_results"][
-                    dialogue_topic
-                ]
+                experiments_results = json.load(jl_file)["cross_datasets_results"][dialogue_topic]
                 ratio_dict[model_label] = experiments_results["per_user"]["ratios"]
         except Exception as e:
             print(model_label)

@@ -122,9 +122,7 @@ def compute_js_centroid(distributions, maxiter=1000, tol=1e-6):
         return np.sum([jensen_shannon_divergence(p, m) for p in valid_distributions])
 
     # Optimize using the L-BFGS-B algorithm
-    result = minimize(
-        objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol}
-    )
+    result = minimize(objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol})
 
     # Extract the optimized centroid
     centroid = softmax(result.x)
@@ -166,9 +164,7 @@ def compute_js_centroid_and_avg(distributions, maxiter=1000, tol=1e-6):
         return np.sum([jensen_shannon_divergence(p, m) for p in valid_distributions])
 
     # Optimize using the L-BFGS-B algorithm
-    result = minimize(
-        objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol}
-    )
+    result = minimize(objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol})
 
     # Extract the optimized centroid
     centroid = softmax(result.x)

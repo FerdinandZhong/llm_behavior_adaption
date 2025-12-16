@@ -87,10 +87,7 @@ class ValuesPredictionController:
             raise TypeError("user_profile_dataset must be a pandas DataFrame.")
         if not isinstance(direct_output_file_path, str) or not direct_output_file_path:
             raise ValueError("direct_output_file_path must be a non-empty string.")
-        if (
-            not isinstance(dialogue_output_file_path, str)
-            or not dialogue_output_file_path
-        ):
+        if not isinstance(dialogue_output_file_path, str) or not dialogue_output_file_path:
             raise ValueError("dialogue_output_file_path must be a non-empty string.")
         if not isinstance(generated_dialogues, dict):
             raise TypeError("generated_dialogues must be a Dict.")
@@ -123,9 +120,7 @@ class ValuesPredictionController:
                 self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"])
             else:
                 base_url = os.getenv("base_url", "http://localhost:8000/v1")
-                self._openai_client = AsyncOpenAI(
-                    api_key=os.environ["api_key"], base_url=base_url
-                )
+                self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"], base_url=base_url)
         else:
             self._openai_client = openai_client
 
@@ -164,13 +159,7 @@ class ValuesPredictionController:
 
         # --- retryable errors tuple (best-effort across versions) ---
         try:
-            from openai import (  # noqa
-                APIConnectionError,
-                APIError,
-                APIStatusError,
-                APITimeoutError,
-                RateLimitError,
-            )
+            from openai import APIConnectionError, APIError, APIStatusError, APITimeoutError, RateLimitError  # noqa
 
             self._OPENAI_ERRORS = (
                 APIError,
@@ -240,9 +229,7 @@ class ValuesPredictionController:
         return self._run_mode
 
     # -------------------- retry helper --------------------
-    async def _retry_llm(
-        self, call_factory, *, max_attempts: int = 3, base_delay: float = 1.0
-    ):
+    async def _retry_llm(self, call_factory, *, max_attempts: int = 3, base_delay: float = 1.0):
         """
         Retry wrapper for LLM calls with exponential backoff and jitter.
 
@@ -327,9 +314,7 @@ class ValuesPredictionController:
 
         # -------- Dataset slice --------
         full_dataset = pd.read_csv(cfg["user_profile_dataset_path"])
-        full_dataset = full_dataset.loc[
-            :, ~full_dataset.columns.str.contains("^Unnamed")
-        ]
+        full_dataset = full_dataset.loc[:, ~full_dataset.columns.str.contains("^Unnamed")]
         start = int(cfg.get("starting_row", 0) or 0)
         end = cfg.get("ending_row", -1)
         if end is None or int(end) < 0:
@@ -342,23 +327,15 @@ class ValuesPredictionController:
         with open(cfg["dialogue_file"], "r", encoding="utf-8") as d_f:
             all_dialogues = d_f.readlines()
             generated_dialogues = [json.loads(dialogue) for dialogue in all_dialogues]
-            generated_dialogues = {
-                k: v for d in generated_dialogues for k, v in d.items()
-            }
+            generated_dialogues = {k: v for d in generated_dialogues for k, v in d.items()}
         # -------- Picked questions --------
         with open(cfg["picked_questions_path"], "r", encoding="utf-8") as question_file:
             picked_questions = json.load(question_file)
 
         # -------- OpenAI / backend client --------
-        api_key = (
-            cfg.get("openai_api_key")
-            or os.environ.get("api_key")
-            or os.environ.get("OPENAI_API_KEY")
-        )
+        api_key = cfg.get("openai_api_key") or os.environ.get("api_key") or os.environ.get("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError(
-                "Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY')."
-            )
+            raise RuntimeError("Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY').")
 
         evaluated_model = cfg["evaluated_model"]
         llm_server = cfg.get("llm_server", "llm_platform")
@@ -367,11 +344,7 @@ class ValuesPredictionController:
         if "gpt" in evaluated_model and "oss" not in evaluated_model:
             openai_client = AsyncOpenAI(api_key=api_key)
         else:
-            base_url = (
-                cfg.get("model_base_url")
-                or os.environ.get("base_url")
-                or "http://localhost:8000/v1"
-            )
+            base_url = cfg.get("model_base_url") or os.environ.get("base_url") or "http://localhost:8000/v1"
             openai_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
         # -------- Instantiate controller --------
@@ -446,12 +419,8 @@ class ValuesPredictionController:
                 if self.llm_server == "llm_platform":
                     reasoning_content = full_chat_response.choices[0].message.reasoning
                 else:
-                    reasoning_content = full_chat_response.choices[
-                        0
-                    ].message.reasoning_content
-                reason_for_selection = (
-                    f"reasoning:{reasoning_content}\n\n{reason_for_selection}"
-                )
+                    reasoning_content = full_chat_response.choices[0].message.reasoning_content
+                reason_for_selection = f"reasoning:{reasoning_content}\n\n{reason_for_selection}"
 
         except KeyError:
             logger.warning("Error processing decoded json: %s", content)
@@ -460,55 +429,46 @@ class ValuesPredictionController:
                 "Wrong structured response",
             )
 
-        return Response(
-            option_id=int(selected_option_id), reason=reason_for_selection
-        ).model_dump()
+        return Response(option_id=int(selected_option_id), reason=reason_for_selection).model_dump()
 
     async def _direct_value_query(self, question_id, user_profile, full_question):
         """
         Query the LLM to answer a single values question given a rendered user profile.
         """
         direct_value_selection_prompt = self._prompt("direct_question")
-        direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[1][
-            "content"
-        ].format(user_details=user_profile)
-        direct_value_selection_prompt[2]["content"] = direct_value_selection_prompt[2][
-            "content"
-        ].format(values_question=full_question)
+        direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[1]["content"].format(
+            user_details=user_profile
+        )
+        direct_value_selection_prompt[2]["content"] = direct_value_selection_prompt[2]["content"].format(
+            values_question=full_question
+        )
 
         # 🔁 Auto-retry the network call only
         structured_output = await self._retry_llm(
-            lambda: self._llm_output_processing(
-                full_messages=direct_value_selection_prompt, reasoning=self.reasoning
-            ),
+            lambda: self._llm_output_processing(full_messages=direct_value_selection_prompt, reasoning=self.reasoning),
             max_attempts=3,
             base_delay=1.0,
         )
 
         return {question_id: structured_output}
 
-    async def _dialogue_continue_value_query(
-        self, question_id, dialogue_history, full_question
-    ):
+    async def _dialogue_continue_value_query(self, question_id, dialogue_history, full_question):
         """
         Query the LLM to answer a values question using prior dialogue context.
         """
         dialogue_continue_prompt = self._prompt("dialogue_followup")
         dialogue_based_msgs = deepcopy(dialogue_history)
         dialogue_based_msgs = [
-            {**m, "role": "assistant"} if m.get("role") == "chatbot" else m
-            for m in dialogue_based_msgs
+            {**m, "role": "assistant"} if m.get("role") == "chatbot" else m for m in dialogue_based_msgs
         ]
         dialogue_based_msgs.append(dialogue_continue_prompt[0])
-        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1][
-            "content"
-        ].format(values_question=full_question)
+        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1]["content"].format(
+            values_question=full_question
+        )
         dialogue_based_msgs.append(dialogue_continue_prompt[1])
 
         structured_output = await self._retry_llm(
-            lambda: self._llm_output_processing(
-                full_messages=dialogue_based_msgs, reasoning=self.reasoning
-            ),
+            lambda: self._llm_output_processing(full_messages=dialogue_based_msgs, reasoning=self.reasoning),
             max_attempts=3,
             base_delay=1.0,
         )
@@ -553,15 +513,10 @@ class ValuesPredictionController:
                             )
 
                         one_user_one_category_selections = await asyncio.gather(
-                            *[
-                                self._direct_value_query(**kwargs)
-                                for kwargs in list_kwargs
-                            ]
+                            *[self._direct_value_query(**kwargs) for kwargs in list_kwargs]
                         )
 
-                        one_user_selections[question_category] = (
-                            one_user_one_category_selections
-                        )
+                        one_user_selections[question_category] = one_user_one_category_selections
 
                         if self._verbose == 1:
                             logger.info(
@@ -574,18 +529,14 @@ class ValuesPredictionController:
 
                     # Store results periodically if storage_step is defined
                     if self._storage_step and (index + 1) % self._storage_step == 0:
-                        self.append_to_file(
-                            list_user_selections, self._direct_output_file_path
-                        )
+                        self.append_to_file(list_user_selections, self._direct_output_file_path)
                         list_user_selections.clear()
 
                     pbar.update(1)
 
                 # Store any remaining results
                 if list_user_selections:
-                    self.append_to_file(
-                        list_user_selections, self._direct_output_file_path
-                    )
+                    self.append_to_file(list_user_selections, self._direct_output_file_path)
 
         except Exception as e:
             logger.error(
@@ -616,9 +567,7 @@ class ValuesPredictionController:
                     try:
                         user_dialogue = self.generated_dialogues[user_id]
                     except KeyError:
-                        logger.warning(
-                            "Error finding the dialogue for user: %s", user_id
-                        )
+                        logger.warning("Error finding the dialogue for user: %s", user_id)
 
                     if self._verbose == 1:
                         logger.info("Processing row %s: %s", index, row_dict)
@@ -641,15 +590,10 @@ class ValuesPredictionController:
                             )
 
                         one_user_one_category_selections = await asyncio.gather(
-                            *[
-                                self._dialogue_continue_value_query(**kwargs)
-                                for kwargs in list_kwargs
-                            ]
+                            *[self._dialogue_continue_value_query(**kwargs) for kwargs in list_kwargs]
                         )
 
-                        one_user_selections[question_category] = (
-                            one_user_one_category_selections
-                        )
+                        one_user_selections[question_category] = one_user_one_category_selections
 
                         if self._verbose == 1:
                             logger.info(
@@ -662,18 +606,14 @@ class ValuesPredictionController:
 
                     # Store results periodically if storage_step is defined
                     if self._storage_step and (index + 1) % self._storage_step == 0:
-                        self.append_to_file(
-                            list_user_selections, self._dialogue_output_file_path
-                        )
+                        self.append_to_file(list_user_selections, self._dialogue_output_file_path)
                         list_user_selections.clear()
 
                     pbar.update(1)
 
                 # Store any remaining results
                 if list_user_selections:
-                    self.append_to_file(
-                        list_user_selections, self._dialogue_output_file_path
-                    )
+                    self.append_to_file(list_user_selections, self._dialogue_output_file_path)
 
         except Exception as e:
             logger.error(
@@ -697,9 +637,7 @@ async def main():
     parser = argparse.ArgumentParser()
     parser = ValuesPredictionController.add_cli_args(parser=parser)
     values_prediction_args = parser.parse_args()
-    prediction_controller = ValuesPredictionController.from_cli_args(
-        args=values_prediction_args
-    )
+    prediction_controller = ValuesPredictionController.from_cli_args(args=values_prediction_args)
 
     await prediction_controller.run()
 

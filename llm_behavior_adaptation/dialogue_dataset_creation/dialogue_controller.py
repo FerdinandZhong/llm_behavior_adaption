@@ -10,7 +10,6 @@ from typing import Dict, Literal
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
-from tqdm import tqdm
 from tqdm.asyncio import tqdm
 
 from ..utils import register_logger
@@ -78,9 +77,7 @@ class DialogueGenerator:
         api_key = os.getenv("OPENAI_API_KEY") or os.getenv("api_key")
         if openai_client is None:
             if not api_key:
-                raise RuntimeError(
-                    "Missing OPENAI_API_KEY (or 'api_key') in environment."
-                )
+                raise RuntimeError("Missing OPENAI_API_KEY (or 'api_key') in environment.")
             self._openai_client = AsyncOpenAI(api_key=api_key)
         else:
             self._openai_client = openai_client
@@ -104,9 +101,7 @@ class DialogueGenerator:
             user_simulator_generation_paramters,
             {"reasoning_effort": "low", "verbosity": "low"},
         )
-        self._chatbot_generation_parameters: dict = _safe_params(
-            chatbot_generation_parameters, {}
-        )
+        self._chatbot_generation_parameters: dict = _safe_params(chatbot_generation_parameters, {})
         self._ooc_detector_parameters: dict = _safe_params(
             ooc_detector_parameters,
             {
@@ -132,9 +127,7 @@ class DialogueGenerator:
         try:
             self._prompts: dict = load_json_folder(folder=self._prompts_folder)
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to load prompts from '{self._prompts_folder}': {e}"
-            ) from e
+            raise RuntimeError(f"Failed to load prompts from '{self._prompts_folder}': {e}") from e
         if not isinstance(self._prompts, dict):
             raise TypeError(
                 f"load_json_folder('{self._prompts_folder}') must return a dict; got {type(self._prompts)!r}"
@@ -226,9 +219,7 @@ class DialogueGenerator:
     # -------- LLM calls --------
     async def _init_dialogue(self, user_profile: str) -> str:
         init_prompt = self._prompt("user_simulator_initial_prompt")
-        init_prompt[1]["content"] = init_prompt[1]["content"].format(
-            user_details=user_profile
-        )
+        init_prompt[1]["content"] = init_prompt[1]["content"].format(user_details=user_profile)
         resp = await self.openai_client.chat.completions.create(
             model=self.user_simulator,
             messages=init_prompt,
@@ -236,9 +227,7 @@ class DialogueGenerator:
         )
         return resp.choices[0].message.content
 
-    async def _llm_ooc_detection(
-        self, user_profile: str, proposed_question: str
-    ) -> dict:
+    async def _llm_ooc_detection(self, user_profile: str, proposed_question: str) -> dict:
         """
         Returns JSON like: {"has_out_of_context": bool, "reason": "<string or empty>"}
         (No rewriting here.)
@@ -255,22 +244,16 @@ class DialogueGenerator:
         # JSON mode constrains output to valid JSON parseable string. :contentReference[oaicite:1]{index=1}
         return json.loads(det.choices[0].message.content)
 
-    async def _rewrite_question(
-        self, user_profile: str, last_user_question: str, ooc_reason: str
-    ) -> str:
+    async def _rewrite_question(self, user_profile: str, last_user_question: str, ooc_reason: str) -> str:
         """
         Rewrites the last user question using the OOC reason + full dialogue + user profile.
         """
         history_str = render_json(self.dialogue_history)
         prompt = self._prompt("user_simulator_rewriter_prompt")
         # Typical layout: [system,...] indices may vary based on your prompt file
-        prompt[1]["content"] = prompt[1]["content"].format(
-            conversation_history=history_str
-        )
+        prompt[1]["content"] = prompt[1]["content"].format(conversation_history=history_str)
         prompt[2]["content"] = prompt[2]["content"].format(user_details=user_profile)
-        prompt[3]["content"] = prompt[3]["content"].format(
-            user_last_message=last_user_question
-        )
+        prompt[3]["content"] = prompt[3]["content"].format(user_last_message=last_user_question)
         prompt[4]["content"] = prompt[4]["content"].format(expert_review=ooc_reason)
 
         resp = await self.openai_client.chat.completions.create(
@@ -283,9 +266,7 @@ class DialogueGenerator:
     async def _review_dialogue(self) -> dict:
         history_str = render_json(self.dialogue_history)
         prompt = self._prompt("dialogue_reviewer_prompt")
-        prompt[1]["content"] = prompt[1]["content"].format(
-            conversation_history=history_str
-        )
+        prompt[1]["content"] = prompt[1]["content"].format(conversation_history=history_str)
         resp = await self.openai_client.chat.completions.create(
             model=self.dialogue_reviewer,
             messages=prompt,
@@ -296,9 +277,7 @@ class DialogueGenerator:
     async def _followup_question(self, user_profile: str) -> str:
         history_str = render_json(self.dialogue_history)
         prompt = self._prompt("user_simulator_subsequent_prompt")
-        prompt[1]["content"] = prompt[1]["content"].format(
-            conversation_history=history_str
-        )
+        prompt[1]["content"] = prompt[1]["content"].format(conversation_history=history_str)
         prompt[2]["content"] = prompt[2]["content"].format(user_details=user_profile)
         resp = await self.openai_client.chat.completions.create(
             model=self.user_simulator,
@@ -343,15 +322,11 @@ class DialogueGenerator:
                 # ---- Initial turn ----
                 first_question = await self._init_dialogue(user_profile=user_profile)
 
-                det = await self._llm_ooc_detection(
-                    user_profile=user_profile, proposed_question=first_question
-                )
+                det = await self._llm_ooc_detection(user_profile=user_profile, proposed_question=first_question)
                 if det.get("has_out_of_context"):
                     reason = det.get("reason", "")
                     if self._verbose == 1:
-                        logger.warning(
-                            "OOC detected on initial question. Reason: %s", reason[:200]
-                        )
+                        logger.warning("OOC detected on initial question. Reason: %s", reason[:200])
                     # rewrite (instead of detector rewriting directly)
                     first_question = await self._rewrite_question(
                         user_profile=user_profile,
@@ -376,19 +351,13 @@ class DialogueGenerator:
                             logger.info("Conversation ended by reviewer.")
                         return self.dialogue_history
 
-                    proposed_question = await self._followup_question(
-                        user_profile=user_profile
-                    )
+                    proposed_question = await self._followup_question(user_profile=user_profile)
 
-                    det = await self._llm_ooc_detection(
-                        user_profile=user_profile, proposed_question=proposed_question
-                    )
+                    det = await self._llm_ooc_detection(user_profile=user_profile, proposed_question=proposed_question)
                     if det.get("has_out_of_context"):
                         reason = det.get("reason", "")
                         if self._verbose == 1:
-                            logger.warning(
-                                "OOC detected on follow-up. Reason: %s", reason[:200]
-                            )
+                            logger.warning("OOC detected on follow-up. Reason: %s", reason[:200])
                         proposed_question = await self._rewrite_question(
                             user_profile=user_profile,
                             last_user_question=proposed_question,
@@ -398,12 +367,8 @@ class DialogueGenerator:
                     chatbot_answer = await self._query_chatbot(proposed_question)
 
                     if self._verbose == 1:
-                        logger.info(
-                            "User: %s", " ".join(proposed_question.split()[:20])
-                        )
-                        logger.info(
-                            "Chatbot: %s", " ".join(chatbot_answer.split()[:20])
-                        )
+                        logger.info("User: %s", " ".join(proposed_question.split()[:20]))
+                        logger.info("Chatbot: %s", " ".join(chatbot_answer.split()[:20]))
 
                     self.append_to_dialogue(proposed_question, chatbot_answer)
                     pbar.update(1)

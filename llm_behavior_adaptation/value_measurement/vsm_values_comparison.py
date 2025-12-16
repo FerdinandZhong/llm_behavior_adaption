@@ -10,18 +10,14 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    calculate_age,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import calculate_age
 from llm_behavior_adaptation.utils import register_logger
 from llm_behavior_adaptation.value_measurement.formulas import (
     componentwise_centroid_vsm,
+    compute_emd,
     emd_distance_vsm,
-    compute_emd
 )
-from llm_behavior_adaptation.value_measurement.measurement_utils import (
-    get_development_level,
-)
+from llm_behavior_adaptation.value_measurement.measurement_utils import get_development_level
 
 logger = logging.getLogger(__name__)
 register_logger(logger)
@@ -184,9 +180,7 @@ class ValuesComparison:
             return model_results
 
         ba_user_results = _process_model_outputs(load_jsonl_file(args.ba_user_results))
-        ba_dialogue_career_results = _process_model_outputs(
-            load_jsonl_file(args.ba_dialogue_career_results)
-        )
+        ba_dialogue_career_results = _process_model_outputs(load_jsonl_file(args.ba_dialogue_career_results))
 
         return cls(
             user_profile_dataset=user_profile_dataset,
@@ -216,14 +210,10 @@ class ValuesComparison:
         )
 
         # Group indices by the range_group column
-        grouped_data = self.user_profile_dataset.groupby("range_group").apply(
-            lambda x: x.index.tolist()
-        )
+        grouped_data = self.user_profile_dataset.groupby("range_group").apply(lambda x: x.index.tolist())
 
         # Convert to a dictionary and remove empty groups
-        grouped_data_dict = {
-            group: indices for group, indices in grouped_data.items() if indices
-        }
+        grouped_data_dict = {group: indices for group, indices in grouped_data.items() if indices}
 
         return grouped_data_dict
 
@@ -251,9 +241,7 @@ class ValuesComparison:
                 lambda x: get_development_level(x["Country"]), axis=1
             )
 
-        grouped_data = self.user_profile_dataset.groupby(target_col).apply(
-            lambda x: x.index.tolist()
-        )
+        grouped_data = self.user_profile_dataset.groupby(target_col).apply(lambda x: x.index.tolist())
         return grouped_data.to_dict()
 
     def _map_model_results_to_groups(
@@ -286,10 +274,7 @@ class ValuesComparison:
         group_answers = {}
         for group_name, idx_list in group_dict.items():
             group_answers[group_name] = [
-                [
-                    question_selection["selected_option_id"]
-                    for question_selection in values_selection_results[user_idx]
-                ]
+                [question_selection["selected_option_id"] for question_selection in values_selection_results[user_idx]]
                 for user_idx in idx_list
             ]
 
@@ -369,8 +354,7 @@ class ValuesComparison:
             if user_id in results_only_dict:
                 logger.warning("Duplicate user id: %s", user_id)
             results_only_dict[user_id] = [
-                question_selection["selected_option_id"]
-                for question_selection in user_answers
+                question_selection["selected_option_id"] for question_selection in user_answers
             ]
 
         return results_only_dict
@@ -380,7 +364,7 @@ class ValuesComparison:
         dist_a: Mapping[str, Mapping[str, int]],
         dist_b: Mapping[str, Mapping[str, int]],
         ids: Optional[Iterable[str]] = None,
-        use_old_emd: bool = True
+        use_old_emd: bool = True,
     ) -> Dict[str, object]:
         """
         Core computation for ID-matched divergences between two datasets A and B.
@@ -440,7 +424,7 @@ class ValuesComparison:
         exclude_self: bool = True,
         seed: int = 42,  # <- NEW: deterministic seed
         rng: Optional[random.Random] = None,
-        use_old_emd: bool = True
+        use_old_emd: bool = True,
     ) -> Dict[str, object]:
         """
         Baseline: for each id in A, compare to `picks` random ids from B (prefer non-self),
@@ -458,8 +442,9 @@ class ValuesComparison:
             }
         """
         # deterministic RNG + deterministic ordering of IDs/candidates
+        # Using random.Random for reproducible scientific experiments, not cryptography
         if rng is None:
-            rng = random.Random(seed)
+            rng = random.Random(seed)  # noqa: S311
 
         a_ids_all = sorted(dist_a.keys())
         b_ids_all = sorted(dist_b.keys())
@@ -506,9 +491,7 @@ class ValuesComparison:
             if len(candidates) >= picks:
                 match_ids = rng.sample(candidates, picks)  # without replacement
             else:
-                match_ids = [
-                    rng.choice(candidates) for _ in range(picks)
-                ]  # with replacement
+                match_ids = [rng.choice(candidates) for _ in range(picks)]  # with replacement
 
             dists = []
             for bid in match_ids:
@@ -535,13 +518,9 @@ class ValuesComparison:
     ):
         """Compute the cross dataset pairwise divergences with a progress bar (id-matched)."""
         user_distributions = self._pick_model_results_option_id(self.ba_user_results)
-        dialogue_distributions = self._pick_model_results_option_id(
-            self.ba_dialogue_career_results
-        )
+        dialogue_distributions = self._pick_model_results_option_id(self.ba_dialogue_career_results)
 
-        core = self._compute_id_matched_divergences(
-            user_distributions, dialogue_distributions
-        )
+        core = self._compute_id_matched_divergences(user_distributions, dialogue_distributions)
 
         divergences: List[float] = core["per_user_divergences"]
         if not divergences:
@@ -578,9 +557,7 @@ class ValuesComparison:
         average the two EMDs, then aggregate mean/std across users. Includes progress bar.
         """
         user_distributions = self._pick_model_results_option_id(self.ba_user_results)
-        dialogue_distributions = self._pick_model_results_option_id(
-            self.ba_dialogue_career_results
-        )
+        dialogue_distributions = self._pick_model_results_option_id(self.ba_dialogue_career_results)
 
         core = self._compute_baseline_two_random_matches(
             user_distributions,
@@ -627,41 +604,26 @@ class ValuesComparison:
 
         return group_centroids
 
-    def compute_attributes_groups_distances(
-        self, results_attribute, show_progress: bool = True
-    ):
+    def compute_attributes_groups_distances(self, results_attribute, show_progress: bool = True):
         """compute group distances for attributes"""
         computed_results = {}
         user_values_dict = getattr(self, results_attribute)
 
         all_samples = []
         for _, user_answers in user_values_dict.items():
-            all_samples.append(
-                [
-                    one_user_answer["selected_option_id"]
-                    for one_user_answer in user_answers
-                ]
-            )
+            all_samples.append([one_user_answer["selected_option_id"] for one_user_answer in user_answers])
 
         global_centroid = componentwise_centroid_vsm(all_samples)
 
-        attributes_iter = (
-            tqdm(ATTRIBUTES, desc="Attributes", unit="attr")
-            if show_progress
-            else ATTRIBUTES
-        )
+        attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
         for attribute in attributes_iter:
             index_based_group_dict = self._get_index_list_for_groups(attribute)
             grouped_values = self._map_model_results_to_groups(
                 group_dict=index_based_group_dict,
                 values_selection_results=user_values_dict,
             )
-            group_centroids = self._calculate_centroids_among_groups(
-                grouped_output_values=grouped_values
-            )
-            group_distances = self.pairwise_group_emd_list(
-                group_centroids, normalize=True
-            )
+            group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+            group_distances = self.pairwise_group_emd_list(group_centroids, normalize=True)
             bassline = {
                 "overall_baseline": self.baseline_emd(
                     global_centroid,
@@ -718,10 +680,7 @@ if __name__ == "__main__":
 
         base_user_map = base_res.pop("per_user_map")
         per_user_base = [base_user_map[uid] for uid in common]
-        per_user_ratio = [
-            d / b if b != 0 else float("nan")
-            for d, b in zip(per_user_div, per_user_base)
-        ]
+        per_user_ratio = [d / b if b != 0 else float("nan") for d, b in zip(per_user_div, per_user_base)]
 
         cross_datasets_results = {
             "distance": dist_res,
@@ -744,7 +703,7 @@ if __name__ == "__main__":
             json.dump(final_outputs, f, ensure_ascii=False, indent=2)
         logger.info("Wrote results to %s", args.results_output_path)
 
-    except Exception as e:
+    except Exception:
         logger.exception("ValuesComparison run failed.")
         # Non-zero exit for CI/automation visibility
         sys.exit(1)

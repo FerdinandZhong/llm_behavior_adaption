@@ -15,13 +15,8 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import (
-    DialogueRun,
-)
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    render_template,
-    retrieve_user_profile,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.dialogue_controller import DialogueRun
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import render_template, retrieve_user_profile
 from llm_behavior_adaptation.value_measurement.constant import (
     CONVERSATION_HISTORY_PROMPT,
     DEFAULT_OPTION_IDS,
@@ -111,9 +106,7 @@ class ValuesPredictionController:
                 self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"])
             else:
                 base_url = os.getenv("base_url", "http://localhost:8000/v1")
-                self._openai_client = AsyncOpenAI(
-                    api_key=os.environ["api_key"], base_url=base_url
-                )
+                self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"], base_url=base_url)
         else:
             self._openai_client = openai_client
 
@@ -269,9 +262,7 @@ class ValuesPredictionController:
             default=os.environ.get("api_key"),
             help="OpenAI API key. Defaults to the value of the environment variable 'api_key'.",
         )
-        parser.add_argument(
-            "--model-base-url", type=str, default=os.environ.get("base_url")
-        )
+        parser.add_argument("--model-base-url", type=str, default=os.environ.get("base_url"))
         parser.add_argument(
             "--user-profile-dataset",
             type=str,
@@ -364,9 +355,7 @@ class ValuesPredictionController:
         full_user_dataset = _read_csv(args.user_profile_dataset)
         user_profile_dataset = full_user_dataset[args.starting_row : args.ending_row]
         direct_value_questions = _read_csv(DIRECT_VALUE_QUESTIONS_CSV)
-        dialogue_continue_value_questions = _read_csv(
-            DIALOGUE_CONTINUE_VALUE_QUESTIONS_CSV
-        )
+        dialogue_continue_value_questions = _read_csv(DIALOGUE_CONTINUE_VALUE_QUESTIONS_CSV)
 
         generated_dialogues = []
         with open(args.dialogue_file, "r", encoding="utf-8") as dialogue_file:
@@ -381,9 +370,7 @@ class ValuesPredictionController:
         if "gpt" in args.evaluated_model:
             openai_client = AsyncOpenAI(api_key=args.openai_api_key)
         else:
-            openai_client = AsyncOpenAI(
-                api_key=args.openai_api_key, base_url=args.model_base_url
-            )
+            openai_client = AsyncOpenAI(api_key=args.openai_api_key, base_url=args.model_base_url)
 
         return cls(
             evaluated_model=args.evaluated_model,
@@ -416,9 +403,7 @@ class ValuesPredictionController:
         try:
             json_output = json.loads(full_chat_response.choices[0].message.content)
         except Exception:
-            logger.warning(
-                f"Error decoding as json: {full_chat_response.choices[0].message.content}"
-            )
+            logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
             return (
                 0,
                 [0, 0, 0, 0, 0],
@@ -429,9 +414,7 @@ class ValuesPredictionController:
             selected_option_id = json_output["option_id"]
             reason_for_selection = json_output["reason"]
             if reasoning is not None:
-                reason_for_selection = (
-                    f"<think>{reasoning}</think>\n" + reason_for_selection
-                )
+                reason_for_selection = f"<think>{reasoning}</think>\n" + reason_for_selection
             option_id_logprobs = None
             for token_obj in full_chat_response.choices[0].logprobs.content:
                 if token_obj.token == str(selected_option_id):
@@ -442,21 +425,13 @@ class ValuesPredictionController:
                 normalized_probs = [0, 0, 0, 0, 0]  # invalid probs
             for prob_item in option_id_logprobs:
                 try:
-                    option_id_logprobs_dict[int(prob_item.token.strip())] = (
-                        prob_item.logprob
-                    )
+                    option_id_logprobs_dict[int(prob_item.token.strip())] = prob_item.logprob
                 except ValueError as e:
-                    logger.warning(
-                        f"Can't have {prob_item.token} casted into int: {str(e)}"
-                    )
+                    logger.warning(f"Can't have {prob_item.token} casted into int: {str(e)}")
                     option_id_logprobs_dict[prob_item.token] = prob_item.logprob
-            normalized_probs = self._normalize_logprobs(
-                option_id_logprobs_dict, DEFAULT_OPTION_IDS
-            )
+            normalized_probs = self._normalize_logprobs(option_id_logprobs_dict, DEFAULT_OPTION_IDS)
         except Exception:
-            logger.warning(
-                f"Error decoding as json: {full_chat_response.choices[0].message.content}"
-            )
+            logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
             return (
                 0,
                 [0, 0, 0, 0, 0],
@@ -471,16 +446,14 @@ class ValuesPredictionController:
             reason_for_selection,
         )
 
-    async def _direct_value_query(
-        self, question_index, user_profile, full_question, options_str
-    ):
+    async def _direct_value_query(self, question_index, user_profile, full_question, options_str):
         direct_value_selection_prompt = deepcopy(DIRECT_VALUE_SELECTION_PROMPT)
-        direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[1][
-            "content"
-        ].format(user_details=user_profile)
-        direct_value_selection_prompt[2]["content"] = direct_value_selection_prompt[2][
-            "content"
-        ].format(question=full_question, option_list=options_str)
+        direct_value_selection_prompt[1]["content"] = direct_value_selection_prompt[1]["content"].format(
+            user_details=user_profile
+        )
+        direct_value_selection_prompt[2]["content"] = direct_value_selection_prompt[2]["content"].format(
+            question=full_question, option_list=options_str
+        )
 
         if self.reasoning:
             reasoning_response = await self.openai_client.chat.completions.create(
@@ -490,9 +463,7 @@ class ValuesPredictionController:
                 max_tokens=4096,  # larger window
             )
 
-            reasoning_output = reasoning_response.choices[0].message.content.split(
-                "</think>"
-            )[0]
+            reasoning_output = reasoning_response.choices[0].message.content.split("</think>")[0]
 
             direct_value_selection_prompt.append(
                 {
@@ -511,9 +482,7 @@ class ValuesPredictionController:
         if self.prompt_append_format:
             direct_value_selection_prompt.append(EXTRA_FORMAT)
 
-        full_chat_response = await self.query_llm(
-            messages=direct_value_selection_prompt
-        )
+        full_chat_response = await self.query_llm(messages=direct_value_selection_prompt)
 
         (
             selected_option_id,
@@ -530,16 +499,14 @@ class ValuesPredictionController:
             reason_for_selection=reason_for_selection,
         )
 
-    async def _dialogue_continue_value_query(
-        self, question_index, dialogue_history, full_question, options_str
-    ):
+    async def _dialogue_continue_value_query(self, question_index, dialogue_history, full_question, options_str):
         dialogue_continue_prompt = deepcopy(CONVERSATION_HISTORY_PROMPT)
         dialogue_based_msgs = deepcopy(dialogue_history)
         dialogue_based_msgs.append(dialogue_continue_prompt[0])
         dialogue_based_msgs.append(dialogue_continue_prompt[1])
-        dialogue_continue_prompt[2]["content"] = dialogue_continue_prompt[2][
-            "content"
-        ].format(question=full_question, option_list=options_str)
+        dialogue_continue_prompt[2]["content"] = dialogue_continue_prompt[2]["content"].format(
+            question=full_question, option_list=options_str
+        )
         dialogue_based_msgs.append(dialogue_continue_prompt[2])
 
         if self.reasoning:
@@ -550,9 +517,7 @@ class ValuesPredictionController:
                 max_tokens=4096,  # larger window
             )
 
-            reasoning_output = reasoning_response.choices[0].message.content.split(
-                "</think>"
-            )[0]
+            reasoning_output = reasoning_response.choices[0].message.content.split("</think>")[0]
 
             dialogue_based_msgs.append(
                 {
@@ -608,9 +573,7 @@ class ValuesPredictionController:
                     row_dict = row.to_dict()
                     one_user_selections = []
 
-                    user_profile = render_template(
-                        PROFILE_TEMPLATE, profile_data=retrieve_user_profile(row_dict)
-                    )
+                    user_profile = render_template(PROFILE_TEMPLATE, profile_data=retrieve_user_profile(row_dict))
 
                     if self._verbose == 1:
                         logger.info(f"Processing row {index}: {row_dict}")
@@ -643,32 +606,23 @@ class ValuesPredictionController:
                     list_user_selections.append(
                         {
                             "user_idx": index,
-                            "value_selections": [
-                                each_question.model_dump()
-                                for each_question in one_user_selections
-                            ],
+                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
                         }
                     )
 
                     # Store results periodically if storage_step is defined
                     if self._storage_step and (index + 1) % self._storage_step == 0:
-                        self.append_to_file(
-                            list_user_selections, self._direct_output_file_path
-                        )
+                        self.append_to_file(list_user_selections, self._direct_output_file_path)
                         list_user_selections.clear()
 
                     pbar.update(1)
 
                 # Store any remaining results
                 if list_user_selections:
-                    self.append_to_file(
-                        list_user_selections, self._direct_output_file_path
-                    )
+                    self.append_to_file(list_user_selections, self._direct_output_file_path)
 
         except Exception as e:
-            logger.error(
-                f"An error occurred in the value selection given user profile: {e}"
-            )
+            logger.error(f"An error occurred in the value selection given user profile: {e}")
             raise
 
     async def get_values_for_dialogue(self):
@@ -685,14 +639,10 @@ class ValuesPredictionController:
 
                     generated_dialogue_runs = []
                     for run in dialogue_details["generated_dialogue"]:
-                        generated_dialogue_runs += DialogueRun.model_validate(
-                            run
-                        ).convert_to_openai_history()
+                        generated_dialogue_runs += DialogueRun.model_validate(run).convert_to_openai_history()
 
                     if self._verbose == 1:
-                        logger.info(
-                            f"Processing row {user_index}: {generated_dialogue_runs}"
-                        )
+                        logger.info(f"Processing row {user_index}: {generated_dialogue_runs}")
 
                     list_kwargs = []
 
@@ -716,44 +666,29 @@ class ValuesPredictionController:
                         )
 
                     one_user_selections = await asyncio.gather(
-                        *[
-                            self._dialogue_continue_value_query(**kwargs)
-                            for kwargs in list_kwargs
-                        ]
+                        *[self._dialogue_continue_value_query(**kwargs) for kwargs in list_kwargs]
                     )
 
                     list_user_selections.append(
                         {
                             "user_idx": user_index,
-                            "value_selections": [
-                                each_question.model_dump()
-                                for each_question in one_user_selections
-                            ],
+                            "value_selections": [each_question.model_dump() for each_question in one_user_selections],
                         }
                     )
 
                     # Store results periodically if storage_step is defined
-                    if (
-                        self._storage_step
-                        and (user_index + 1) % self._storage_step == 0
-                    ):
-                        self.append_to_file(
-                            list_user_selections, self._dialogue_output_file_path
-                        )
+                    if self._storage_step and (user_index + 1) % self._storage_step == 0:
+                        self.append_to_file(list_user_selections, self._dialogue_output_file_path)
                         list_user_selections.clear()
 
                     pbar.update(1)
 
                 # Store any remaining results
                 if list_user_selections:
-                    self.append_to_file(
-                        list_user_selections, self._dialogue_output_file_path
-                    )
+                    self.append_to_file(list_user_selections, self._dialogue_output_file_path)
 
         except Exception as e:
-            logger.error(
-                f"An error occurred in the value selection given dialogue context: {e}"
-            )
+            logger.error(f"An error occurred in the value selection given dialogue context: {e}")
             raise
 
     def append_to_file(self, data, output_file_path):
@@ -767,13 +702,9 @@ async def main():
     parser = argparse.ArgumentParser()
     parser = ValuesPredictionController.add_cli_args(parser=parser)
     values_prediction_args = parser.parse_args()
-    prediction_controller = ValuesPredictionController.from_cli_args(
-        args=values_prediction_args
-    )
+    prediction_controller = ValuesPredictionController.from_cli_args(args=values_prediction_args)
 
-    values_for_user_profiles = (
-        await prediction_controller.get_values_for_user_profiles()
-    )
+    values_for_user_profiles = await prediction_controller.get_values_for_user_profiles()
     values_for_dialogue = await prediction_controller.get_values_for_dialogue()
 
     # You can print or return these if needed

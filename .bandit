@@ -1,0 +1,23 @@
+# Bandit configuration for security checks
+exclude_dirs:
+  - /tests/
+  - /.venv/
+  - /venv/
+  - /env/
+  - /.eggs/
+  - /*.egg-info/
+  - /build/
+  - /dist/
+  - /__pycache__/
+  - /.pytest_cache/
+  - /.mypy_cache/
+  - /.tox/
+  - /datasets/
+  - /values_results/
+  - /vsm_images/
+  - /wvs_images/
+
+# Test IDs to skip
+# B101: Test for use of assert (common in tests)
+skips:
+  - B101

@@ -13,14 +13,8 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.constant import (
-    LLM_JUDGE_DICT,
-    PROFILE_TEMPLATE,
-)
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    render_template,
-    retrieve_user_profile,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.constant import LLM_JUDGE_DICT, PROFILE_TEMPLATE
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import render_template, retrieve_user_profile
 
 logger = logging.getLogger(__name__)
 
@@ -68,9 +62,7 @@ class GenerationJudgeController:
         self._storage_step = storage_step
         if openai_client is None:
             base_url = os.getenv("base_url", "http://localhost:8000/v1")
-            self._openai_client = AsyncOpenAI(
-                api_key=os.environ["api_key"], base_url=base_url
-            )
+            self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"], base_url=base_url)
         else:
             self._openai_client = openai_client
         # self._profile_keys = deepcopy(PROFILE_KEYS)
@@ -153,9 +145,7 @@ class GenerationJudgeController:
             default=os.environ.get("api_key"),
             help="OpenAI API key. Defaults to the value of the environment variable 'api_key'.",
         )
-        parser.add_argument(
-            "--model-base-url", type=str, default=os.environ.get("base_url")
-        )
+        parser.add_argument("--model-base-url", type=str, default=os.environ.get("base_url"))
         parser.add_argument(
             "--user-profile-dataset",
             type=str,
@@ -241,9 +231,7 @@ class GenerationJudgeController:
                 if len(generated_dialogues) >= args.ending_row:
                     break
 
-        openai_client = AsyncOpenAI(
-            api_key=args.openai_api_key, base_url=args.model_base_url
-        )
+        openai_client = AsyncOpenAI(api_key=args.openai_api_key, base_url=args.model_base_url)
 
         return cls(
             openai_client=openai_client,
@@ -260,19 +248,13 @@ class GenerationJudgeController:
             json_output = json.loads(full_chat_response.choices[0].message.content)
             return json_output
         except Exception:
-            logger.warning(
-                f"Error decoding as json: {full_chat_response.choices[0].message.content}"
-            )
+            logger.warning(f"Error decoding as json: {full_chat_response.choices[0].message.content}")
             return {"rating": 3, "reason": "Default value"}
 
     async def _judge_generated_questions(self, user_profile, questions_str, seed=1):
         messages = deepcopy(self._judge_prompt_template)
-        messages[1]["content"] = messages[1]["content"].format(
-            user_details=user_profile
-        )
-        messages[2]["content"] = messages[2]["content"].format(
-            question_str=questions_str
-        )
+        messages[1]["content"] = messages[1]["content"].format(user_details=user_profile)
+        messages[2]["content"] = messages[2]["content"].format(question_str=questions_str)
         judge_response = await self.openai_client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
@@ -316,12 +298,8 @@ class GenerationJudgeController:
                     row_dict = row.to_dict()
                     one_profile_judgements = []
 
-                    user_profile = render_template(
-                        PROFILE_TEMPLATE, profile_data=retrieve_user_profile(row_dict)
-                    )
-                    dialogue_details = self.generated_dialogues[user_idx][
-                        "generated_dialogue"
-                    ]
+                    user_profile = render_template(PROFILE_TEMPLATE, profile_data=retrieve_user_profile(row_dict))
+                    dialogue_details = self.generated_dialogues[user_idx]["generated_dialogue"]
 
                     if self._verbose == 1:
                         logger.info(f"Processing row {user_idx}: {row_dict}")
@@ -337,15 +315,12 @@ class GenerationJudgeController:
                             }
                         )
                     one_profile_judgements = await asyncio.gather(
-                        *[
-                            self._judge_generated_questions(**kwargs)
-                            for kwargs in list_kwargs
-                        ]
+                        *[self._judge_generated_questions(**kwargs) for kwargs in list_kwargs]
                     )
 
-                    final_rating = sum(
-                        [result["rating"] for result in one_profile_judgements]
-                    ) / len(one_profile_judgements)
+                    final_rating = sum([result["rating"] for result in one_profile_judgements]) / len(
+                        one_profile_judgements
+                    )
                     list_judgements.append(
                         {
                             f"generation_{user_idx}": {
@@ -364,9 +339,7 @@ class GenerationJudgeController:
                 self.append_to_file(list_judgements, self.output_file_path)
                 list_judgements.clear()
         except Exception as e:
-            logger.error(
-                f"An error occurred in the value selection given dialogue context: {e}"
-            )
+            logger.error(f"An error occurred in the value selection given dialogue context: {e}")
             raise e
 
     def append_to_file(self, data, output_file_path):
@@ -380,9 +353,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser = GenerationJudgeController.add_cli_args(parser=parser)
     values_prediction_args = parser.parse_args()
-    judge_controller = GenerationJudgeController.from_cli_args(
-        args=values_prediction_args
-    )
-    values_for_user_profiles = asyncio.run(
-        judge_controller.get_judgements_for_generations()
-    )
+    judge_controller = GenerationJudgeController.from_cli_args(args=values_prediction_args)
+    values_for_user_profiles = asyncio.run(judge_controller.get_judgements_for_generations())

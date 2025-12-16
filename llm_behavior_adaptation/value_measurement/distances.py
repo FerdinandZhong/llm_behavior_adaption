@@ -11,9 +11,7 @@ def _get_answer(q: str, v: AnswerVec) -> Optional[int]:
         return v.get(q, None)
     # If it's a sequence, we assume the caller iterates in the same order of `questions`
     # and passes the sequence zipped with `questions`. We'll handle that in the main fn.
-    raise TypeError(
-        "If v_a/v_b are sequences, call emd_between_vectors with `vector_mode='sequence'`."
-    )
+    raise TypeError("If v_a/v_b are sequences, call emd_between_vectors with `vector_mode='sequence'`.")
 
 
 def _normalize(dist: float, lo: int, hi: int, normalize_range: bool) -> float:
@@ -78,13 +76,9 @@ def emd_between_vectors(
             b_vals.append(_get_answer(q, v_b))
     elif vector_mode == "sequence":
         if not (isinstance(v_a, Sequence) and isinstance(v_b, Sequence)):
-            raise TypeError(
-                "For vector_mode='sequence', v_a and v_b must be sequences."
-            )
+            raise TypeError("For vector_mode='sequence', v_a and v_b must be sequences.")
         if len(v_a) != n or len(v_b) != n:
-            raise ValueError(
-                "When vector_mode='sequence', v_a and v_b must match len(questions)."
-            )
+            raise ValueError("When vector_mode='sequence', v_a and v_b must match len(questions).")
         a_vals = list(v_a)
         b_vals = list(v_b)
     else:

@@ -1,8 +1,6 @@
 import json
-import math
 import os
 import re
-from itertools import combinations
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import matplotlib as mpl
@@ -10,13 +8,10 @@ import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 import seaborn as sns
 from matplotlib.cm import get_cmap
-from matplotlib.colors import Normalize
 from matplotlib.patches import Rectangle
 from scipy import stats
-from scipy.stats import friedmanchisquare, ttest_rel, wilcoxon
 
 mpl.rcParams["font.family"] = "arial"
 
@@ -67,9 +62,7 @@ def plot_pairwise_comparison_heatmap_aligned(model_ratios: dict):
                 d_matrix[i, j] = np.nan
                 label_matrix[i, j] = ""
             else:
-                p, d = compute_p_and_d_with_user_alignment(
-                    model_ratios[models[i]], model_ratios[models[j]]
-                )
+                p, d = compute_p_and_d_with_user_alignment(model_ratios[models[i]], model_ratios[models[j]])
                 pval_matrix[i, j] = p
                 d_matrix[i, j] = d
                 if i < j:
@@ -148,7 +141,6 @@ def compare_models_stats(ratio_dict):
 
     # Sort by mean_ratio ascending
     return sorted(results, key=lambda x: x["mean_ratio"])
-
 
 
 def plot_divergence_comparison_radar(
@@ -274,17 +266,13 @@ def plot_divergence_comparison_radar(
     start_idx = 1 if human_present else 0
     for mi in range(start_idx, n_models):
         row = list(values[mi]) + [values[mi][0]]
-        ax.plot(
-            angles, row, color=colors[mi], linewidth=1.8, label=labels[mi], zorder=3
-        )
+        ax.plot(angles, row, color=colors[mi], linewidth=1.8, label=labels[mi], zorder=3)
         ax.fill(angles, row, color=colors[mi], alpha=0.18, zorder=2)
 
     # Human last (on top)
     if human_present:
         hrow = list(values[0]) + [values[0][0]]
-        ax.plot(
-            angles, hrow, color=colors[0], linewidth=3.2, label=labels[0], zorder=10
-        )
+        ax.plot(angles, hrow, color=colors[0], linewidth=3.2, label=labels[0], zorder=10)
         ax.scatter(angles[:-1], values[0], color=colors[0], s=45, zorder=11)
         ax.fill(angles, hrow, color=colors[0], alpha=0.35, zorder=5)
 
@@ -305,17 +293,11 @@ def plot_divergence_comparison_radar(
     ax.set_xticks([])
 
     r_label = max_val * (1.0 + label_radius_pad)
-    effects = (
-        [pe.withStroke(linewidth=3, foreground="white")] if label_outline else None
-    )
+    effects = [pe.withStroke(linewidth=3, foreground="white")] if label_outline else None
 
     for angle, txt in zip(angles[:-1], display_pairs):
         a = (angle + np.pi) % (2 * np.pi) - np.pi
-        ha = (
-            "left"
-            if (-np.pi / 2 < a < np.pi / 2)
-            else ("center" if abs(a) == np.pi / 2 else "right")
-        )
+        ha = "left" if (-np.pi / 2 < a < np.pi / 2) else ("center" if abs(a) == np.pi / 2 else "right")
         ax.text(
             angle,
             r_label,
@@ -373,9 +355,7 @@ def plot_divergence_comparison_heatmap(
     sort_by_defined_order: bool = True,
     defined_order: Optional[Sequence[str]] = None,
     pair_normalizer: Optional[Callable[[str], Tuple[str, str]]] = None,
-    order_pairs: Optional[
-        Callable[[List[str]], List[str]]
-    ] = None,  # full custom column order
+    order_pairs: Optional[Callable[[List[str]], List[str]]] = None,  # full custom column order
     # ---- Presentation ----
     annotate: bool = True,  # show numbers in cells by default
     annotate_fontsize: int = 9,
@@ -477,9 +457,7 @@ def plot_divergence_comparison_heatmap(
 
     # Emphasize row (e.g., Human)
     if emphasize_label in mat.index:
-        mat = mat.loc[
-            [emphasize_label] + [r for r in mat.index if r != emphasize_label], :
-        ]
+        mat = mat.loc[[emphasize_label] + [r for r in mat.index if r != emphasize_label], :]
 
     # CSV export
     if csv_path:
@@ -507,14 +485,12 @@ def plot_divergence_comparison_heatmap(
     plt.yticks(range(mat.shape[0]), mat.index)
     plt.xticks(range(mat.shape[1]), mat.columns, rotation=45, ha="right")
 
-    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)
+    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)  # noqa F841
     # cbar.set_label("Ratio over baseline", rotation=90)
 
     if emphasize_label in mat.index:
         r = list(mat.index).index(emphasize_label)
-        plt.gca().add_patch(
-            Rectangle((-0.5, r - 0.5), mat.shape[1], 1, fill=False, lw=2)
-        )
+        plt.gca().add_patch(Rectangle((-0.5, r - 0.5), mat.shape[1], 1, fill=False, lw=2))
 
     if grid:
         ax = plt.gca()
@@ -579,9 +555,7 @@ def display_comparison(
                 if model_label.lower() == "human":
                     experiments_results = json.load(jl_file)[attribute]
                 else:
-                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
-                        attribute
-                    ]
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
                 datasets.append(experiments_results["group_distances"])
                 baselines.append(experiments_results["baseline"])
         except Exception as e:
@@ -644,9 +618,7 @@ def display_comparison_heatmap(
                 if model_label.lower() == "human":
                     experiments_results = json.load(jl_file)[attribute]
                 else:
-                    experiments_results = json.load(jl_file)[f"{scenario}_results"][
-                        attribute
-                    ]
+                    experiments_results = json.load(jl_file)[f"{scenario}_results"][attribute]
                 datasets.append(experiments_results["group_distances"])
                 baselines.append(experiments_results["baseline"])
         except Exception as e:
@@ -708,21 +680,15 @@ def display_model_consistency_comparison(model_list):
     ) as c_f:
         json.dump(model_comparison_stats, c_f, indent=2)
 
-    
-
 
 edu_group_to_abbrev = {
     "High School": "HS",
     "Bachelor's Degree": "BD",
     "Master's Degree": "MD",
-    "PhD": "PHD"
+    "PhD": "PHD",
 }
 
-dev_group_to_abbrev = {
-  "Developing": "DEV",
-  "Developed": "DEVD",
-  "Third World": "TW"
-}
+dev_group_to_abbrev = {"Developing": "DEV", "Developed": "DEVD", "Third World": "TW"}
 
 
 display_model_consistency_comparison(
@@ -841,5 +807,3 @@ display_comparison(
 #     # pair_label_fontsize=14,
 #     group_to_abbrev=dev_group_to_abbrev,
 # )
-
-

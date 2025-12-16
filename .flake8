@@ -1,0 +1,62 @@
+[flake8]
+# Maximum line length
+max-line-length = 119
+
+# Ignore specific error codes
+# E203: whitespace before ':' (conflicts with black)
+# W503: line break before binary operator (conflicts with black)
+# E501: line too long
+# C901: function is too complex
+extend-ignore = E203, W503, E501, C901, D100, D101, D102, D103, D104, D105, D107, D200, D202, D205, D400, D401, D403, D406, D407, D411, B006
+
+# Exclude patterns
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .eggs,
+    *.egg,
+    *.egg-info,
+    build,
+    dist,
+    .pytest_cache,
+    .mypy_cache,
+    .tox,
+    datasets,
+    values_results,
+    vsm_images,
+    wvs_images,
+    Synthetic-Persona-Chat,
+    htmlcov,
+    .ipynb_checkpoints,
+    **/constant.py,
+    understanding/*
+
+# Maximum complexity
+max-complexity = 19
+
+# Per-file ignores
+per-file-ignores =
+    # Ignore imported but unused in __init__.py files
+    __init__.py:F401,E402
+    # Ignore docstring requirements in test files
+    tests/*:D100,D101,D102,D103,D104,D105,D106,D107
+    # Ignore some checks in setup.py
+    setup.py:D100
+
+# Docstring conventions
+docstring-convention = numpy
+
+# Show source code for errors
+show-source = true
+
+# Show error codes in output
+show-pep8 = true
+
+# Count the number of occurrences of each error/warning
+count = true
+
+# Print total number of errors
+statistics = true

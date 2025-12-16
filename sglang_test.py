@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
 from openai import OpenAI
+from pydantic import BaseModel, Field
 
 client = OpenAI(base_url="http://127.0.0.1:30000/v1", api_key="None")
 
@@ -33,6 +33,7 @@ tools = [
     }
 ]
 
+
 # Define the schema using Pydantic
 class BestPlayer(BaseModel):
     name: str = Field(..., pattern=r"^\w+$", description="Name of the player")
@@ -40,13 +41,11 @@ class BestPlayer(BaseModel):
     # through: str = Field(..., description="The reasoning process for the question")
     # mayer: str = Field(..., description="Mayer of the capital city")
 
+
 output = client.chat.completions.create(
     model="Qwen/QwQ-32B",
     messages=[
-        {
-            "role": "user",
-            "content": "Think who is the goat in history of football"
-        },
+        {"role": "user", "content": "Think who is the goat in history of football"},
     ],
     max_tokens=4096,
     temperature=0.6,
@@ -54,9 +53,7 @@ output = client.chat.completions.create(
     # top_k=40,
     # min_p=0.0,
     # repetition_penalty=1.0
-    extra_body={
-        "reasoning_effort": "low"
-    },
+    extra_body={"reasoning_effort": "low"},
     response_format={
         "type": "json_schema",
         "json_schema": {
@@ -113,5 +110,3 @@ print(output.choices[0].message.content)
 # # validate the JSON response by the pydantic model
 # capital_info = BestPlayer.model_validate_json(response_content)
 # print(f"Validated response: {capital_info.model_dump_json()}")
-
-

@@ -16,9 +16,7 @@ import yaml
 from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.langgraph_dialogue_controller import (
-    DialogueAgent,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.langgraph_dialogue_controller import DialogueAgent
 from llm_behavior_adaptation.utils import register_logger
 
 logger = logging.getLogger(__name__)
@@ -96,9 +94,7 @@ class DatasetGenerationController:
 
         # Load dataset slice
         full_dataset = pd.read_csv(cfg["seed_dataset_path"])
-        full_dataset = full_dataset.loc[
-            :, ~full_dataset.columns.str.contains("^Unnamed")
-        ]
+        full_dataset = full_dataset.loc[:, ~full_dataset.columns.str.contains("^Unnamed")]
         start = int(cfg.get("starting_row", 0) or 0)
         end = cfg.get("ending_row", -1)
         if end is None or int(end) < 0:
@@ -107,15 +103,9 @@ class DatasetGenerationController:
             seed_dataset = full_dataset.iloc[start : int(end)]
 
         # Build OpenAI client
-        api_key = (
-            cfg.get("openai_api_key")
-            or os.environ.get("api_key")
-            or os.environ.get("OPENAI_API_KEY")
-        )
+        api_key = cfg.get("openai_api_key") or os.environ.get("api_key") or os.environ.get("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError(
-                "Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY')."
-            )
+            raise RuntimeError("Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY').")
         openai_client = AsyncOpenAI(api_key=api_key)
 
         dialogue_generator = DialogueAgent(
@@ -158,28 +148,16 @@ class DatasetGenerationController:
                         logger.info("Processing row %s: %s", index, row_dict)
 
                     try:
-                        start_state = (
-                            self.dialogue_generator.make_start_state_from_seed(
-                                seed_row=row_dict
-                            )
-                        )
+                        start_state = self.dialogue_generator.make_start_state_from_seed(seed_row=row_dict)
                         final_state = await self.dialogue_generator.run(start_state)
 
                         # runs is expected to be a list of Turn-like pydantic instances
                         history = final_state.get("history", [])
                         turns_serialized = [
-                            (
-                                turn.model_dump()
-                                if hasattr(turn, "model_dump")
-                                else dict(turn)
-                            )
-                            for turn in history
+                            (turn.model_dump() if hasattr(turn, "model_dump") else dict(turn)) for turn in history
                         ]
                         # Enforce Turn-only shape (speaker,text) in case extras exist
-                        turns_openai_format = [
-                            {"role": t["speaker"], "content": t["text"]}
-                            for t in turns_serialized
-                        ]
+                        turns_openai_format = [{"role": t["speaker"], "content": t["text"]} for t in turns_serialized]
                         pending_lines.append(
                             json.dumps(
                                 {row_dict["D_INTERVIEW"]: turns_openai_format},
@@ -195,22 +173,16 @@ class DatasetGenerationController:
                                 )
                             else:
                                 first_turn_preview = "EMPTY"
-                            logger.info(
-                                "Row %s OK. First turn: %s", index, first_turn_preview
-                            )
+                            logger.info("Row %s OK. First turn: %s", index, first_turn_preview)
 
                         # Periodic flush
-                        if self._storage_step and (
-                            (wrote + 1) % int(self._storage_step) == 0
-                        ):
+                        if self._storage_step and ((wrote + 1) % int(self._storage_step) == 0):
                             self._append_lines(pending_lines)
                             pending_lines.clear()
                         wrote += 1
 
                     except Exception as e:
-                        logger.error(
-                            "Error generating dialogue for row %s: %s", index, e
-                        )
+                        logger.error("Error generating dialogue for row %s: %s", index, e)
 
                     pbar.update(1)
 
