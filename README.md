@@ -28,7 +28,7 @@ The 2 datasets consisting of 1000 generated dialogues each [datasets](https://gi
 
 Dataset is generated through a multi-agent mechanism based on the [seed dataset](https://github.com/FerdinandZhong/llm_behavior_adaptation/datasets/wvs_benchmarks/sampled_demographic_features.csv)
 
-![Figure: Dataset Generation](https://github.com/FerdinandZhong/llm_behavior_adaptation/images/DataGen.png)
+![Figure: Dataset Generation](https://github.com/FerdinandZhong/llm_behavior_adaptation/blob/main/images/DataGen.png)
 
 
 Code details are listed in the directory `llm_behavior_adaptation/dialogue_dataset_creation`
