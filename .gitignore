@@ -197,3 +197,5 @@ wvs_values_results/*
 
 vsm_images/**/**2.json
 values_results/**/**2.json
+wvs_images
+vsm_images
