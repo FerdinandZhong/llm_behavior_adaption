@@ -1,4 +1,5 @@
 import logging
+from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
 from scipy.optimize import minimize
@@ -121,9 +122,7 @@ def compute_js_centroid(distributions, maxiter=1000, tol=1e-6):
         return np.sum([jensen_shannon_divergence(p, m) for p in valid_distributions])
 
     # Optimize using the L-BFGS-B algorithm
-    result = minimize(
-        objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol}
-    )
+    result = minimize(objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol})
 
     # Extract the optimized centroid
     centroid = softmax(result.x)
@@ -165,9 +164,7 @@ def compute_js_centroid_and_avg(distributions, maxiter=1000, tol=1e-6):
         return np.sum([jensen_shannon_divergence(p, m) for p in valid_distributions])
 
     # Optimize using the L-BFGS-B algorithm
-    result = minimize(
-        objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol}
-    )
+    result = minimize(objective, z_init, method="L-BFGS-B", options={"maxiter": maxiter, "ftol": tol})
 
     # Extract the optimized centroid
     centroid = softmax(result.x)
@@ -195,3 +192,281 @@ def compute_emd(vector_a, vector_b):
     # Sum absolute differences of CDFs (excluding last category)
     emd = np.sum(np.abs(cdf_p[:-1] - cdf_q[:-1]))
     return emd
+
+
+def _is_finite_scalar(x: Any) -> bool:
+    """True if x is a finite scalar (not NaN/None/inf)."""
+    try:
+        return (x is not None) and np.isfinite(x)
+    except Exception:
+        return False
+
+
+def _vector_has_nan_or_nonfinite(
+    v: Mapping[str, Any],
+    question_metadata: Mapping[str, Mapping[str, Any]],
+) -> bool:
+    """Return True if ANY value in v (for keys present in metadata) is NaN/None/inf."""
+    for q in question_metadata.keys():
+        if q in v and not _is_finite_scalar(v[q]):
+            return True
+    return False
+
+
+def emd_distance(
+    a: Mapping[str, Any],
+    b: Mapping[str, Any],
+    question_metadata: Mapping[str, Mapping[str, Any]],
+    normalize: bool = True,
+    *,
+    skip_out_of_range: bool = True,
+) -> float:
+    """Compute normalized EMD (L1 on ordinal scales) between two answer vectors.
+    Assumes caller filtered out NaN/None/inf vectors; still guards per-question.
+    """
+    d = 0.0
+    for q, info in question_metadata.items():
+        if q not in a or q not in b:
+            continue
+
+        lo = int(info["answer_scale_min"])
+        hi = int(info["answer_scale_max"])
+
+        av, bv = a[q], b[q]
+        # per-question guard (should rarely trigger after prefilter)
+        if not (_is_finite_scalar(av) and _is_finite_scalar(bv)):
+            continue
+
+        try:
+            ai = int(float(av))
+            bi = int(float(bv))
+        except Exception as e:
+            print(str(e))
+            continue
+
+        if skip_out_of_range:
+            if not (lo <= ai <= hi and lo <= bi <= hi):
+                continue
+        else:
+            ai = min(hi, max(lo, ai))
+            bi = min(hi, max(lo, bi))
+
+        diff = abs(ai - bi)
+        d += (diff / (hi - lo)) if (normalize and hi > lo) else diff
+
+    return float(d)
+
+
+def emd_distance_vsm(
+    a: List[int],
+    b: List[int],
+    normalize: bool = True,
+    *,
+    skip_out_of_range: bool = True,
+) -> float:
+    """Compute normalized EMD (L1 on ordinal scales) between two answer vectors.
+    Assumes caller filtered out NaN/None/inf vectors; still guards per-question.
+    """
+    d = 0.0
+    for av, bv in zip(a, b):
+        lo = 1
+        hi = 5
+
+        # per-question guard (should rarely trigger after prefilter)
+        if not (_is_finite_scalar(av) and _is_finite_scalar(bv)):
+            continue
+
+        try:
+            ai = int(float(av))
+            bi = int(float(bv))
+        except Exception as e:
+            print(str(e))
+            continue
+
+        if skip_out_of_range:
+            if not (lo <= ai <= hi and lo <= bi <= hi):
+                continue
+        else:
+            ai = min(hi, max(lo, ai))
+            bi = min(hi, max(lo, bi))
+
+        diff = abs(ai - bi)
+        d += (diff / (hi - lo)) if (normalize and hi > lo) else diff
+
+    return float(d)
+
+
+def emd_medoid_skip_nan(
+    vectors: Sequence[Mapping[str, Any]],
+    question_metadata: Mapping[str, Mapping[str, Any]],
+    normalize: bool = True,
+    *,
+    skip_out_of_range: bool = True,
+) -> Tuple[Mapping[str, Any], float, int, List[int]]:
+    """Find the medoid under normalized EMD, **ignoring any vector with NaN/None/inf**.
+
+    Returns:
+        medoid_vector: the most central (existing) vector among the CLEAN set
+        minimal_total_distance: sum of distances from medoid to all other CLEAN vectors
+        excluded_count: number of vectors skipped due to NaN/None/inf
+        excluded_indices: indices (w.r.t. input `vectors`) that were excluded
+
+    Notes:
+        - If after filtering there are 0 clean vectors: raises ValueError.
+        - If exactly 1 clean vector: returns it with distance 0.0.
+        - Pairwise cost is O(m^2) for m = num of clean vectors.
+    """
+    print(len(question_metadata))
+    if len(vectors) == 0:
+        raise ValueError("emd_medoid_skip_nan: empty `vectors`.")
+
+    # Identify and drop any vectors with NaN/None/inf on any metadata question
+    excluded_indices: List[int] = []
+    clean_vectors: List[Mapping[str, Any]] = []
+    clean_to_orig_index: List[int] = []
+
+    for idx, v in enumerate(vectors):
+        if _vector_has_nan_or_nonfinite(v, question_metadata):
+            excluded_indices.append(idx)
+            continue
+        clean_vectors.append(v)
+        clean_to_orig_index.append(idx)
+
+    excluded_count = len(excluded_indices)
+    m = len(clean_vectors)
+
+    if m == 0:
+        raise ValueError("emd_medoid_skip_nan: all vectors contain NaN/None/inf.")
+    if m == 1:
+        return clean_vectors[0], 0.0, excluded_count, excluded_indices
+
+    # Compute sum of distances to all others for each clean vector
+    dsum = np.zeros(m, dtype=float)
+    for i in range(m):
+        vi = clean_vectors[i]
+        for j in range(i + 1, m):
+            vj = clean_vectors[j]
+            d = emd_distance(
+                vi,
+                vj,
+                question_metadata,
+                normalize,
+                skip_out_of_range=skip_out_of_range,
+            )
+            dsum[i] += d
+            dsum[j] += d
+
+    best_idx = int(np.argmin(dsum))
+    medoid_vec = clean_vectors[best_idx]
+    min_total = float(dsum[best_idx])
+
+    return medoid_vec, min_total, excluded_count, excluded_indices
+
+
+def componentwise_centroid(
+    vectors: Sequence[Mapping[str, Any]],
+    question_metadata: Mapping[str, Mapping[str, Any]],
+) -> Dict[str, int]:
+    """
+    Compute the component-wise centroid for a cluster:
+    - per question, take the median of valid answers;
+    - when there are two middle values, take their average and round();
+    - clamp the result to [answer_scale_min, answer_scale_max].
+
+    Returns:
+        Dict[qid, int]: centroid answer per question.
+    """
+    centroid: Dict[str, int] = {}
+
+    for q, info in question_metadata.items():
+        lo = int(info["answer_scale_min"])
+        hi = int(info["answer_scale_max"])
+
+        vals = []
+        for v in vectors:
+            if q not in v:
+                continue
+            x = v[q]
+            # skip None/NaN/inf
+            try:
+                if x is None or not np.isfinite(x):
+                    continue
+            except Exception:
+                # if it can't be checked (e.g., string), try to coerce; else skip
+                try:
+                    x = float(x)
+                    if not np.isfinite(x):
+                        continue
+                except Exception:
+                    continue
+
+            # coerce to int safely (accept 2.0, "3", etc.)
+            try:
+                xi = int(x)
+            except Exception:
+                try:
+                    xi = int(float(x))
+                except Exception:
+                    continue
+
+            # clamp to valid range
+            xi = min(hi, max(lo, xi))
+            vals.append(xi)
+
+        if not vals:
+            continue
+
+        vals = np.sort(np.asarray(vals, dtype=int))
+        m = len(vals)
+        if m % 2 == 1:
+            med = int(vals[m // 2])
+        else:
+            # always use "round" for the tie
+            lower = int(vals[m // 2 - 1])
+            upper = int(vals[m // 2])
+            med = int(round((lower + upper) / 2))
+            med = min(hi, max(lo, med))
+
+        centroid[q] = med
+
+    return centroid
+
+
+def componentwise_centroid_vsm(
+    vectors: Sequence[List[int]],
+) -> List[int]:
+    """
+    Compute the component-wise centroid for a cluster:
+    - per question, take the median of valid answers;
+    - when there are two middle values, take their average and round();
+    - clamp the result to [answer_scale_min, answer_scale_max].
+
+    Returns:
+        Dict[qid, int]: centroid answer per question.
+    """
+    centroid: List[int] = []
+
+    questions_length = len(vectors[0])
+
+    lo = 1
+    hi = 5
+    for q_idx in range(questions_length):
+        vals = [vector[q_idx] for vector in vectors]
+
+        if not vals:
+            continue
+
+        vals = np.sort(np.asarray(vals, dtype=int))
+        m = len(vals)
+        if m % 2 == 1:
+            med = int(vals[m // 2])
+        else:
+            # always use "round" for the tie
+            lower = int(vals[m // 2 - 1])
+            upper = int(vals[m // 2])
+            med = int(round((lower + upper) / 2))
+            med = min(hi, max(lo, med))
+
+        centroid.append(med)
+
+    return centroid

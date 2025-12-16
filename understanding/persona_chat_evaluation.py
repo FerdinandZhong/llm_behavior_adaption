@@ -58,16 +58,12 @@ async def model_query(
             selection_num=selection_num,
         )
 
-    requests_list = generate_dataset_fewshots(
-        few_shots_examples=samples, input_list=input_list
-    )
+    requests_list = generate_dataset_fewshots(few_shots_examples=samples, input_list=input_list)
 
     if few_shots_num < 5:
         logger.info("Request sample: %s", requests_list[0])
 
-    results = await query_server_in_chunk(
-        requests_list, target_model, chunk_size=chunk_size
-    )
+    results = await query_server_in_chunk(requests_list, target_model, chunk_size=chunk_size)
 
     return results
 
@@ -130,13 +126,9 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--model", type=str, help="Tested Model", required=True)
-    parser.add_argument(
-        "--results_csv", type=str, help="Name of results csv file", required=True
-    )
+    parser.add_argument("--results_csv", type=str, help="Name of results csv file", required=True)
     parser.add_argument("--chunk_size", type=int, help="query chunk size", default=50)
-    parser.add_argument(
-        "--selection_num", type=int, help="number of selections", default=1
-    )
+    parser.add_argument("--selection_num", type=int, help="number of selections", default=1)
     parser.add_argument(
         "--num_samples",
         type=int,
@@ -150,25 +142,17 @@ if __name__ == "__main__":
 
     # Load an existing DataFrame if available
     result_csv_path = os.path.join(OUTPUTS_FOLDER, args.results_csv)
-    existing_df = (
-        pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
-    )
+    existing_df = pd.read_csv(result_csv_path) if os.path.exists(result_csv_path) else None
 
     # Load dataset and set up data for testing
     persona_df = load_dataset()
 
     all_few_shots_samples = persona_df.iloc[:10].to_dict(orient="records")
-    remaining_rows = (
-        persona_df.iloc[10:].reset_index(drop=True).to_dict(orient="records")
-    )
+    remaining_rows = persona_df.iloc[10:].reset_index(drop=True).to_dict(orient="records")
 
     user_inputs_list_dict = {
-        "User 1": generate_input_contents(
-            remaining_rows, tested_user="User 1", selection_num=args.selection_num
-        ),
-        "User 2": generate_input_contents(
-            remaining_rows, tested_user="User 2", selection_num=args.selection_num
-        ),
+        "User 1": generate_input_contents(remaining_rows, tested_user="User 1", selection_num=args.selection_num),
+        "User 2": generate_input_contents(remaining_rows, tested_user="User 2", selection_num=args.selection_num),
     }
 
     # Run the main function asynchronously

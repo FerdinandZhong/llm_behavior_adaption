@@ -4,10 +4,7 @@ import os
 
 import pandas as pd
 
-from llm_behavior_adaptation.value_measurement.values_comparison import (
-    ValuesComparison,
-    load_jsonl_file,
-)
+from llm_behavior_adaptation.value_measurement.values_comparison import ValuesComparison, load_jsonl_file
 
 
 def _read_csv(csv_path):
@@ -16,9 +13,7 @@ def _read_csv(csv_path):
     return df
 
 
-def store_single_dataset_results(
-    attribute, model_name, scenario, results, baselines, overall_baseline
-):
+def store_single_dataset_results(attribute, model_name, scenario, results, baselines, overall_baseline):
     """store single dataset results"""
     os.makedirs(f"./values_results/{model_name}/vsm/{scenario}/", exist_ok=True)
     with open(

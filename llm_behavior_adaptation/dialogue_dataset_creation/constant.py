@@ -71,7 +71,7 @@ USER_SIMULATOR_SUBSEQUENT_PROMPT_MESSAGES = [
             'Always respond using the following JSON format: {{ "proposed_question": ...,"end_conversation": true/false}}'
         ),
     },
-]
+]  # noqa E501
 
 CONVERSATION_TEMPLATE_STRING = """
 {{ line_break }}
@@ -126,24 +126,19 @@ Scoring details:
 * mentioning 3 attributes --> 3
 * mentioning 4 attributes --> 4
 * mentioning 5 attributes --> 5
-        
+
 Always respond using the following JSON format: {{ "rating": int, "reason": str}}'
 """,
     },
     {
         "role": "user",
         "content": (
-            "Here are the details of the persona attributes:\n"
-            + LINE_BREAK
-            + "{user_details}\n"
-            + LINE_BREAK
+            "Here are the details of the persona attributes:\n" + LINE_BREAK + "{user_details}\n" + LINE_BREAK
         ),
     },
     {
         "role": "user",
-        "content": (
-            "Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK
-        ),
+        "content": ("Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK),
     },
 ]
 
@@ -163,7 +158,7 @@ Scoring details:
 * three attribute values are wrong --> 2
 * four attribute values are wrong --> 1
 * five attribute values are wrong --> 0
-        
+
 Always respond using the following JSON format: {{ "rating": int, "reason": str}}'
 
 Write your reason concisely.
@@ -172,17 +167,12 @@ Write your reason concisely.
     {
         "role": "user",
         "content": (
-            "Here are the details of the persona attributes:\n"
-            + LINE_BREAK
-            + "{user_details}\n"
-            + LINE_BREAK
+            "Here are the details of the persona attributes:\n" + LINE_BREAK + "{user_details}\n" + LINE_BREAK
         ),
     },
     {
         "role": "user",
-        "content": (
-            "Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK
-        ),
+        "content": ("Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK),
     },
 ]
 
@@ -200,7 +190,7 @@ Scoring details:
 * 3 unique contents and 2 repeated questions --> 3
 * only 2 unique contents among 5 questions, 3 questions are having the repeated contents --> 2
 * all five questions are having the same content --> 1
-        
+
 Always respond using the following JSON format: {{ "rating": int, "reason": str}}'
 
 Write your reason concisely.
@@ -209,17 +199,12 @@ Write your reason concisely.
     {
         "role": "user",
         "content": (
-            "Here are the details of the persona attributes:\n"
-            + LINE_BREAK
-            + "{user_details}\n"
-            + LINE_BREAK
+            "Here are the details of the persona attributes:\n" + LINE_BREAK + "{user_details}\n" + LINE_BREAK
         ),
     },
     {
         "role": "user",
-        "content": (
-            "Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK
-        ),
+        "content": ("Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK),
     },
 ]
 
@@ -249,17 +234,12 @@ Write your reason concisely.
     {
         "role": "user",
         "content": (
-            "Here are the details of the persona attributes:\n"
-            + LINE_BREAK
-            + "{user_details}\n"
-            + LINE_BREAK
+            "Here are the details of the persona attributes:\n" + LINE_BREAK + "{user_details}\n" + LINE_BREAK
         ),
     },
     {
         "role": "user",
-        "content": (
-            "Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK
-        ),
+        "content": ("Here are the questions:\n" + LINE_BREAK + "{question_str}\n" + LINE_BREAK),
     },
 ]
 

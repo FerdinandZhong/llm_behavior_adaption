@@ -1,0 +1,122 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+# To install: pre-commit install
+# To run manually: pre-commit run --all-files
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent large files from being committed
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+      # Check for merge conflicts
+      - id: check-merge-conflict
+      # Check YAML files
+      - id: check-yaml
+        exclude: ^\.github/workflows/
+      # Check TOML files
+      - id: check-toml
+      # Check JSON files
+      - id: check-json
+      # Ensure files end with a newline
+      - id: end-of-file-fixer
+        exclude: \.ipynb$
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        exclude: \.ipynb$
+      # Check for debugger imports
+      - id: debug-statements
+      # Check Python syntax
+      - id: check-ast
+      # Detect private keys
+      - id: detect-private-key
+      # Check for mixed line endings
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Autoflake - removes unused imports and variables
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+      - id: autoflake
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --remove-duplicate-keys
+          - --ignore-init-module-imports
+          - --expand-star-imports
+
+  # isort - sorts imports
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Black - code formatter
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3.10
+        args: ['--line-length=119']
+
+  # Flake8 - linter
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args:
+          - --config=.flake8
+        additional_dependencies:
+          - flake8-docstrings
+          - flake8-bugbear
+
+  # Mypy - static type checker (optional, commented out by default)
+  # Uncomment if you want static type checking
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.8.0
+  #   hooks:
+  #     - id: mypy
+  #       args: [--ignore-missing-imports, --no-strict-optional]
+  #       exclude: ^(tests/|setup.py)
+
+  # Check docstring coverage (optional, commented out by default)
+  # Uncomment if you want to enforce docstring coverage
+  # - repo: https://github.com/econchick/interrogate
+  #   rev: 1.5.0
+  #   hooks:
+  #     - id: interrogate
+  #       args: [-vv, --fail-under=50, --ignore-init-method, --ignore-init-module]
+  #       exclude: ^(tests/|setup.py)
+
+# Configuration for specific file types
+default_language_version:
+  python: python3.10
+
+# Skip some hooks for certain file patterns
+exclude: |
+  (?x)^(
+      \.git/|
+      \.venv/|
+      venv/|
+      env/|
+      \.eggs/|
+      .*\.egg-info/|
+      build/|
+      dist/|
+      __pycache__/|
+      \.pytest_cache/|
+      \.mypy_cache/|
+      \.tox/|
+      datasets/|
+      .*_results/|
+      .*images/|
+      \.ipynb_checkpoints/
+  )

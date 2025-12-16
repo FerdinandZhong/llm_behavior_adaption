@@ -15,12 +15,30 @@ package: clean
 	python setup.py sdist bdist_wheel
 
 format:
-	autoflake --in-place --remove-all-unused-imports --recursive ${PY_SOURCE_FILES}
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --expand-star-imports --recursive ${PY_SOURCE_FILES}
 	isort ${PY_SOURCE_FILES}
-	black ${PY_SOURCE_FILES}
+	black --line-length 119 ${PY_SOURCE_FILES}
 
 lint:
 	isort --check --diff ${PY_SOURCE_FILES}
-	black --check --diff ${PY_SOURCE_FILES}
-	flake8 ${PY_SOURCE_FILES} --count --show-source --statistics --max-line-length 120
+	black --check --diff --line-length 119 ${PY_SOURCE_FILES}
+	flake8 --config .flake8 ${PY_SOURCE_FILES}
 
+# Pre-commit hooks
+pre-commit-install:
+	pre-commit install
+
+pre-commit-uninstall:
+	pre-commit uninstall
+
+pre-commit-run:
+	pre-commit run --all-files
+
+pre-commit-update:
+	pre-commit autoupdate
+
+pre-commit-clean:
+	pre-commit clean
+
+# Run all code quality checks
+check: lint pre-commit-run test

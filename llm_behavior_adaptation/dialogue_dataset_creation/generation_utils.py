@@ -1,11 +1,54 @@
-"""Generation utils file
-"""
+"""Generation utils file"""
 
+import json
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict
 
 from jinja2 import Template
 
-from .constant import PROFILE_KEYS
+from .wvs_dataset_constants import JSON_TEMPLATE, PROFILE_KEYS
+
+
+def render_json(json_input: dict) -> str:
+    serialized_json_input = json.dumps(json_input, indent=2, sort_keys=True, ensure_ascii=False)
+    return Template(JSON_TEMPLATE).render(json_input=serialized_json_input)
+
+
+def load_json_folder(
+    folder: str | Path,
+    pattern: str = "*.json",
+    recursive: bool = False,
+    key_style: str = "stem",  # "stem", "name", or "relpath"
+    on_error: str = "raise",  # "raise", "warn", or "ignore"
+) -> Dict[str, Any]:
+    folder = Path(folder)
+    files = folder.rglob(pattern) if recursive else folder.glob(pattern)
+    out: Dict[str, Any] = {}
+
+    for f in files:
+        try:
+            obj = json.loads(f.read_text(encoding="utf-8"))
+        except Exception as e:
+            if on_error == "raise":
+                raise
+            elif on_error == "warn":
+                print(f"Warning: skipping {f}: {e}")
+                continue
+            else:  # ignore
+                continue
+
+        if key_style == "stem":
+            key = f.stem
+        elif key_style == "name":
+            key = f.name
+        elif key_style == "relpath":
+            key = str(f.relative_to(folder))
+        else:
+            raise ValueError("key_style must be 'stem', 'name', or 'relpath'")
+
+        out[key] = obj
+    return out
 
 
 def calculate_age(dob):
@@ -75,3 +118,21 @@ def render_template(template_str, **kwargs):
     rendered_profile = template.render(**kwargs)
 
     return rendered_profile
+
+
+def retrieve_user_profile_wvs(row, profile_keys=PROFILE_KEYS):
+    """
+    Retrieve and format the user profile, calculating age for the 'Date of Birth' field.
+
+    Args:
+        row (dict): A dictionary containing user profile data with keys corresponding to profile fields.
+        profile_keys (list, optional): A list of profile keys to retrieve from the row. Defaults to PROFILE_KEYS.
+
+    Returns:
+        dict: A dictionary with profile field names as keys and their corresponding values, including the calculated age.
+    """
+    # Create a dictionary with processed values
+    profile_data = {}
+    for key in profile_keys:
+        profile_data[key] = row[key]
+    return profile_data

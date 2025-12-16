@@ -22,9 +22,7 @@ def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
     """
     # Extract values
     groups = [item["compared_groups"] for item in data]
-    avg_divergence = [
-        item["compared_details"]["average_user_divergence"] for item in data
-    ]
+    avg_divergence = [item["compared_details"]["average_user_divergence"] for item in data]
     std_divergence = [item["compared_details"]["std_user_divergence"] for item in data]
 
     # Plot
@@ -40,9 +38,7 @@ def plot_user_divergence(data, baseline, formula="JSD", output_path=None):
     )
 
     # Add baseline
-    plt.axhline(
-        y=baseline, color="red", linestyle="--", label=f"Baseline ({baseline:.3f})"
-    )
+    plt.axhline(y=baseline, color="red", linestyle="--", label=f"Baseline ({baseline:.3f})")
 
     # Customize plot
     plt.xticks(x, groups, rotation=45, ha="right")
@@ -229,7 +225,7 @@ def plot_divergence_comparison_radar(
 
     legend_fig, legend_ax = plt.subplots(figsize=(12, 1))
     legend_ax.axis("off")
-    legend = legend_ax.legend(
+    legend = legend_ax.legend(  # noqa F841
         *ax.get_legend_handles_labels(),
         loc="center",
         fontsize=30,
@@ -237,9 +233,7 @@ def plot_divergence_comparison_radar(
         ncol=min(6, n_models),
     )
     if output_path:
-        legend_fig.savefig(
-            output_path.replace(".pdf", "_legend.pdf"), bbox_inches="tight", dpi=300
-        )
+        legend_fig.savefig(output_path.replace(".pdf", "_legend.pdf"), bbox_inches="tight", dpi=300)
 
 
 def plot_divergence_comparison(
@@ -318,15 +312,14 @@ def plot_divergence_comparison(
         # Adjusted position calculation using group_spacing
         x_pos = group_positions - total_width / 2 + bar_width / 2 + mi * bar_width
 
-        bars = ax.barh(
+        bars = ax.barh(  # noqa F841
             x_pos,
             values[mi],
             height=bar_width,  # Height relative to group spacing
             color=colors[mi],
             alpha=0.85,
             label=f"{labels[mi]}",
-        )
-
+        )  # noqa F841
 
     # Styling improvements
     ax.set_yticks(group_positions)
@@ -341,9 +334,7 @@ def plot_divergence_comparison(
     # Labels and titles
     ax.set_xlabel("Relative Ratio of Divergence over Baseline", fontsize=22)
     ax.set_ylabel("Group Comparisons", fontsize=22)
-    ax.set_title(
-        f"Divergence Comparison ({attribute.capitalize()})", fontsize=24, pad=20
-    )
+    ax.set_title(f"Divergence Comparison ({attribute.capitalize()})", fontsize=24, pad=20)
 
     # Enhanced legend
     ax.legend(
@@ -381,9 +372,7 @@ def display_comparison(
     baselines = []
     for model_label in model_list:
         try:
-            with open(
-                f"../values_results/{model_label}/vsm/{scenario}/{attribute}.jsonl", "r"
-            ) as jl_file:
+            with open(f"../values_results/{model_label}/vsm/{scenario}/{attribute}.jsonl", "r") as jl_file:
                 dataset = []
                 for result in jl_file.readlines():
                     result = json.loads(result)
@@ -441,165 +430,165 @@ def display_comparison(
         )
 
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="age",
-    scenario="BA_dialogue",
-    # extra_rules=["<30", ">60"],
-    specific_name="BA_dialogue_age_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="age",
+#     scenario="BA_dialogue",
+#     # extra_rules=["<30", ">60"],
+#     specific_name="BA_dialogue_age_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="age",
-    scenario="BA_user",
-    # extra_rules=["<30", ">60"],
-    specific_name="BA_user_age_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="age",
+#     scenario="BA_user",
+#     # extra_rules=["<30", ">60"],
+#     specific_name="BA_user_age_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="education",
-    scenario="BA_dialogue",
-    specific_name="BA_dialogue_education_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="education",
+#     scenario="BA_dialogue",
+#     specific_name="BA_dialogue_education_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="education",
-    scenario="BA_user",
-    specific_name="BA_user_education_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="education",
+#     scenario="BA_user",
+#     specific_name="BA_user_education_radar",
+# )
 
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.5,
-    cmap="tab10",
-    attribute="development_level",
-    scenario="BA_dialogue",
-    specific_name="BA_dialogue_development_level_radar",
-)
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.5,
-    cmap="tab10",
-    attribute="development_level",
-    scenario="BA_user",
-    specific_name="BA_user_development_level_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="development_level",
+#     scenario="BA_dialogue",
+#     specific_name="BA_dialogue_development_level_radar",
+# )
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="development_level",
+#     scenario="BA_user",
+#     specific_name="BA_user_development_level_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.5,
-    cmap="tab10",
-    attribute="position_level",
-    scenario="BA_user",
-    specific_name="BA_user_position_level_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="position_level",
+#     scenario="BA_user",
+#     specific_name="BA_user_position_level_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.5,
-    cmap="tab10",
-    attribute="position_level",
-    scenario="BA_dialogue",
-    specific_name="BA_dialogue_position_level_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.5,
+#     cmap="tab10",
+#     attribute="position_level",
+#     scenario="BA_dialogue",
+#     specific_name="BA_dialogue_position_level_radar",
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="job_category",
-    scenario="BA_user",
-    specific_name="BA_user_job_category_radar",
-    # extra_rules=["Business", "Science"]
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="job_category",
+#     scenario="BA_user",
+#     specific_name="BA_user_job_category_radar",
+#     # extra_rules=["Business", "Science"]
+# )
 
-display_comparison(
-    [
-        "Llama3.1-8B-Instruct",
-        "Llama3.1-70B-Instruct",
-        "DeepSeek-V3",
-        "Qwen2.5-7B-Instruct",
-        "Qwen2.5-72B-Instruct",
-        "QwQ-32B",
-    ],
-    group_spacing=1.75,
-    cmap="tab10",
-    attribute="job_category",
-    scenario="BA_dialogue",
-    specific_name="BA_dialogue_job_category_radar",
-)
+# display_comparison(
+#     [
+#         "Llama3.1-8B-Instruct",
+#         "Llama3.1-70B-Instruct",
+#         "DeepSeek-V3",
+#         "Qwen2.5-7B-Instruct",
+#         "Qwen2.5-72B-Instruct",
+#         "QwQ-32B",
+#     ],
+#     group_spacing=1.75,
+#     cmap="tab10",
+#     attribute="job_category",
+#     scenario="BA_dialogue",
+#     specific_name="BA_dialogue_job_category_radar",
+# )

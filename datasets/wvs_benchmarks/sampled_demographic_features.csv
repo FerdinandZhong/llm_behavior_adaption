@@ -1,0 +1,1001 @@
+D_INTERVIEW,gender,age,place_of_residence,continent_of_residence,immigration_status,highest_level_of_education,socioeconomic_status,occupation_group
+688070395,Male,57,Serbia,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Clerical
+360070863,Female,28,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+404070704,Female,27,Kenya,Africa,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+458070481,Male,63,Malaysia,Asia,not immigrant,Lower secondary education,Lower middle class,Higher administrative
+504070927,Male,36,Morocco,Africa,not immigrant,Upper secondary education,Lower middle class,Service
+344071086,Female,38,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Working class,Clerical
+762071190,Female,57,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Unskilled worker
+716070788,Male,38,Zimbabwe,Africa,not immigrant,Primary education,Lower middle class,Service
+642070971,Female,60,Romania,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+422070317,Male,33,Lebanon,Asia,not immigrant,Lower secondary education,Working class,Semi-skilled worker
+528071262,Male,32,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Service
+788070568,Female,20,Tunisia,Africa,not immigrant,Upper secondary education,Working class,Never had a job
+417070167,Female,64,Kyrgyzstan,Asia,not immigrant,Lower secondary education,Lower middle class,Semi-skilled worker
+218070895,Male,43,Ecuador,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+124072775,Female,49,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+792071203,Female,59,Turkey,Asia,not immigrant,Primary education,Lower class,Skilled worker
+410070909,Female,19,South Korea,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+156071249,Female,67,China,Asia,not immigrant,Early childhood education,Working class,Farm worker
+76071203,Male,24,Brazil,South America,not immigrant,Upper secondary education,Lower middle class,Sales
+51070281,Male,64,Armenia,Europe,immigrant,Master or equivalent,Lower middle class,Sales
+124071055,Male,53,Canada,North America,immigrant,Short-cycle tertiary education,Working class,Skilled worker
+840072926,Male,46,United States,North America,immigrant,Master or equivalent,Upper middle class,Professional and technical
+76071846,Male,26,Brazil,South America,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+642071088,Male,45,Romania,Europe,not immigrant,Upper secondary education,Lower middle class,Service
+300070460,Female,60,Greece,Europe,not immigrant,Primary education,Lower middle class,Never had a job
+68070938,Male,71,Bolivia,South America,not immigrant,Primary education,Working class,Farm worker
+604070965,Male,27,Peru,South America,not immigrant,Lower secondary education,Working class,Service
+792071442,Female,33,Turkey,Asia,not immigrant,Upper secondary education,Upper middle class,Service
+276070700,Female,58,Germany,Europe,immigrant,Upper secondary education,Lower middle class,Service
+504070730,Male,41,Morocco,Africa,not immigrant,Primary education,Lower middle class,Skilled worker
+792071478,Male,30,Turkey,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+68071502,Male,26,Bolivia,South America,not immigrant,Upper secondary education,Lower middle class,Professional and technical
+51070749,Female,24,Armenia,Europe,not immigrant,Master or equivalent,Upper middle class,Sales
+32070333,Female,40,Argentina,South America,not immigrant,Upper secondary education,Working class,Sales
+586071102,Male,48,Pakistan,Asia,not immigrant,Early childhood education,Lower class,Farm worker
+196070947,Female,39,Cyprus,Europe,not immigrant,Short-cycle tertiary education,not sure,not sure
+218070928,Male,25,Ecuador,South America,not immigrant,Upper secondary education,Upper middle class,Sales
+156070749,Female,69,China,Asia,not immigrant,Primary education,Working class,Service
+124075046,Male,40,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+630070238,Female,36,Puerto Rico,North America,not immigrant,Post-secondary non-tertiary education,Lower class,Semi-skilled worker
+496070755,Female,40,Mongolia,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+462070834,Female,45,Maldives,Asia,not immigrant,Lower secondary education,Lower middle class,not sure
+158070800,Male,73,Taiwan ROC,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+158070468,Female,69,Taiwan ROC,Asia,not immigrant,Upper secondary education,Upper middle class,Semi-skilled worker
+462070079,Male,37,Maldives,Asia,not immigrant,Lower secondary education,Upper middle class,Never had a job
+68070644,Female,34,Bolivia,South America,not immigrant,Short-cycle tertiary education,Upper middle class,Sales
+76071918,Male,66,Brazil,South America,not immigrant,Upper secondary education,Lower middle class,Clerical
+558070365,Female,45,Nicaragua,North America,not immigrant,Bachelor or equivalent,Lower middle class,Skilled worker
+528071984,Female,36,Netherlands,Europe,not immigrant,Bachelor or equivalent,Working class,Clerical
+826070906,Male,64,Great Britain,Europe,not immigrant,Master or equivalent,not sure,Higher administrative
+218070974,Female,39,Ecuador,South America,not immigrant,Lower secondary education,Lower middle class,Professional and technical
+156071307,Male,38,China,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+156071603,Male,19,China,Asia,not immigrant,Lower secondary education,Lower middle class,Never had a job
+276070480,Female,83,Germany,Europe,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+36071200,Male,25,Australia,Oceania,not immigrant,Post-secondary non-tertiary education,Lower class,Service
+788071048,Female,34,Tunisia,Africa,not immigrant,Post-secondary non-tertiary education,Lower middle class,Never had a job
+203070185,Female,59,Czechia,Europe,not immigrant,Lower secondary education,Lower middle class,Unskilled worker
+392070373,Male,78,Japan,Asia,not immigrant,Lower secondary education,Lower class,not sure
+764071258,Female,27,Thailand,Asia,not immigrant,Lower secondary education,Working class,Semi-skilled worker
+231070996,Female,45,Ethiopia,Africa,not immigrant,Early childhood education,Working class,Never had a job
+804070721,Female,39,Ukraine,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+528071597,Female,58,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Clerical
+558070442,Female,32,Nicaragua,North America,not immigrant,Primary education,Working class,Unskilled worker
+104070345,Male,20,Myanmar,Asia,not immigrant,Post-secondary non-tertiary education,Working class,"Farm owner, farm manager"
+462070333,Male,36,Maldives,Asia,not immigrant,Lower secondary education,Upper middle class,Skilled worker
+909070261,Female,51,Northern Ireland,Europe,immigrant,Master or equivalent,not sure,Professional and technical
+300070157,Female,28,Greece,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Unskilled worker
+300070556,Male,54,Greece,Europe,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+20070519,Male,18,Andorra,Europe,not immigrant,Upper secondary education,Upper middle class,Never had a job
+68071220,Female,18,Bolivia,South America,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+300070049,Female,39,Greece,Europe,immigrant,Lower secondary education,Lower middle class,not sure
+586070096,Male,30,Pakistan,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,"Farm owner, farm manager"
+320070869,Male,20,Guatemala,North America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+434070297,Male,32,Libya,Africa,not immigrant,Bachelor or equivalent,Working class,Service
+608070200,Female,61,Philippines,Asia,not immigrant,Primary education,Lower class,Skilled worker
+196070471,Male,36,Cyprus,Europe,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+586071203,Female,40,Pakistan,Asia,not immigrant,Primary education,Working class,Never had a job
+124074881,Female,56,Canada,North America,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+104070693,Male,60,Myanmar,Asia,not immigrant,Lower secondary education,Upper middle class,Farm worker
+762070616,Female,39,Tajikistan,Asia,not immigrant,Lower secondary education,Lower middle class,Unskilled worker
+840072336,Male,70,United States,North America,not immigrant,Master or equivalent,Upper middle class,not sure
+554070700,Male,33,New Zealand,Oceania,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+36071552,Female,57,Australia,Oceania,not immigrant,Upper secondary education,Lower class,Skilled worker
+528070640,Male,57,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Skilled worker
+496070951,Female,60,Mongolia,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+203070413,Female,80,Czechia,Europe,not immigrant,Primary education,Lower class,Unskilled worker
+704070716,Male,58,Vietnam,Asia,not immigrant,Upper secondary education,Upper middle class,Clerical
+124072920,Male,30,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+76070013,Female,27,Brazil,South America,not immigrant,Early childhood education,Lower class,Unskilled worker
+170074611,Female,60,Colombia,South America,not immigrant,Early childhood education,Lower class,Service
+156071759,Male,57,China,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+170076483,Female,51,Colombia,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+862070365,Female,35,Venezuela,South America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+826071089,Male,80,Great Britain,Europe,not immigrant,Upper secondary education,not sure,Professional and technical
+792072031,Female,47,Turkey,Asia,not immigrant,Primary education,Working class,Skilled worker
+840071786,Male,64,United States,North America,not sure,Post-secondary non-tertiary education,Lower middle class,not sure
+554070338,Male,35,New Zealand,Oceania,immigrant,Short-cycle tertiary education,Working class,Skilled worker
+156071597,Female,18,China,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Never had a job
+762071131,Female,64,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Farm worker
+203070001,Female,77,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+344070139,Female,45,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Lower middle class,Clerical
+203071188,Female,74,Czechia,Europe,not immigrant,Primary education,Lower class,Unskilled worker
+320070718,Male,27,Guatemala,North America,not immigrant,Early childhood education,Lower middle class,Sales
+504070478,Male,47,Morocco,Africa,not immigrant,Early childhood education,Lower middle class,Sales
+344070673,Male,38,Hong Kong SAR,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+604070292,Male,47,Peru,South America,not immigrant,Primary education,Lower class,Unskilled worker
+400070945,Female,39,Jordan,Asia,not immigrant,Upper secondary education,Lower class,Skilled worker
+528070154,Male,36,Netherlands,Europe,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+320070001,Female,37,Guatemala,North America,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+400070202,Male,60,Jordan,Asia,immigrant,Lower secondary education,Lower class,Never had a job
+76071567,Female,72,Brazil,South America,not immigrant,Primary education,Lower class,Unskilled worker
+792071447,Female,45,Turkey,Asia,not immigrant,Primary education,Working class,Skilled worker
+528070297,Male,39,Netherlands,Europe,not immigrant,Bachelor or equivalent,not sure,Service
+586071707,Female,41,Pakistan,Asia,not immigrant,Early childhood education,Working class,Never had a job
+704070203,Female,36,Vietnam,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+762070285,Female,48,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Skilled worker
+203070952,Male,57,Czechia,Europe,not immigrant,Lower secondary education,Working class,Skilled worker
+422070017,Male,71,Lebanon,Asia,not immigrant,Lower secondary education,Lower middle class,Service
+804070441,Male,65,Ukraine,Europe,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+528071079,Male,70,Netherlands,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+554070313,Female,68,New Zealand,Oceania,immigrant,Upper secondary education,Lower middle class,Clerical
+68071419,Female,44,Bolivia,South America,not immigrant,Primary education,not sure,not sure
+818070833,Female,26,Egypt,Africa,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+422070953,Male,48,Lebanon,Asia,not immigrant,Lower secondary education,Upper middle class,Service
+604070326,Female,40,Peru,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,not sure
+458070693,Male,28,Malaysia,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+76071615,Male,37,Brazil,South America,not immigrant,Lower secondary education,Lower class,Unskilled worker
+604070091,Female,70,Peru,South America,not immigrant,Early childhood education,Working class,Unskilled worker
+170072173,Male,48,Colombia,South America,not immigrant,Primary education,Upper middle class,Never had a job
+398070062,Male,52,Kazakhstan,Asia,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+76070250,Male,26,Brazil,South America,not immigrant,Upper secondary education,Lower class,Sales
+32070623,Female,24,Argentina,South America,not immigrant,Short-cycle tertiary education,Lower middle class,Sales
+716070566,Male,20,Zimbabwe,Africa,not immigrant,Lower secondary education,Working class,Unskilled worker
+703070604,Female,22,Slovakia,Europe,not immigrant,Upper secondary education,Lower middle class,Sales
+862070569,Female,70,Venezuela,South America,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+156070965,Female,62,China,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+276070082,Male,59,Germany,Europe,not immigrant,Upper secondary education,Working class,Unskilled worker
+566070863,Male,29,Nigeria,Africa,not immigrant,Post-secondary non-tertiary education,Lower class,Clerical
+156072194,Male,18,China,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+643071623,Female,84,Russia,Europe,not immigrant,Lower secondary education,Lower class,Unskilled worker
+586070880,Female,35,Pakistan,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+462070031,Female,28,Maldives,Asia,not immigrant,Short-cycle tertiary education,Working class,Clerical
+608070387,Male,31,Philippines,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+702071668,Female,28,Singapore,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Clerical
+392070452,Female,71,Japan,Asia,not immigrant,Lower secondary education,Lower middle class,Semi-skilled worker
+76070206,Female,48,Brazil,South America,not immigrant,Primary education,Lower class,Never had a job
+604070314,Male,55,Peru,South America,not immigrant,Upper secondary education,Working class,Sales
+50070641,Female,29,Bangladesh,Asia,not immigrant,Lower secondary education,Working class,Never had a job
+704070028,Male,61,Vietnam,Asia,not immigrant,Lower secondary education,Working class,Unskilled worker
+586071583,Female,42,Pakistan,Asia,not immigrant,Early childhood education,Lower middle class,Never had a job
+458071070,Female,51,Malaysia,Asia,not immigrant,Bachelor or equivalent,Upper class,Sales
+203070520,Female,46,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+818070429,Male,28,Egypt,Africa,not immigrant,Bachelor or equivalent,Working class,Sales
+764070094,Female,40,Thailand,Asia,not immigrant,Upper secondary education,Lower class,Unskilled worker
+604070424,Female,65,Peru,South America,not immigrant,Early childhood education,Working class,"Farm owner, farm manager"
+862070240,Female,68,Venezuela,South America,not immigrant,Early childhood education,Working class,Unskilled worker
+703070029,Male,52,Slovakia,Europe,not immigrant,Upper secondary education,Working class,Skilled worker
+804070850,Female,30,Ukraine,Europe,not immigrant,Master or equivalent,Lower middle class,Clerical
+704070975,Male,40,Vietnam,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Service
+586071419,Male,53,Pakistan,Asia,not immigrant,Upper secondary education,Lower middle class,"Farm owner, farm manager"
+422070511,Male,53,Lebanon,Asia,not immigrant,Upper secondary education,Lower class,Sales
+360072248,Male,24,Indonesia,Asia,not immigrant,Lower secondary education,Working class,Farm worker
+804071042,Female,68,Ukraine,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+364071175,Female,36,Iran,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Never had a job
+398070481,Female,41,Kazakhstan,Asia,not immigrant,Master or equivalent,Working class,Higher administrative
+203070121,Male,60,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Service
+152070538,Female,62,Chile,South America,not immigrant,Upper secondary education,Working class,Service
+818070747,Female,45,Egypt,Africa,not immigrant,Early childhood education,Working class,Sales
+642071235,Female,22,Romania,Europe,not immigrant,Upper secondary education,Working class,Unskilled worker
+36071448,Female,60,Australia,Oceania,not immigrant,Upper secondary education,Working class,Sales
+50070229,Male,60,Bangladesh,Asia,not immigrant,Early childhood education,Working class,Sales
+804070822,Female,29,Ukraine,Europe,not immigrant,Upper secondary education,Lower middle class,Farm worker
+702071409,Male,37,Singapore,Asia,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+792070279,Male,30,Turkey,Asia,not immigrant,Bachelor or equivalent,Working class,Skilled worker
+320070958,Male,23,Guatemala,North America,not immigrant,Bachelor or equivalent,Upper middle class,not sure
+364071156,Female,41,Iran,Asia,not immigrant,Upper secondary education,Lower class,Never had a job
+203070473,Female,30,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+104070897,Male,62,Myanmar,Asia,not immigrant,Primary education,Working class,not sure
+398070893,Female,78,Kazakhstan,Asia,not immigrant,Primary education,Upper middle class,Farm worker
+170076067,Male,28,Colombia,South America,not immigrant,Lower secondary education,Lower middle class,Sales
+688070242,Male,20,Serbia,Europe,not immigrant,Bachelor or equivalent,Working class,Never had a job
+20070629,Male,44,Andorra,Europe,immigrant,Master or equivalent,Upper class,Higher administrative
+818070623,Male,52,Egypt,Africa,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+434070591,Male,40,Libya,Africa,not immigrant,Short-cycle tertiary education,Upper class,Sales
+320070633,Female,57,Guatemala,North America,not immigrant,Early childhood education,Lower class,Professional and technical
+804070894,Female,32,Ukraine,Europe,not immigrant,Upper secondary education,Working class,Never had a job
+203071156,Female,50,Czechia,Europe,not immigrant,Lower secondary education,Working class,Skilled worker
+792071333,Male,45,Turkey,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+458071216,Female,26,Malaysia,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+344071448,Female,29,Hong Kong SAR,Asia,not immigrant,Master or equivalent,Lower middle class,Higher administrative
+840072762,Female,26,United States,North America,not immigrant,Post-secondary non-tertiary education,Working class,not sure
+124072457,Female,76,Canada,North America,immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+36070369,Male,56,Australia,Oceania,not immigrant,Master or equivalent,Upper middle class,Service
+434070530,Male,26,Libya,Africa,not immigrant,Upper secondary education,Lower middle class,Clerical
+124073499,Female,26,Canada,North America,not immigrant,Post-secondary non-tertiary education,Working class,Professional and technical
+368070175,Male,25,Iraq,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+156073015,Female,22,China,Asia,not immigrant,Bachelor or equivalent,Working class,Never had a job
+422070785,Male,52,Lebanon,Asia,not immigrant,Bachelor or equivalent,Working class,Semi-skilled worker
+909070113,Male,56,Northern Ireland,Europe,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+20070046,Female,47,Andorra,Europe,immigrant,Bachelor or equivalent,Working class,Professional and technical
+642070296,Female,49,Romania,Europe,not immigrant,Lower secondary education,Upper middle class,Sales
+818070278,Male,40,Egypt,Africa,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+156070506,Female,49,China,Asia,not immigrant,Upper secondary education,Working class,Sales
+392071228,Female,63,Japan,Asia,not immigrant,Upper secondary education,Lower class,Service
+417070202,Male,30,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+320070365,Female,19,Guatemala,North America,not immigrant,Upper secondary education,Lower middle class,Service
+300071142,Female,22,Greece,Europe,not immigrant,Bachelor or equivalent,Working class,not sure
+68070331,Female,74,Bolivia,South America,not immigrant,Primary education,Working class,"Farm owner, farm manager"
+496070352,Female,25,Mongolia,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+156070591,Female,54,China,Asia,not immigrant,Lower secondary education,Lower class,Semi-skilled worker
+788070539,Female,34,Tunisia,Africa,not immigrant,Bachelor or equivalent,Lower middle class,Skilled worker
+392070577,Female,70,Japan,Asia,not immigrant,Short-cycle tertiary education,Working class,Sales
+276070398,Female,49,Germany,Europe,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+484070097,Male,29,Mexico,North America,not immigrant,Short-cycle tertiary education,Upper middle class,Sales
+528071326,Male,69,Netherlands,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+360072259,Male,33,Indonesia,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+554070012,Female,42,New Zealand,Oceania,not immigrant,Bachelor or equivalent,Upper middle class,Sales
+586070262,Female,37,Pakistan,Asia,not immigrant,Early childhood education,Working class,Never had a job
+360072376,Female,60,Indonesia,Asia,not immigrant,Early childhood education,Lower class,Farm worker
+170079244,Female,59,Colombia,South America,not immigrant,Primary education,Working class,Sales
+364072061,Male,28,Iran,Asia,not immigrant,Bachelor or equivalent,Working class,Unskilled worker
+792072176,Female,33,Turkey,Asia,not immigrant,Primary education,Upper middle class,Never had a job
+422070763,Male,35,Lebanon,Asia,not immigrant,Primary education,Lower class,Never had a job
+158070083,Female,77,Taiwan ROC,Asia,not immigrant,Lower secondary education,Lower middle class,Service
+218071111,Male,38,Ecuador,South America,not immigrant,Lower secondary education,Lower middle class,Semi-skilled worker
+50070775,Male,24,Bangladesh,Asia,not immigrant,Master or equivalent,Upper middle class,Sales
+804070833,Male,43,Ukraine,Europe,not immigrant,Short-cycle tertiary education,Working class,Semi-skilled worker
+404070378,Female,23,Kenya,Africa,not immigrant,Primary education,Upper class,not sure
+702070435,Male,42,Singapore,Asia,not immigrant,Early childhood education,Working class,Unskilled worker
+20070605,Male,24,Andorra,Europe,not immigrant,Short-cycle tertiary education,Lower middle class,Service
+104070185,Male,32,Myanmar,Asia,not immigrant,Upper secondary education,Upper middle class,Unskilled worker
+702071372,Female,44,Singapore,Asia,immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+446070183,Male,25,Macao SAR,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+702070053,Male,73,Singapore,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+417070839,Female,52,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Upper middle class,Clerical
+703070730,Male,58,Slovakia,Europe,not immigrant,Upper secondary education,Lower class,Skilled worker
+170071454,Female,24,Colombia,South America,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+404070603,Male,28,Kenya,Africa,not immigrant,Lower secondary education,Lower class,not sure
+558070712,Female,16,Nicaragua,North America,not immigrant,Upper secondary education,Working class,Never had a job
+218071083,Male,50,Ecuador,South America,not immigrant,Upper secondary education,Lower class,not sure
+504070505,Female,22,Morocco,Africa,not immigrant,Upper secondary education,Upper middle class,Skilled worker
+792071084,Female,33,Turkey,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+124075699,Female,43,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+364072110,Male,50,Iran,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Service
+50070393,Female,42,Bangladesh,Asia,not immigrant,Primary education,Lower middle class,Never had a job
+608070592,Female,52,Philippines,Asia,not immigrant,Primary education,Lower middle class,Sales
+124071318,Male,23,Canada,North America,not immigrant,Upper secondary education,Lower middle class,Sales
+558070886,Male,24,Nicaragua,North America,not immigrant,Primary education,Upper middle class,Semi-skilled worker
+446070284,Male,22,Macao SAR,Asia,immigrant,Bachelor or equivalent,Working class,Clerical
+68070880,Female,31,Bolivia,South America,not immigrant,Upper secondary education,Lower class,Sales
+364071290,Female,39,Iran,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+392070515,Male,64,Japan,Asia,not immigrant,Short-cycle tertiary education,Working class,Unskilled worker
+124071260,Female,67,Canada,North America,not immigrant,Upper secondary education,Lower middle class,Professional and technical
+434071149,Male,43,Libya,Africa,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+203070173,Female,36,Czechia,Europe,not immigrant,Upper secondary education,Upper middle class,Higher administrative
+51070006,Female,61,Armenia,Europe,not immigrant,Short-cycle tertiary education,Lower class,Sales
+300071041,Male,43,Greece,Europe,not immigrant,Lower secondary education,Working class,Sales
+417070042,Female,50,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+704070196,Female,26,Vietnam,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+50071068,Male,35,Bangladesh,Asia,not immigrant,Lower secondary education,Lower middle class,Farm worker
+840072369,Male,34,United States,North America,immigrant,Bachelor or equivalent,Upper middle class,Skilled worker
+586071760,Male,36,Pakistan,Asia,not immigrant,Primary education,Upper class,Unskilled worker
+320070116,Female,30,Guatemala,North America,not immigrant,Primary education,Lower middle class,Professional and technical
+344070159,Male,86,Hong Kong SAR,Asia,immigrant,Lower secondary education,Working class,Semi-skilled worker
+630070791,Female,78,Puerto Rico,North America,not immigrant,Upper secondary education,Upper middle class,Clerical
+398071113,Female,26,Kazakhstan,Asia,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+504070095,Female,40,Morocco,Africa,not immigrant,Early childhood education,Upper middle class,Never had a job
+566071155,Male,30,Nigeria,Africa,not immigrant,Lower secondary education,Lower class,Sales
+496070316,Female,69,Mongolia,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+344070434,Female,59,Hong Kong SAR,Asia,not immigrant,Lower secondary education,Working class,Unskilled worker
+608070379,Male,41,Philippines,Asia,not immigrant,Early childhood education,Lower class,"Farm owner, farm manager"
+417070023,Female,47,Kyrgyzstan,Asia,not immigrant,Short-cycle tertiary education,Working class,Clerical
+462071002,Female,37,Maldives,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+124071428,Female,68,Canada,North America,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+360071076,Female,56,Indonesia,Asia,not immigrant,Early childhood education,Lower middle class,Farm worker
+608070835,Male,52,Philippines,Asia,not immigrant,Primary education,Lower class,"Farm owner, farm manager"
+604070764,Female,52,Peru,South America,not immigrant,Early childhood education,Working class,Never had a job
+276071312,Male,30,Germany,Europe,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+76071432,Male,48,Brazil,South America,not immigrant,Upper secondary education,Lower class,Unskilled worker
+20070522,Male,42,Andorra,Europe,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+704070689,Female,26,Vietnam,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+410071020,Male,56,South Korea,Asia,not immigrant,Short-cycle tertiary education,Lower class,Skilled worker
+643071397,Male,50,Russia,Europe,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+484070796,Male,22,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Sales
+704070277,Female,28,Vietnam,Asia,not immigrant,Short-cycle tertiary education,Working class,Service
+434070722,Male,45,Libya,Africa,not immigrant,Short-cycle tertiary education,Working class,Sales
+410070389,Female,51,South Korea,Asia,not immigrant,Upper secondary education,Upper middle class,Service
+398071093,Female,37,Kazakhstan,Asia,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+218070025,Male,37,Ecuador,South America,not immigrant,Upper secondary education,Working class,Sales
+400070939,Female,32,Jordan,Asia,immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+368070427,Female,37,Iraq,Asia,not immigrant,Primary education,Lower class,Never had a job
+124074937,Female,41,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+32070522,Male,20,Argentina,South America,not immigrant,Lower secondary education,Lower middle class,Skilled worker
+826070965,Female,64,Great Britain,Europe,not immigrant,Master or equivalent,not sure,Professional and technical
+196070370,Female,63,Cyprus,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+554070949,Female,76,New Zealand,Oceania,not immigrant,Short-cycle tertiary education,Upper middle class,Clerical
+818071152,Female,50,Egypt,Africa,not immigrant,Lower secondary education,Working class,Never had a job
+818070078,Female,57,Egypt,Africa,not immigrant,Early childhood education,Lower middle class,Never had a job
+804070877,Female,65,Ukraine,Europe,not immigrant,Short-cycle tertiary education,Working class,Unskilled worker
+360070988,Female,21,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+586071338,Female,48,Pakistan,Asia,not immigrant,Primary education,Lower middle class,Never had a job
+764070759,Male,57,Thailand,Asia,not immigrant,Primary education,Working class,Unskilled worker
+276071418,Female,59,Germany,Europe,immigrant,Bachelor or equivalent,Lower middle class,Service
+104070601,Male,65,Myanmar,Asia,not immigrant,Lower secondary education,Upper middle class,Sales
+76071299,Male,35,Brazil,South America,not immigrant,Lower secondary education,Lower class,Semi-skilled worker
+792071661,Male,59,Turkey,Asia,not immigrant,Primary education,Working class,Skilled worker
+604070428,Female,18,Peru,South America,not immigrant,Lower secondary education,Working class,Never had a job
+788070106,Male,29,Tunisia,Africa,not immigrant,Primary education,Lower class,Farm worker
+20070405,Female,44,Andorra,Europe,immigrant,Short-cycle tertiary education,Lower middle class,Sales
+703071031,Female,34,Slovakia,Europe,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+76071608,Female,35,Brazil,South America,not immigrant,Lower secondary education,Lower middle class,not sure
+36070920,Female,61,Australia,Oceania,not immigrant,Upper secondary education,Lower class,"Farm owner, farm manager"
+792070120,Female,55,Turkey,Asia,not immigrant,Primary education,Working class,Never had a job
+320070852,Male,22,Guatemala,North America,not immigrant,Early childhood education,Upper class,Sales
+608071030,Female,51,Philippines,Asia,not immigrant,Primary education,Working class,Service
+792070342,Male,23,Turkey,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+364072138,Male,26,Iran,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+156070161,Female,45,China,Asia,not immigrant,Upper secondary education,Working class,Service
+156071037,Male,45,China,Asia,not immigrant,Bachelor or equivalent,Lower middle class,not sure
+643070101,Female,53,Russia,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+608070100,Female,18,Philippines,Asia,not immigrant,Upper secondary education,Lower class,Service
+20070749,Female,25,Andorra,Europe,immigrant,Upper secondary education,Working class,Skilled worker
+458070216,Male,44,Malaysia,Asia,not immigrant,Lower secondary education,Working class,Service
+231070712,Female,28,Ethiopia,Africa,not immigrant,Upper secondary education,Lower middle class,Never had a job
+231070255,Male,26,Ethiopia,Africa,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+170074479,Male,26,Colombia,South America,not immigrant,Lower secondary education,Lower class,Farm worker
+558070435,Female,33,Nicaragua,North America,not immigrant,Bachelor or equivalent,Lower class,Never had a job
+703070874,Female,52,Slovakia,Europe,not immigrant,Upper secondary education,Lower middle class,Service
+792070086,Female,25,Turkey,Asia,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+554070900,Female,77,New Zealand,Oceania,not immigrant,Lower secondary education,Lower middle class,not sure
+630070840,Female,29,Puerto Rico,North America,not immigrant,Bachelor or equivalent,Upper middle class,Service
+218071023,Male,39,Ecuador,South America,immigrant,Primary education,Lower middle class,not sure
+203070665,Female,31,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+716070463,Female,23,Zimbabwe,Africa,not immigrant,Upper secondary education,Upper middle class,Never had a job
+458071124,Female,48,Malaysia,Asia,not immigrant,Lower secondary education,Lower middle class,Professional and technical
+630071068,Female,54,Puerto Rico,North America,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+826071888,Male,52,Great Britain,Europe,not immigrant,Short-cycle tertiary education,not sure,Professional and technical
+50070319,Female,31,Bangladesh,Asia,not immigrant,Primary education,Lower class,Never had a job
+417070040,Male,57,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Upper class,"Farm owner, farm manager"
+566070591,Female,30,Nigeria,Africa,not immigrant,Upper secondary education,Lower class,Skilled worker
+392070177,Male,57,Japan,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+558070372,Female,18,Nicaragua,North America,not immigrant,Upper secondary education,Lower middle class,Never had a job
+410070751,Male,35,South Korea,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+231070066,Female,30,Ethiopia,Africa,not immigrant,Early childhood education,Upper middle class,Never had a job
+586070646,Male,31,Pakistan,Asia,not immigrant,Lower secondary education,Upper middle class,Skilled worker
+300070998,Female,53,Greece,Europe,not immigrant,Upper secondary education,Working class,Sales
+156071794,Female,29,China,Asia,not immigrant,Bachelor or equivalent,Working class,Never had a job
+434070618,Male,19,Libya,Africa,not immigrant,Upper secondary education,Working class,Sales
+124073038,Female,25,Canada,North America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+630070617,Female,86,Puerto Rico,North America,not immigrant,Master or equivalent,Lower middle class,Service
+156071964,Female,43,China,Asia,not immigrant,Lower secondary education,Lower class,Sales
+276071320,Male,48,Germany,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Service
+20070094,Female,30,Andorra,Europe,immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+364072725,Female,40,Iran,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Professional and technical
+586070769,Male,25,Pakistan,Asia,not immigrant,Bachelor or equivalent,Lower middle class,"Farm owner, farm manager"
+400070905,Female,34,Jordan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+496070265,Female,43,Mongolia,Asia,not immigrant,Upper secondary education,Upper middle class,Sales
+203070847,Male,60,Czechia,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+716070487,Female,21,Zimbabwe,Africa,not immigrant,Lower secondary education,Lower class,Never had a job
+792071062,Male,27,Turkey,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Service
+504070949,Male,41,Morocco,Africa,not immigrant,Short-cycle tertiary education,Upper middle class,Service
+36070218,Female,53,Australia,Oceania,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+458071017,Male,46,Malaysia,Asia,not immigrant,Short-cycle tertiary education,Working class,Professional and technical
+218070608,Female,46,Ecuador,South America,not immigrant,Primary education,Upper middle class,Unskilled worker
+344070552,Female,54,Hong Kong SAR,Asia,not immigrant,Lower secondary education,Working class,Sales
+51071132,Male,62,Armenia,Europe,not immigrant,Upper secondary education,Working class,Unskilled worker
+804070288,Female,50,Ukraine,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+434070242,Female,30,Libya,Africa,not immigrant,Short-cycle tertiary education,Lower middle class,Never had a job
+702071701,Male,32,Singapore,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+398070186,Male,27,Kazakhstan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+368070875,Female,38,Iraq,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+364072560,Male,38,Iran,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+392070719,Male,51,Japan,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+528071414,Male,56,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,Skilled worker
+688070694,Female,48,Serbia,Europe,not immigrant,Post-secondary non-tertiary education,Working class,Service
+124072329,Male,59,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+604070289,Male,18,Peru,South America,not immigrant,Short-cycle tertiary education,Upper middle class,Never had a job
+446070673,Female,23,Macao SAR,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+360071408,Female,37,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+909070212,Female,33,Northern Ireland,Europe,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+458070387,Female,24,Malaysia,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+51070014,Female,31,Armenia,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+170072744,Female,37,Colombia,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+604070136,Female,65,Peru,South America,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+788071035,Female,73,Tunisia,Africa,not immigrant,Early childhood education,Lower class,Never had a job
+792070134,Male,38,Turkey,Asia,not immigrant,Bachelor or equivalent,Working class,Skilled worker
+50070709,Male,38,Bangladesh,Asia,not immigrant,Primary education,Working class,Farm worker
+566070603,Female,22,Nigeria,Africa,not immigrant,Upper secondary education,Lower middle class,Never had a job
+124071481,Female,53,Canada,North America,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+50070574,Male,50,Bangladesh,Asia,not immigrant,Lower secondary education,Working class,"Farm owner, farm manager"
+300070121,Female,33,Greece,Europe,not immigrant,Master or equivalent,Upper middle class,Clerical
+360071094,Male,21,Indonesia,Asia,not immigrant,Upper secondary education,Working class,Farm worker
+528070660,Female,69,Netherlands,Europe,not immigrant,Upper secondary education,Upper middle class,not sure
+484070739,Male,21,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Working class,Service
+434070196,Female,24,Libya,Africa,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+368070563,Female,43,Iraq,Asia,not immigrant,Doctoral or equivalent,Working class,Service
+392071274,Male,72,Japan,Asia,not immigrant,Bachelor or equivalent,Lower middle class,"Farm owner, farm manager"
+764070800,Male,68,Thailand,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+703070720,Female,49,Slovakia,Europe,not immigrant,Upper secondary education,Lower middle class,Sales
+792071814,Male,18,Turkey,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+124074811,Female,63,Canada,North America,not immigrant,Upper secondary education,Working class,Unskilled worker
+704070827,Female,22,Vietnam,Asia,not immigrant,Short-cycle tertiary education,Upper middle class,Sales
+158070815,Male,79,Taiwan ROC,Asia,not immigrant,Short-cycle tertiary education,Upper middle class,Professional and technical
+68071385,Female,45,Bolivia,South America,not immigrant,Early childhood education,Lower class,Semi-skilled worker
+422070165,Male,18,Lebanon,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Never had a job
+528070726,Male,48,Netherlands,Europe,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+410070647,Male,52,South Korea,Asia,not immigrant,Lower secondary education,Lower class,Unskilled worker
+51071192,Male,38,Armenia,Europe,not immigrant,Upper secondary education,Upper middle class,Skilled worker
+36070593,Female,30,Australia,Oceania,not immigrant,Post-secondary non-tertiary education,Lower class,Clerical
+344070647,Male,64,Hong Kong SAR,Asia,immigrant,Upper secondary education,Lower middle class,Unskilled worker
+51071070,Male,35,Armenia,Europe,not immigrant,Upper secondary education,Working class,Unskilled worker
+364071773,Female,35,Iran,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Never had a job
+703070429,Male,66,Slovakia,Europe,not immigrant,Lower secondary education,Lower class,Farm worker
+422070833,Male,60,Lebanon,Asia,not immigrant,Early childhood education,Lower class,Sales
+344070544,Female,65,Hong Kong SAR,Asia,immigrant,Lower secondary education,Working class,Sales
+36070692,Male,74,Australia,Oceania,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+68070733,Female,44,Bolivia,South America,not immigrant,Bachelor or equivalent,Upper middle class,not sure
+50070927,Female,27,Bangladesh,Asia,not immigrant,Lower secondary education,Working class,Never had a job
+604070276,Female,49,Peru,South America,not immigrant,Primary education,Lower middle class,Unskilled worker
+410070120,Male,56,South Korea,Asia,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+792072037,Female,46,Turkey,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+458070178,Female,50,Malaysia,Asia,not immigrant,Lower secondary education,Lower middle class,Farm worker
+417070827,Male,24,Kyrgyzstan,Asia,not immigrant,Short-cycle tertiary education,Upper middle class,Sales
+152070656,Female,50,Chile,South America,not immigrant,Upper secondary education,Working class,Skilled worker
+360071880,Male,67,Indonesia,Asia,not immigrant,Primary education,Upper middle class,Farm worker
+196070240,Female,37,Cyprus,Europe,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+554071055,Male,62,New Zealand,Oceania,not immigrant,Upper secondary education,Working class,Skilled worker
+558070194,Male,24,Nicaragua,North America,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+156072761,Female,54,China,Asia,not immigrant,Primary education,Lower class,Farm worker
+604070788,Female,60,Peru,South America,not immigrant,Primary education,Lower middle class,Never had a job
+826070183,Female,54,Great Britain,Europe,not immigrant,Doctoral or equivalent,not sure,Professional and technical
+51070627,Female,68,Armenia,Europe,not immigrant,Upper secondary education,Working class,Never had a job
+762070386,Male,22,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Unskilled worker
+826071617,Female,23,Great Britain,Europe,not immigrant,Upper secondary education,not sure,Skilled worker
+231070572,Female,22,Ethiopia,Africa,not immigrant,Upper secondary education,Lower class,Clerical
+826072125,Male,80,Great Britain,Europe,not immigrant,Upper secondary education,not sure,Sales
+152070740,Male,59,Chile,South America,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+76071348,Female,81,Brazil,South America,not immigrant,Primary education,Lower class,Sales
+792071679,Female,26,Turkey,Asia,not immigrant,Primary education,Working class,Farm worker
+643071516,Female,35,Russia,Europe,not immigrant,Short-cycle tertiary education,Working class,Service
+458070612,Male,50,Malaysia,Asia,not immigrant,Lower secondary education,Upper middle class,Skilled worker
+417070284,Female,62,Kyrgyzstan,Asia,not immigrant,Master or equivalent,Upper middle class,Clerical
+156072246,Male,48,China,Asia,not immigrant,Upper secondary education,Working class,Clerical
+604070885,Female,46,Peru,South America,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+458071192,Female,28,Malaysia,Asia,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+392070414,Female,56,Japan,Asia,not immigrant,Short-cycle tertiary education,Lower class,Never had a job
+604071103,Male,40,Peru,South America,not immigrant,Early childhood education,Lower class,Farm worker
+231070506,Male,19,Ethiopia,Africa,not immigrant,Primary education,Upper class,Never had a job
+604070736,Female,37,Peru,South America,not immigrant,Post-secondary non-tertiary education,Lower class,Unskilled worker
+203070894,Female,64,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Sales
+392070772,Female,54,Japan,Asia,not immigrant,Upper secondary education,Lower class,Service
+528070907,Female,78,Netherlands,Europe,not immigrant,Lower secondary education,not sure,Clerical
+68071832,Female,62,Bolivia,South America,not immigrant,Primary education,Lower class,Sales
+300070837,Male,82,Greece,Europe,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+840072100,Male,61,United States,North America,not immigrant,Short-cycle tertiary education,Lower middle class,Semi-skilled worker
+826071982,Male,57,Great Britain,Europe,not immigrant,Upper secondary education,not sure,Clerical
+558070225,Female,55,Nicaragua,North America,not immigrant,Primary education,Lower class,Semi-skilled worker
+703070220,Male,55,Slovakia,Europe,not immigrant,Lower secondary education,Lower class,Skilled worker
+68071692,Male,52,Bolivia,South America,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+566070301,Female,60,Nigeria,Africa,not immigrant,Early childhood education,Lower class,Sales
+484070639,Female,35,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Lower class,Clerical
+124075750,Male,46,Canada,North America,not immigrant,Master or equivalent,Upper middle class,Sales
+554070563,Male,56,New Zealand,Oceania,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+124073486,Female,39,Canada,North America,not immigrant,Post-secondary non-tertiary education,Working class,Professional and technical
+124074523,Female,35,Canada,North America,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+792072046,Male,55,Turkey,Asia,not immigrant,Primary education,Lower middle class,Skilled worker
+818070462,Female,52,Egypt,Africa,not immigrant,Short-cycle tertiary education,Lower middle class,Never had a job
+156072949,Female,69,China,Asia,not immigrant,Early childhood education,Lower middle class,Semi-skilled worker
+68071530,Female,22,Bolivia,South America,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+643071455,Male,28,Russia,Europe,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+404071227,Male,43,Kenya,Africa,not immigrant,Early childhood education,Lower middle class,not sure
+566070654,Male,21,Nigeria,Africa,not immigrant,Early childhood education,Upper class,Never had a job
+703070358,Male,43,Slovakia,Europe,not immigrant,Lower secondary education,Working class,Skilled worker
+840073439,Male,45,United States,North America,not immigrant,Master or equivalent,Lower middle class,Clerical
+300071200,Male,43,Greece,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+458070462,Male,39,Malaysia,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+360071944,Male,64,Indonesia,Asia,not immigrant,Primary education,Lower middle class,Farm worker
+703071161,Male,34,Slovakia,Europe,not immigrant,Lower secondary education,Lower class,Skilled worker
+792070215,Female,37,Turkey,Asia,not immigrant,Early childhood education,Working class,Never had a job
+702070692,Male,62,Singapore,Asia,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+32070596,Male,44,Argentina,South America,not immigrant,Short-cycle tertiary education,Upper middle class,Clerical
+703070105,Female,82,Slovakia,Europe,not immigrant,Upper secondary education,not sure,Service
+716070786,Male,33,Zimbabwe,Africa,not immigrant,Post-secondary non-tertiary education,Lower middle class,Professional and technical
+124073548,Female,62,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+826071947,Male,58,Great Britain,Europe,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+586070372,Male,26,Pakistan,Asia,not immigrant,Primary education,Lower middle class,Semi-skilled worker
+360072485,Male,56,Indonesia,Asia,not immigrant,Upper secondary education,Working class,Higher administrative
+231070477,Male,35,Ethiopia,Africa,not immigrant,Upper secondary education,Working class,"Farm owner, farm manager"
+764070924,Female,33,Thailand,Asia,not immigrant,Lower secondary education,Lower middle class,Service
+702071445,Female,43,Singapore,Asia,not immigrant,Bachelor or equivalent,Working class,Service
+392070541,Male,33,Japan,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+862071058,Male,32,Venezuela,South America,not immigrant,Upper secondary education,Working class,Sales
+764070717,Male,38,Thailand,Asia,not immigrant,Primary education,Working class,"Farm owner, farm manager"
+364071339,Female,34,Iran,Asia,not immigrant,Bachelor or equivalent,Upper middle class,not sure
+704070122,Female,44,Vietnam,Asia,not immigrant,Lower secondary education,Working class,Sales
+300070542,Male,42,Greece,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+484071358,Male,43,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Lower class,Skilled worker
+643071168,Male,22,Russia,Europe,not immigrant,Short-cycle tertiary education,not sure,Farm worker
+792071839,Female,24,Turkey,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Skilled worker
+36070417,Female,55,Australia,Oceania,not immigrant,Upper secondary education,Working class,"Farm owner, farm manager"
+792070024,Female,65,Turkey,Asia,not immigrant,Primary education,not sure,not sure
+792071111,Male,47,Turkey,Asia,not immigrant,Lower secondary education,Upper middle class,Skilled worker
+554070134,Male,71,New Zealand,Oceania,not immigrant,Short-cycle tertiary education,Upper middle class,Professional and technical
+528071635,Female,42,Netherlands,Europe,not immigrant,Short-cycle tertiary education,not sure,not sure
+422070796,Female,77,Lebanon,Asia,not immigrant,Upper secondary education,Upper middle class,Sales
+630070305,Male,72,Puerto Rico,North America,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+762070147,Female,18,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Professional and technical
+586070428,Male,48,Pakistan,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Professional and technical
+124075712,Male,29,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+76070295,Male,23,Brazil,South America,not immigrant,Bachelor or equivalent,Lower middle class,Skilled worker
+156071778,Female,66,China,Asia,not immigrant,Primary education,Working class,Never had a job
+392070122,Female,19,Japan,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Never had a job
+702071411,Male,49,Singapore,Asia,not immigrant,Upper secondary education,Working class,Farm worker
+702071457,Female,73,Singapore,Asia,immigrant,Lower secondary education,Lower middle class,Unskilled worker
+702071089,Male,55,Singapore,Asia,not immigrant,Upper secondary education,Lower middle class,Service
+360070972,Male,56,Indonesia,Asia,not immigrant,Lower secondary education,Lower middle class,Never had a job
+170071308,Female,19,Colombia,South America,not immigrant,Short-cycle tertiary education,Lower middle class,Clerical
+124072218,Male,47,Canada,North America,not immigrant,Post-secondary non-tertiary education,Working class,Clerical
+104070486,Female,42,Myanmar,Asia,not immigrant,Upper secondary education,Working class,Sales
+156072917,Female,33,China,Asia,not immigrant,Lower secondary education,Lower class,Sales
+558070744,Male,55,Nicaragua,North America,not immigrant,Primary education,Lower class,Farm worker
+586070868,Female,21,Pakistan,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+484070444,Female,73,Mexico,North America,not immigrant,Lower secondary education,Lower middle class,Farm worker
+484070050,Female,37,Mexico,North America,not immigrant,Upper secondary education,Lower middle class,Sales
+484070947,Male,48,Mexico,North America,not immigrant,Upper secondary education,Lower middle class,Professional and technical
+156071540,Female,38,China,Asia,not immigrant,Upper secondary education,Working class,Sales
+400070516,Female,52,Jordan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+360071467,Female,49,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+764070518,Female,23,Thailand,Asia,not immigrant,Lower secondary education,Lower middle class,Unskilled worker
+804070073,Female,26,Ukraine,Europe,not immigrant,Short-cycle tertiary education,Lower class,Farm worker
+156071028,Male,41,China,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+826070623,Female,74,Great Britain,Europe,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+36071172,Female,71,Australia,Oceania,not immigrant,Lower secondary education,Lower middle class,Sales
+170075768,Female,53,Colombia,South America,not immigrant,Primary education,Lower class,Service
+344070517,Female,49,Hong Kong SAR,Asia,immigrant,Lower secondary education,Lower middle class,Unskilled worker
+417071033,Female,22,Kyrgyzstan,Asia,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+826072456,Female,53,Great Britain,Europe,not immigrant,Upper secondary education,not sure,Semi-skilled worker
+586071168,Male,33,Pakistan,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+422070706,Female,19,Lebanon,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Sales
+360071787,Female,55,Indonesia,Asia,not immigrant,Early childhood education,Lower class,Sales
+300070127,Female,31,Greece,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+642070037,Female,26,Romania,Europe,not immigrant,Lower secondary education,Upper middle class,Farm worker
+68071253,Male,59,Bolivia,South America,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+360070341,Male,44,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+504070337,Female,18,Morocco,Africa,not immigrant,Early childhood education,Working class,Farm worker
+68071672,Female,35,Bolivia,South America,not immigrant,Primary education,Lower middle class,Farm worker
+840072067,Female,46,United States,North America,not immigrant,Short-cycle tertiary education,Upper middle class,Professional and technical
+344070960,Male,70,Hong Kong SAR,Asia,immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+434070444,Male,48,Libya,Africa,not immigrant,Upper secondary education,Lower class,Service
+156070258,Male,42,China,Asia,not immigrant,Lower secondary education,Lower class,Never had a job
+360072715,Male,43,Indonesia,Asia,not immigrant,Primary education,Working class,Unskilled worker
+276070691,Female,68,Germany,Europe,not immigrant,Master or equivalent,Upper middle class,Sales
+392071071,Female,76,Japan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+300070797,Male,72,Greece,Europe,not immigrant,Early childhood education,Lower class,Sales
+704070436,Male,33,Vietnam,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+792070832,Female,55,Turkey,Asia,not immigrant,Early childhood education,Upper middle class,Never had a job
+344071153,Female,52,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Working class,Clerical
+462070925,Female,25,Maldives,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Clerical
+716070584,Male,62,Zimbabwe,Africa,not immigrant,Primary education,Upper middle class,Professional and technical
+344070018,Female,73,Hong Kong SAR,Asia,not immigrant,Lower secondary education,Lower class,Service
+156071507,Female,62,China,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+484071480,Female,48,Mexico,North America,not immigrant,Short-cycle tertiary education,Upper middle class,Professional and technical
+764070884,Male,40,Thailand,Asia,not immigrant,Upper secondary education,Lower middle class,Service
+124073054,Female,46,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Service
+586070804,Male,20,Pakistan,Asia,not immigrant,Lower secondary education,Lower middle class,Semi-skilled worker
+788070682,Female,32,Tunisia,Africa,not immigrant,Lower secondary education,Lower middle class,Never had a job
+688071067,Male,75,Serbia,Europe,not immigrant,Master or equivalent,Upper middle class,Higher administrative
+566070785,Female,26,Nigeria,Africa,not immigrant,Upper secondary education,Working class,Sales
+496070793,Male,21,Mongolia,Asia,not immigrant,Short-cycle tertiary education,Working class,Service
+68071584,Male,41,Bolivia,South America,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+586071567,Female,19,Pakistan,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+804071223,Male,22,Ukraine,Europe,not immigrant,Master or equivalent,not sure,not sure
+764070782,Male,55,Thailand,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+344070115,Female,52,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Working class,Sales
+642071000,Female,57,Romania,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+400070002,Female,39,Jordan,Asia,immigrant,Upper secondary education,Lower middle class,Never had a job
+276071098,Male,27,Germany,Europe,immigrant,Upper secondary education,Lower middle class,Never had a job
+410070662,Male,27,South Korea,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+566070700,Male,20,Nigeria,Africa,not immigrant,Upper secondary education,not sure,not sure
+404070648,Male,47,Kenya,Africa,not immigrant,Upper secondary education,not sure,Skilled worker
+156070339,Male,43,China,Asia,not immigrant,Upper secondary education,Lower middle class,Professional and technical
+417070815,Female,44,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+68070567,Male,65,Bolivia,South America,immigrant,Bachelor or equivalent,Upper class,Professional and technical
+124070764,Male,71,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+124074688,Male,77,Canada,North America,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+504070764,Male,25,Morocco,Africa,not immigrant,Master or equivalent,Lower middle class,Never had a job
+704070137,Male,36,Vietnam,Asia,not immigrant,Bachelor or equivalent,Working class,Service
+20070934,Female,61,Andorra,Europe,immigrant,Upper secondary education,Lower middle class,Clerical
+586070219,Male,27,Pakistan,Asia,not immigrant,Upper secondary education,Upper middle class,Sales
+688070196,Male,19,Serbia,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,not sure
+434071193,Female,22,Libya,Africa,not immigrant,Upper secondary education,Lower middle class,Never had a job
+231070099,Male,26,Ethiopia,Africa,not immigrant,Early childhood education,Lower middle class,Service
+840073460,Female,48,United States,North America,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+417070095,Male,55,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+702070176,Female,29,Singapore,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+360071448,Female,24,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+196070707,Female,41,Cyprus,Europe,not immigrant,Lower secondary education,Upper middle class,Semi-skilled worker
+458071291,Female,26,Malaysia,Asia,not immigrant,Bachelor or equivalent,Lower class,Clerical
+218070848,Female,24,Ecuador,South America,not immigrant,Post-secondary non-tertiary education,Lower class,Never had a job
+504070953,Male,23,Morocco,Africa,not immigrant,Early childhood education,Working class,Skilled worker
+124073851,Male,22,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Professional and technical
+158070319,Male,65,Taiwan ROC,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+764070153,Female,35,Thailand,Asia,not immigrant,Short-cycle tertiary education,Upper middle class,Unskilled worker
+50070388,Male,58,Bangladesh,Asia,not immigrant,Early childhood education,Lower middle class,Farm worker
+792070837,Male,23,Turkey,Asia,not immigrant,Upper secondary education,not sure,Unskilled worker
+76070365,Female,61,Brazil,South America,not immigrant,Upper secondary education,Lower middle class,Higher administrative
+417070392,Male,57,Kyrgyzstan,Asia,not immigrant,Short-cycle tertiary education,Working class,Semi-skilled worker
+364072334,Female,39,Iran,Asia,not immigrant,Primary education,Lower middle class,Never had a job
+124074929,Male,48,Canada,North America,immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+528071218,Male,54,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,Service
+231070706,Female,30,Ethiopia,Africa,not immigrant,Early childhood education,Working class,"Farm owner, farm manager"
+300070713,Male,34,Greece,Europe,not immigrant,Upper secondary education,Lower middle class,Sales
+688071101,Female,63,Serbia,Europe,not immigrant,Lower secondary education,Working class,Unskilled worker
+364072235,Male,45,Iran,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+410071237,Female,68,South Korea,Asia,not immigrant,Lower secondary education,Lower middle class,not sure
+410070048,Female,60,South Korea,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+344071377,Female,29,Hong Kong SAR,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+404070723,Male,53,Kenya,Africa,not immigrant,Lower secondary education,Upper middle class,Professional and technical
+484071649,Female,18,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,not sure
+360070640,Male,47,Indonesia,Asia,not immigrant,Upper secondary education,Working class,Clerical
+158071038,Male,67,Taiwan ROC,Asia,not immigrant,Primary education,Working class,Unskilled worker
+398070341,Female,52,Kazakhstan,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,Unskilled worker
+764070194,Male,71,Thailand,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+360072389,Male,49,Indonesia,Asia,not immigrant,Upper secondary education,Upper middle class,"Farm owner, farm manager"
+410070842,Female,76,South Korea,Asia,not immigrant,Primary education,Lower middle class,not sure
+368070290,Male,28,Iraq,Asia,not immigrant,Upper secondary education,Working class,Sales
+586071182,Male,24,Pakistan,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Never had a job
+364071961,Male,70,Iran,Asia,not immigrant,Primary education,Lower middle class,Sales
+716070709,Female,30,Zimbabwe,Africa,not immigrant,Lower secondary education,Lower middle class,Sales
+840071712,Male,64,United States,North America,not immigrant,Short-cycle tertiary education,Lower class,not sure
+417070062,Female,28,Kyrgyzstan,Asia,not immigrant,Upper secondary education,not sure,Never had a job
+608071150,Female,36,Philippines,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+558071126,Female,16,Nicaragua,North America,not immigrant,Upper secondary education,Working class,Never had a job
+762070781,Male,68,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Farm worker
+804070281,Female,31,Ukraine,Europe,not immigrant,Bachelor or equivalent,Working class,Sales
+840072789,Male,30,United States,North America,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+344070166,Male,29,Hong Kong SAR,Asia,immigrant,Master or equivalent,Lower middle class,Professional and technical
+32070796,Female,48,Argentina,South America,immigrant,Primary education,Working class,Unskilled worker
+398070649,Male,47,Kazakhstan,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,Unskilled worker
+840071149,Female,19,United States,North America,not immigrant,Post-secondary non-tertiary education,Working class,not sure
+196070969,Male,35,Cyprus,Europe,not immigrant,Doctoral or equivalent,Upper middle class,Professional and technical
+156072350,Female,18,China,Asia,not immigrant,Upper secondary education,Working class,Never had a job
+404070957,Female,42,Kenya,Africa,not immigrant,Primary education,Lower middle class,not sure
+360071430,Male,59,Indonesia,Asia,not immigrant,Primary education,Lower middle class,Service
+32070751,Female,26,Argentina,South America,not immigrant,Upper secondary education,Lower middle class,Sales
+20070914,Female,77,Andorra,Europe,immigrant,Short-cycle tertiary education,Upper middle class,Sales
+36070855,Female,55,Australia,Oceania,not immigrant,Upper secondary education,Lower class,Service
+528070135,Female,44,Netherlands,Europe,immigrant,Lower secondary education,Lower middle class,Unskilled worker
+704070189,Male,50,Vietnam,Asia,not immigrant,Upper secondary education,Working class,Service
+68070051,Female,35,Bolivia,South America,not immigrant,Short-cycle tertiary education,Lower middle class,Sales
+156072295,Female,60,China,Asia,not immigrant,Lower secondary education,Lower class,Semi-skilled worker
+788071113,Male,57,Tunisia,Africa,not immigrant,Upper secondary education,Upper middle class,Clerical
+446070872,Male,29,Macao SAR,Asia,not immigrant,Upper secondary education,Lower class,not sure
+152070146,Male,22,Chile,South America,not immigrant,Post-secondary non-tertiary education,Working class,Semi-skilled worker
+496070280,Male,28,Mongolia,Asia,not immigrant,Master or equivalent,Lower middle class,Clerical
+400071142,Male,40,Jordan,Asia,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+400070755,Female,26,Jordan,Asia,not immigrant,Lower secondary education,Lower middle class,Never had a job
+434070460,Female,23,Libya,Africa,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+484070159,Male,69,Mexico,North America,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+446070982,Female,27,Macao SAR,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,Clerical
+642070226,Male,42,Romania,Europe,not immigrant,Upper secondary education,Lower middle class,Higher administrative
+156071053,Male,22,China,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Service
+528071503,Male,65,Netherlands,Europe,not immigrant,Upper secondary education,Working class,Service
+124073835,Male,33,Canada,North America,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+484070297,Male,42,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Upper middle class,Sales
+68070117,Female,22,Bolivia,South America,not immigrant,Bachelor or equivalent,Lower middle class,Skilled worker
+840071039,Male,40,United States,North America,not sure,Post-secondary non-tertiary education,Upper middle class,Professional and technical
+36071135,Female,71,Australia,Oceania,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+630070685,Female,63,Puerto Rico,North America,not immigrant,Lower secondary education,Lower middle class,Never had a job
+792070927,Male,35,Turkey,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Skilled worker
+68071935,Female,55,Bolivia,South America,not immigrant,Primary education,Lower middle class,Service
+792070797,Male,47,Turkey,Asia,not immigrant,Early childhood education,Working class,not sure
+504070100,Female,25,Morocco,Africa,not immigrant,Lower secondary education,Lower middle class,Sales
+410070952,Male,36,South Korea,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Clerical
+716071012,Male,29,Zimbabwe,Africa,not immigrant,Upper secondary education,Lower middle class,Sales
+458071238,Female,18,Malaysia,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Service
+231070747,Male,30,Ethiopia,Africa,not immigrant,Lower secondary education,Working class,Service
+608070670,Female,58,Philippines,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+804070980,Male,50,Ukraine,Europe,not immigrant,Short-cycle tertiary education,Lower middle class,Skilled worker
+484071064,Female,40,Mexico,North America,not immigrant,Primary education,Lower class,not sure
+410070956,Male,34,South Korea,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+360070701,Male,29,Indonesia,Asia,not immigrant,Upper secondary education,Working class,Service
+68070661,Male,20,Bolivia,South America,not immigrant,Bachelor or equivalent,Upper middle class,Farm worker
+643070084,Male,60,Russia,Europe,not immigrant,Short-cycle tertiary education,Upper middle class,Clerical
+368070152,Male,24,Iraq,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Unskilled worker
+642071039,Male,35,Romania,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+104070673,Male,46,Myanmar,Asia,not immigrant,Lower secondary education,Working class,Unskilled worker
+702070584,Female,24,Singapore,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+158070794,Male,80,Taiwan ROC,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+276070293,Male,52,Germany,Europe,immigrant,Short-cycle tertiary education,not sure,Skilled worker
+51071126,Male,24,Armenia,Europe,not immigrant,Bachelor or equivalent,Working class,Service
+203070501,Male,31,Czechia,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+276070154,Male,79,Germany,Europe,not immigrant,Upper secondary education,Upper middle class,Sales
+496071045,Male,28,Mongolia,Asia,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+152070672,Female,30,Chile,South America,not immigrant,Short-cycle tertiary education,Working class,Professional and technical
+152070280,Male,67,Chile,South America,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+792072191,Male,55,Turkey,Asia,not immigrant,Primary education,Upper middle class,Skilled worker
+196070293,Female,26,Cyprus,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+558070173,Male,48,Nicaragua,North America,not immigrant,Lower secondary education,Working class,Sales
+764070239,Male,54,Thailand,Asia,not immigrant,Primary education,Working class,Farm worker
+152070055,Female,20,Chile,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Never had a job
+104071142,Female,24,Myanmar,Asia,not immigrant,Master or equivalent,Upper middle class,Higher administrative
+643071790,Female,28,Russia,Europe,not immigrant,Short-cycle tertiary education,Working class,Semi-skilled worker
+586070899,Male,38,Pakistan,Asia,not immigrant,Primary education,Working class,Unskilled worker
+642070033,Male,83,Romania,Europe,not immigrant,Primary education,Lower middle class,Farm worker
+320070538,Female,46,Guatemala,North America,not immigrant,Master or equivalent,Lower middle class,Sales
+604070617,Female,25,Peru,South America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Never had a job
+158070057,Male,62,Taiwan ROC,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Service
+762070476,Male,20,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,Professional and technical
+124074012,Male,37,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+51070334,Female,78,Armenia,Europe,not immigrant,Lower secondary education,Upper middle class,Unskilled worker
+434070891,Female,18,Libya,Africa,not immigrant,Lower secondary education,Upper middle class,Never had a job
+586071317,Female,35,Pakistan,Asia,not immigrant,Primary education,Lower middle class,Never had a job
+554070781,Female,41,New Zealand,Oceania,not immigrant,Master or equivalent,Upper middle class,not sure
+702071860,Female,35,Singapore,Asia,not immigrant,Upper secondary education,Working class,Service
+404070339,Male,19,Kenya,Africa,not immigrant,Upper secondary education,Upper middle class,not sure
+788071020,Male,66,Tunisia,Africa,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+170075661,Male,44,Colombia,South America,not immigrant,Primary education,Lower middle class,Farm worker
+68071656,Female,56,Bolivia,South America,not immigrant,Primary education,Lower middle class,Never had a job
+586071636,Male,28,Pakistan,Asia,not immigrant,Early childhood education,Lower middle class,Sales
+231070172,Female,40,Ethiopia,Africa,not immigrant,Early childhood education,Working class,Farm worker
+909070152,Male,45,Northern Ireland,Europe,not immigrant,Lower secondary education,not sure,Semi-skilled worker
+716070023,Female,20,Zimbabwe,Africa,not immigrant,Lower secondary education,Working class,Never had a job
+360072710,Male,39,Indonesia,Asia,not immigrant,Upper secondary education,Working class,"Farm owner, farm manager"
+704070144,Female,38,Vietnam,Asia,not immigrant,Lower secondary education,Working class,Never had a job
+504070012,Female,51,Morocco,Africa,not immigrant,Primary education,Working class,Never had a job
+50070989,Male,42,Bangladesh,Asia,not immigrant,Lower secondary education,Working class,Sales
+32070272,Female,34,Argentina,South America,not immigrant,Upper secondary education,Upper middle class,Unskilled worker
+792071163,Male,36,Turkey,Asia,not immigrant,Upper secondary education,Upper middle class,Higher administrative
+792070195,Male,44,Turkey,Asia,not immigrant,Primary education,Lower middle class,Higher administrative
+643071234,Female,80,Russia,Europe,not immigrant,Primary education,Lower middle class,Skilled worker
+764071282,Female,45,Thailand,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+528071932,Female,74,Netherlands,Europe,not sure,Doctoral or equivalent,not sure,Professional and technical
+360071238,Female,28,Indonesia,Asia,not immigrant,Primary education,Upper middle class,Unskilled worker
+643070022,Male,67,Russia,Europe,not immigrant,Short-cycle tertiary education,Working class,Semi-skilled worker
+826071132,Female,53,Great Britain,Europe,not immigrant,Short-cycle tertiary education,not sure,Professional and technical
+818070927,Female,57,Egypt,Africa,not immigrant,Early childhood education,Lower class,Never had a job
+528070869,Male,73,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,not sure,Skilled worker
+320070509,Female,42,Guatemala,North America,not immigrant,Bachelor or equivalent,Upper middle class,Clerical
+410070513,Male,35,South Korea,Asia,not immigrant,Short-cycle tertiary education,Lower class,Clerical
+170074734,Male,22,Colombia,South America,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+50070966,Female,24,Bangladesh,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Never had a job
+586070147,Female,33,Pakistan,Asia,not immigrant,Primary education,Working class,Never had a job
+156070508,Female,51,China,Asia,not immigrant,Lower secondary education,Lower middle class,Service
+20070329,Female,27,Andorra,Europe,immigrant,Post-secondary non-tertiary education,Working class,Sales
+818071107,Male,52,Egypt,Africa,not immigrant,Early childhood education,Lower class,Farm worker
+156071508,Female,37,China,Asia,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+643070536,Female,45,Russia,Europe,not immigrant,Lower secondary education,Working class,Skilled worker
+566071208,Female,40,Nigeria,Africa,not immigrant,Early childhood education,Lower class,"Farm owner, farm manager"
+792071732,Female,28,Turkey,Asia,not immigrant,Upper secondary education,Working class,Skilled worker
+400070617,Male,62,Jordan,Asia,not immigrant,Short-cycle tertiary education,Lower class,Professional and technical
+124073169,Male,54,Canada,North America,immigrant,Upper secondary education,Lower middle class,Skilled worker
+554070805,Male,68,New Zealand,Oceania,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+586070566,Female,33,Pakistan,Asia,not immigrant,Early childhood education,Working class,Never had a job
+344071848,Female,55,Hong Kong SAR,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Sales
+792071156,Male,47,Turkey,Asia,not immigrant,Primary education,Upper middle class,Higher administrative
+630070818,Female,63,Puerto Rico,North America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+400070729,Female,40,Jordan,Asia,not immigrant,Short-cycle tertiary education,Working class,Professional and technical
+368070918,Female,23,Iraq,Asia,not immigrant,Primary education,Working class,Never had a job
+124071090,Male,49,Canada,North America,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+410071173,Male,36,South Korea,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Service
+364071135,Male,60,Iran,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Service
+792071776,Female,56,Turkey,Asia,not immigrant,Upper secondary education,Lower middle class,Clerical
+434070328,Male,30,Libya,Africa,not immigrant,Lower secondary education,Upper middle class,Service
+398070556,Female,18,Kazakhstan,Asia,not immigrant,Lower secondary education,Working class,Sales
+909070252,Female,44,Northern Ireland,Europe,not immigrant,Bachelor or equivalent,not sure,Clerical
+608070295,Male,30,Philippines,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Service
+558070635,Male,52,Nicaragua,North America,not immigrant,Bachelor or equivalent,Lower class,Higher administrative
+764071175,Male,48,Thailand,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+124070983,Female,71,Canada,North America,not immigrant,Post-secondary non-tertiary education,Upper middle class,Professional and technical
+68071675,Male,24,Bolivia,South America,not immigrant,Bachelor or equivalent,Lower middle class,Never had a job
+909070182,Male,90,Northern Ireland,Europe,not immigrant,Bachelor or equivalent,not sure,Professional and technical
+158070450,Male,37,Taiwan ROC,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Skilled worker
+586071570,Female,35,Pakistan,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+702070294,Female,42,Singapore,Asia,not immigrant,Short-cycle tertiary education,Upper middle class,Professional and technical
+124070731,Female,66,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Professional and technical
+462070005,Male,63,Maldives,Asia,not immigrant,Early childhood education,Lower class,"Farm owner, farm manager"
+50070454,Male,20,Bangladesh,Asia,not immigrant,Upper secondary education,Lower class,Never had a job
+218070232,Female,72,Ecuador,South America,not immigrant,Primary education,Lower middle class,not sure
+792070573,Male,55,Turkey,Asia,not immigrant,Early childhood education,Lower middle class,not sure
+826072303,Female,54,Great Britain,Europe,not immigrant,Short-cycle tertiary education,not sure,Professional and technical
+203070285,Male,63,Czechia,Europe,not immigrant,Upper secondary education,Lower middle class,Service
+528071809,Female,89,Netherlands,Europe,not immigrant,Upper secondary education,not sure,not sure
+446070625,Male,46,Macao SAR,Asia,immigrant,Lower secondary education,Lower middle class,Professional and technical
+231071174,Female,18,Ethiopia,Africa,not immigrant,Short-cycle tertiary education,Working class,Never had a job
+643070736,Female,24,Russia,Europe,not immigrant,Bachelor or equivalent,not sure,Clerical
+642070284,Female,52,Romania,Europe,not immigrant,Upper secondary education,Working class,Skilled worker
+68070571,Male,50,Bolivia,South America,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+642070329,Male,18,Romania,Europe,not immigrant,Lower secondary education,Upper class,Never had a job
+36071187,Female,62,Australia,Oceania,immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+218070346,Male,22,Ecuador,South America,not immigrant,Upper secondary education,Working class,Skilled worker
+764070871,Male,43,Thailand,Asia,not immigrant,Lower secondary education,Lower middle class,"Farm owner, farm manager"
+124070909,Female,61,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Professional and technical
+792070997,Male,55,Turkey,Asia,not immigrant,Primary education,Lower middle class,"Farm owner, farm manager"
+124070406,Female,32,Canada,North America,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+792071824,Male,29,Turkey,Asia,not immigrant,Lower secondary education,Working class,Skilled worker
+458071244,Female,27,Malaysia,Asia,not immigrant,Bachelor or equivalent,Lower middle class,"Farm owner, farm manager"
+566070057,Male,43,Nigeria,Africa,not immigrant,Upper secondary education,Upper class,Sales
+703070872,Female,79,Slovakia,Europe,immigrant,Primary education,Lower class,Unskilled worker
+344070345,Female,67,Hong Kong SAR,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+788070773,Male,26,Tunisia,Africa,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+276070096,Female,48,Germany,Europe,immigrant,Lower secondary education,Lower middle class,Unskilled worker
+400070086,Male,23,Jordan,Asia,not immigrant,Post-secondary non-tertiary education,Lower middle class,Sales
+504070672,Male,72,Morocco,Africa,not immigrant,Early childhood education,Lower middle class,Sales
+104070612,Female,45,Myanmar,Asia,not immigrant,Bachelor or equivalent,Upper class,Professional and technical
+196070106,Female,60,Cyprus,Europe,not immigrant,Upper secondary education,Lower middle class,Clerical
+792070089,Male,25,Turkey,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Never had a job
+792070402,Male,25,Turkey,Asia,not immigrant,Upper secondary education,Upper middle class,Service
+462070302,Female,42,Maldives,Asia,not immigrant,Primary education,Working class,Service
+716070725,Male,66,Zimbabwe,Africa,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+704071067,Female,18,Vietnam,Asia,not immigrant,Lower secondary education,Upper middle class,Unskilled worker
+826070956,Female,56,Great Britain,Europe,immigrant,Post-secondary non-tertiary education,not sure,Unskilled worker
+218070548,Female,25,Ecuador,South America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+368071118,Male,30,Iraq,Asia,not immigrant,Upper secondary education,Lower class,Sales
+608070750,Female,83,Philippines,Asia,not immigrant,Primary education,Upper middle class,Farm worker
+276071229,Female,66,Germany,Europe,not immigrant,Upper secondary education,Working class,Sales
+422070975,Male,27,Lebanon,Asia,not immigrant,Lower secondary education,Lower middle class,Sales
+360072207,Female,29,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+36070860,Male,28,Australia,Oceania,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+368070477,Male,61,Iraq,Asia,not immigrant,Upper secondary education,Working class,Clerical
+604071319,Female,30,Peru,South America,not immigrant,Upper secondary education,Lower middle class,Never had a job
+762070990,Male,29,Tajikistan,Asia,not immigrant,Master or equivalent,Lower middle class,Sales
+404070972,Female,48,Kenya,Africa,not immigrant,Lower secondary education,Lower middle class,Sales
+360071441,Female,66,Indonesia,Asia,not immigrant,Primary education,Lower middle class,not sure
+218071001,Female,39,Ecuador,South America,not immigrant,Primary education,Lower class,Semi-skilled worker
+300071162,Female,28,Greece,Europe,not immigrant,Lower secondary education,Lower class,Sales
+68071394,Female,67,Bolivia,South America,not immigrant,Upper secondary education,Lower middle class,not sure
+36071577,Female,56,Australia,Oceania,not immigrant,Master or equivalent,Upper middle class,Higher administrative
+484070289,Male,30,Mexico,North America,not immigrant,Lower secondary education,Upper middle class,Sales
+458070284,Female,27,Malaysia,Asia,not immigrant,Early childhood education,Lower middle class,Never had a job
+404070418,Male,39,Kenya,Africa,not immigrant,Lower secondary education,Lower class,Skilled worker
+764070660,Male,45,Thailand,Asia,not immigrant,Lower secondary education,Lower middle class,Skilled worker
+360072149,Female,18,Indonesia,Asia,not immigrant,Lower secondary education,Upper middle class,not sure
+68071046,Male,29,Bolivia,South America,not immigrant,Bachelor or equivalent,Working class,Higher administrative
+20070656,Male,21,Andorra,Europe,not immigrant,Short-cycle tertiary education,Lower middle class,Skilled worker
+630070528,Male,57,Puerto Rico,North America,not immigrant,Post-secondary non-tertiary education,Lower class,Semi-skilled worker
+51070628,Female,44,Armenia,Europe,not immigrant,Upper secondary education,Working class,Skilled worker
+76071276,Female,43,Brazil,South America,not immigrant,Lower secondary education,Lower middle class,Professional and technical
+558070084,Male,64,Nicaragua,North America,not immigrant,Primary education,Lower class,Semi-skilled worker
+36071436,Male,62,Australia,Oceania,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+566070119,Female,21,Nigeria,Africa,not immigrant,Upper secondary education,Lower middle class,not sure
+703071117,Male,25,Slovakia,Europe,not immigrant,Lower secondary education,Lower middle class,Skilled worker
+792070290,Female,55,Turkey,Asia,not immigrant,Primary education,Lower middle class,Skilled worker
+462070577,Male,18,Maldives,Asia,not immigrant,Lower secondary education,Lower class,Sales
+909070123,Female,74,Northern Ireland,Europe,not immigrant,Lower secondary education,not sure,Sales
+826070722,Female,91,Great Britain,Europe,not immigrant,Lower secondary education,not sure,Clerical
+764071408,Male,33,Thailand,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+788070657,Female,26,Tunisia,Africa,not immigrant,Master or equivalent,Lower middle class,Clerical
+792070975,Male,55,Turkey,Asia,not immigrant,Primary education,Working class,Skilled worker
+124075852,Male,52,Canada,North America,not immigrant,Bachelor or equivalent,Lower middle class,Professional and technical
+76071397,Female,66,Brazil,South America,not immigrant,Upper secondary education,Lower class,Professional and technical
+484071497,Male,71,Mexico,North America,not immigrant,Primary education,Lower middle class,not sure
+788070419,Male,65,Tunisia,Africa,not immigrant,Early childhood education,Lower class,Sales
+360070620,Male,50,Indonesia,Asia,not immigrant,Primary education,Lower class,"Farm owner, farm manager"
+458070439,Male,59,Malaysia,Asia,not immigrant,Lower secondary education,Working class,Clerical
+484071194,Female,47,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+203070267,Male,44,Czechia,Europe,not immigrant,Upper secondary education,Upper middle class,Skilled worker
+566070174,Female,26,Nigeria,Africa,not immigrant,Upper secondary education,Lower middle class,Skilled worker
+36070579,Female,20,Australia,Oceania,immigrant,Bachelor or equivalent,Working class,Professional and technical
+862070148,Male,21,Venezuela,South America,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+36071589,Female,57,Australia,Oceania,not immigrant,Upper secondary education,Working class,Higher administrative
+32070707,Female,53,Argentina,South America,not immigrant,Upper secondary education,Upper middle class,Semi-skilled worker
+32070521,Female,21,Argentina,South America,not immigrant,Upper secondary education,Lower middle class,Never had a job
+608070923,Male,34,Philippines,Asia,not immigrant,Post-secondary non-tertiary education,Lower class,Service
+630070689,Female,70,Puerto Rico,North America,not immigrant,Bachelor or equivalent,Lower class,Clerical
+702070028,Male,38,Singapore,Asia,not immigrant,Lower secondary education,Working class,Unskilled worker
+716071021,Female,19,Zimbabwe,Africa,not immigrant,Lower secondary education,Lower class,Never had a job
+792070124,Female,26,Turkey,Asia,not immigrant,Bachelor or equivalent,Working class,Clerical
+703070110,Female,51,Slovakia,Europe,not immigrant,Lower secondary education,Lower middle class,Skilled worker
+170075227,Female,47,Colombia,South America,not immigrant,Upper secondary education,Lower middle class,Sales
+364071492,Male,29,Iran,Asia,not immigrant,Early childhood education,Working class,Service
+792071935,Male,45,Turkey,Asia,not immigrant,Primary education,Lower middle class,Clerical
+50070174,Male,46,Bangladesh,Asia,not immigrant,Lower secondary education,Lower class,Farm worker
+364071977,Male,34,Iran,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+170074636,Female,41,Colombia,South America,not immigrant,Upper secondary education,Lower middle class,Sales
+643071570,Female,52,Russia,Europe,not immigrant,Master or equivalent,Working class,Sales
+152070725,Male,38,Chile,South America,not immigrant,Upper secondary education,Working class,Unskilled worker
+344070323,Female,43,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+496070916,Female,40,Mongolia,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Sales
+231070978,Male,45,Ethiopia,Africa,not immigrant,Early childhood education,Lower class,Never had a job
+586070014,Female,30,Pakistan,Asia,not immigrant,Upper secondary education,Lower middle class,Never had a job
+702070278,Female,67,Singapore,Asia,not immigrant,Lower secondary education,Working class,Unskilled worker
+344071654,Male,66,Hong Kong SAR,Asia,immigrant,Upper secondary education,Lower middle class,Clerical
+462070619,Female,65,Maldives,Asia,not immigrant,Early childhood education,not sure,not sure
+792072360,Female,28,Turkey,Asia,not immigrant,Bachelor or equivalent,Working class,Professional and technical
+360072442,Male,50,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Unskilled worker
+231071117,Male,26,Ethiopia,Africa,not immigrant,Post-secondary non-tertiary education,Lower class,Semi-skilled worker
+792070728,Male,55,Turkey,Asia,not immigrant,Primary education,Lower middle class,Service
+643070360,Female,61,Russia,Europe,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+392071342,Male,34,Japan,Asia,not immigrant,Upper secondary education,Lower class,Sales
+586071298,Male,45,Pakistan,Asia,not immigrant,Upper secondary education,Lower class,Sales
+276071148,Female,41,Germany,Europe,not immigrant,Upper secondary education,Lower middle class,Service
+826071488,Male,30,Great Britain,Europe,immigrant,Bachelor or equivalent,not sure,not sure
+203070978,Male,19,Czechia,Europe,not immigrant,Primary education,Lower middle class,not sure
+364071733,Male,63,Iran,Asia,not immigrant,Lower secondary education,Lower middle class,Skilled worker
+368070802,Male,35,Iraq,Asia,not immigrant,Upper secondary education,Working class,Clerical
+704070116,Female,25,Vietnam,Asia,not immigrant,Upper secondary education,Working class,Unskilled worker
+276071469,Male,85,Germany,Europe,not immigrant,Post-secondary non-tertiary education,Lower middle class,"Farm owner, farm manager"
+124071234,Female,65,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Sales
+484071102,Male,20,Mexico,North America,not immigrant,Post-secondary non-tertiary education,Working class,Sales
+484071581,Female,26,Mexico,North America,not immigrant,Upper secondary education,Upper middle class,not sure
+344070129,Male,66,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Working class,Unskilled worker
+762070072,Female,51,Tajikistan,Asia,not immigrant,Master or equivalent,Upper middle class,Never had a job
+604071183,Male,32,Peru,South America,not immigrant,Short-cycle tertiary education,not sure,Skilled worker
+124075283,Female,45,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower middle class,Clerical
+203070072,Male,31,Czechia,Europe,not immigrant,Upper secondary education,Upper middle class,Sales
+360071418,Female,40,Indonesia,Asia,not immigrant,Lower secondary education,Lower class,Sales
+300070510,Female,32,Greece,Europe,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+496070160,Male,22,Mongolia,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Sales
+50070136,Female,45,Bangladesh,Asia,not immigrant,Lower secondary education,Lower middle class,Never had a job
+410070116,Female,79,South Korea,Asia,not immigrant,Primary education,Lower class,Farm worker
+434070274,Female,20,Libya,Africa,not immigrant,Upper secondary education,Upper middle class,Professional and technical
+360071676,Female,38,Indonesia,Asia,not immigrant,Lower secondary education,Lower middle class,not sure
+764070961,Male,60,Thailand,Asia,not immigrant,Primary education,Upper class,Never had a job
+158071013,Female,67,Taiwan ROC,Asia,not immigrant,Primary education,Working class,Unskilled worker
+792070708,Male,37,Turkey,Asia,not immigrant,Primary education,Working class,not sure
+360072662,Male,53,Indonesia,Asia,not immigrant,Lower secondary education,Upper middle class,Semi-skilled worker
+203070448,Female,75,Czechia,Europe,not immigrant,Lower secondary education,Lower middle class,Sales
+124073183,Female,54,Canada,North America,not immigrant,Post-secondary non-tertiary education,Lower class,Never had a job
+586071061,Female,28,Pakistan,Asia,not immigrant,Early childhood education,Lower class,Never had a job
+276070824,Male,74,Germany,Europe,not immigrant,Short-cycle tertiary education,Upper middle class,Skilled worker
+704070182,Female,45,Vietnam,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+124071938,Male,54,Canada,North America,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+702070769,Female,49,Singapore,Asia,not immigrant,Post-secondary non-tertiary education,Working class,Sales
+792070486,Female,26,Turkey,Asia,not immigrant,Primary education,Lower middle class,Unskilled worker
+496070339,Female,27,Mongolia,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+196070529,Male,58,Cyprus,Europe,not immigrant,Bachelor or equivalent,Upper middle class,Higher administrative
+156071082,Male,27,China,Asia,not immigrant,Bachelor or equivalent,Lower middle class,"Farm owner, farm manager"
+364072106,Male,19,Iran,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Service
+196070598,Male,29,Cyprus,Europe,not immigrant,Doctoral or equivalent,Lower middle class,Service
+458070737,Male,46,Malaysia,Asia,not immigrant,Lower secondary education,Upper middle class,Sales
+702070418,Female,61,Singapore,Asia,immigrant,Master or equivalent,Upper middle class,Higher administrative
+392070686,Female,60,Japan,Asia,not immigrant,Upper secondary education,Lower middle class,Clerical
+434070375,Male,62,Libya,Africa,not immigrant,Short-cycle tertiary education,Working class,Professional and technical
+586070759,Male,22,Pakistan,Asia,not immigrant,Master or equivalent,Lower middle class,Higher administrative
+862071007,Female,22,Venezuela,South America,not immigrant,Primary education,Lower middle class,Service
+818070056,Female,29,Egypt,Africa,not immigrant,Upper secondary education,Upper middle class,Never had a job
+410071204,Male,42,South Korea,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+156072357,Female,38,China,Asia,not immigrant,Primary education,Working class,Service
+404070302,Male,23,Kenya,Africa,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+124074681,Female,68,Canada,North America,not immigrant,Post-secondary non-tertiary education,Working class,Clerical
+417070820,Female,54,Kyrgyzstan,Asia,not immigrant,Upper secondary education,Working class,Semi-skilled worker
+360070747,Female,22,Indonesia,Asia,not immigrant,Primary education,Working class,Sales
+862070020,Male,22,Venezuela,South America,not immigrant,Upper secondary education,Lower middle class,Sales
+764071105,Female,60,Thailand,Asia,not immigrant,Primary education,Upper middle class,Unskilled worker
+762070468,Female,55,Tajikistan,Asia,not immigrant,Short-cycle tertiary education,Working class,Skilled worker
+586070959,Female,26,Pakistan,Asia,not immigrant,Early childhood education,Lower middle class,Never had a job
+804071104,Female,61,Ukraine,Europe,not immigrant,Lower secondary education,Working class,Unskilled worker
+558070496,Female,29,Nicaragua,North America,not immigrant,Primary education,Working class,Never had a job
+762071081,Female,22,Tajikistan,Asia,not immigrant,Upper secondary education,Upper middle class,not sure
+32070052,Female,42,Argentina,South America,not immigrant,Lower secondary education,Working class,Unskilled worker
+496070369,Female,69,Mongolia,Asia,not immigrant,Short-cycle tertiary education,Working class,Skilled worker
+704071040,Female,35,Vietnam,Asia,not immigrant,Lower secondary education,Working class,Sales
+446070550,Male,30,Macao SAR,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Higher administrative
+643071645,Female,71,Russia,Europe,not immigrant,Upper secondary education,Working class,Farm worker
+716070572,Male,21,Zimbabwe,Africa,not immigrant,Lower secondary education,Lower class,Never had a job
+344071891,Female,30,Hong Kong SAR,Asia,not immigrant,Bachelor or equivalent,Lower class,Clerical
+124070061,Male,39,Canada,North America,not immigrant,Bachelor or equivalent,Working class,Unskilled worker
+703070690,Female,54,Slovakia,Europe,not immigrant,Lower secondary education,Working class,Service
+124072481,Female,66,Canada,North America,not immigrant,Short-cycle tertiary education,Lower middle class,Clerical
+826071421,Female,22,Great Britain,Europe,not immigrant,Lower secondary education,not sure,not sure
+76071760,Female,51,Brazil,South America,not immigrant,Upper secondary education,Lower middle class,Clerical
+360072966,Male,24,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,Sales
+203070342,Male,25,Czechia,Europe,not immigrant,Lower secondary education,Lower class,Semi-skilled worker
+604070049,Female,45,Peru,South America,not immigrant,Primary education,Working class,Never had a job
+344071424,Female,32,Hong Kong SAR,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,Professional and technical
+792071640,Female,46,Turkey,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Never had a job
+762070647,Female,34,Tajikistan,Asia,not immigrant,Lower secondary education,Lower middle class,Professional and technical
+702070453,Male,54,Singapore,Asia,not immigrant,Bachelor or equivalent,Upper middle class,Professional and technical
+458070494,Male,25,Malaysia,Asia,not immigrant,Post-secondary non-tertiary education,Upper middle class,Professional and technical
+124075981,Male,38,Canada,North America,immigrant,Upper secondary education,Working class,Service
+788070447,Male,22,Tunisia,Africa,not immigrant,Upper secondary education,Lower middle class,Sales
+818070446,Male,39,Egypt,Africa,not immigrant,Early childhood education,Lower middle class,Sales
+716070491,Female,33,Zimbabwe,Africa,not immigrant,Short-cycle tertiary education,Lower class,Never had a job
+458070105,Male,28,Malaysia,Asia,not immigrant,Lower secondary education,Upper middle class,Higher administrative
+124072492,Male,35,Canada,North America,immigrant,Bachelor or equivalent,Working class,Service
+51070331,Female,34,Armenia,Europe,not immigrant,Upper secondary education,Working class,Farm worker
+462070334,Male,41,Maldives,Asia,not immigrant,Lower secondary education,Upper class,Semi-skilled worker
+528071837,Female,47,Netherlands,Europe,not immigrant,Post-secondary non-tertiary education,Upper middle class,Clerical
+528071705,Female,34,Netherlands,Europe,not immigrant,Master or equivalent,Upper middle class,Professional and technical
+360070714,Female,38,Indonesia,Asia,not immigrant,Upper secondary education,Lower middle class,not sure
+76070743,Male,40,Brazil,South America,not immigrant,Upper secondary education,Lower middle class,Semi-skilled worker
+300071163,Male,68,Greece,Europe,not immigrant,Primary education,Lower middle class,Farm worker
+300070972,Male,54,Greece,Europe,not immigrant,Primary education,Working class,Semi-skilled worker
+32070930,Female,18,Argentina,South America,not immigrant,Lower secondary education,Upper middle class,Never had a job
+344071155,Female,50,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Lower middle class,Clerical
+643070764,Female,29,Russia,Europe,not immigrant,Short-cycle tertiary education,Working class,Semi-skilled worker
+496071433,Female,39,Mongolia,Asia,not immigrant,Upper secondary education,Working class,Service
+558071184,Female,57,Nicaragua,North America,not immigrant,Primary education,Working class,Never had a job
+360071608,Female,33,Indonesia,Asia,not immigrant,Primary education,Lower middle class,Semi-skilled worker
+688070036,Female,28,Serbia,Europe,not immigrant,Lower secondary education,Lower class,Unskilled worker
+276070783,Female,20,Germany,Europe,not immigrant,Upper secondary education,Upper middle class,Never had a job
+360070375,Female,40,Indonesia,Asia,not immigrant,Upper secondary education,Working class,Sales
+840073098,Male,48,United States,North America,not immigrant,Post-secondary non-tertiary education,Upper middle class,not sure
+702070544,Male,55,Singapore,Asia,not immigrant,Bachelor or equivalent,Lower middle class,Clerical
+392071157,Female,41,Japan,Asia,not immigrant,Short-cycle tertiary education,Lower middle class,Professional and technical
+203070123,Male,78,Czechia,Europe,not immigrant,Lower secondary education,Working class,Semi-skilled worker
+840071736,Female,40,United States,North America,not immigrant,Master or equivalent,Lower middle class,Professional and technical
+156072361,Female,40,China,Asia,not immigrant,Lower secondary education,Lower middle class,"Farm owner, farm manager"
+344071908,Female,36,Hong Kong SAR,Asia,not immigrant,Upper secondary education,Lower middle class,Clerical

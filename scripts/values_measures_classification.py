@@ -3,7 +3,7 @@ import argparse
 from tqdm import tqdm
 
 from llm_behavior_adaptation.value_measurement.measurement_utils import JobClassifier
-from llm_behavior_adaptation.value_measurement.values_comparison import *
+from llm_behavior_adaptation.value_measurement.values_comparison import json, pd
 
 tqdm.pandas()
 
@@ -37,17 +37,11 @@ if __name__ == "__main__":
 
     job_classifier = JobClassifier()
     user_profile_dataset["Position_Level"] = user_profile_dataset.progress_apply(
-        lambda x: job_classifier.get_classification(
-            x["Job Title"], args.classification_attr
-        ),
+        lambda x: job_classifier.get_classification(x["Job Title"], args.classification_attr),
         axis=1,
     )
 
-    grouped_data = (
-        user_profile_dataset.groupby("Position_Level")
-        .apply(lambda x: x.index.tolist())
-        .to_dict()
-    )
+    grouped_data = user_profile_dataset.groupby("Position_Level").apply(lambda x: x.index.tolist()).to_dict()
 
     with open(args.output_file, "w") as output_file:
         json.dump(grouped_data, output_file, indent=2)

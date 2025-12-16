@@ -1,0 +1,133 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm_behavior_adaptation"
+version = "0.0.1"
+description = "Research for LLM's persona understanding"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "pandas==2.2.2",
+    "fastparquet==2024.5.0",
+    "jinja2",
+    "scipy==1.15.1",
+    "pycountry_convert",
+    "openai",
+    "langgraph",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6",
+    "flake8>=3.8",
+    "black>=20.8b1",
+    "isort>=5.6",
+    "autoflake>=1.4",
+    "pre-commit>=2.0",
+]
+
+[tool.black]
+line-length = 119
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | datasets
+  | values_results
+  | vsm_images
+  | wvs_images
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 119
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_glob = [
+    "*/migrations/*",
+    "*/datasets/*",
+    "*_results/*",
+    "*images/*",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers"
+testpaths = [
+    "tests",
+]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.coverage.run]
+source = ["llm_behavior_adaptation"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+no_strict_optional = true
+exclude = [
+    "tests/",
+    "setup.py",
+    "build/",
+    "dist/",
+]
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = false
+ignore-nested-functions = false
+ignore-nested-classes = true
+ignore-setters = false
+fail-under = 50
+exclude = ["setup.py", "docs", "build", "tests"]
+verbose = 2
+quiet = false
+whitelist-regex = []
+color = true

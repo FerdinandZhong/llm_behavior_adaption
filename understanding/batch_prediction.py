@@ -10,11 +10,7 @@ import pandas as pd
 from openai import OpenAI
 from tqdm import tqdm
 
-from understanding.constant import (
-    DATASETS_FOLDER,
-    LLM_CHAT_MESSAGES,
-    SAMPLE_USER_CONTENT_TEMPLATE_NO_FIXED,
-)
+from understanding.constant import DATASETS_FOLDER, LLM_CHAT_MESSAGES, SAMPLE_USER_CONTENT_TEMPLATE_NO_FIXED
 from understanding.utils import register_logger
 
 JSONL_FOLDER = os.path.join(os.getcwd(), os.environ["jsonl_folder"])
@@ -52,9 +48,7 @@ def prepare_batch_json(input_list, model_name):
 
 def store_jsonl_file(jsonl_file_path, jsonl_inputs_list, starting_index, ending_index):
     with open(jsonl_file_path, "w") as jsonl_file:
-        for entry in tqdm(
-            jsonl_inputs_list[starting_index:ending_index], desc="Writing JSONL entries"
-        ):
+        for entry in tqdm(jsonl_inputs_list[starting_index:ending_index], desc="Writing JSONL entries"):
             jsonl_file.write(json.dumps(entry) + "\n")
 
 
@@ -101,9 +95,7 @@ def submit_batch(
     client,
     jsonl_file_path,
 ):
-    batch_input_file = client.files.create(
-        file=open(jsonl_file_path, "rb"), purpose="batch"
-    )
+    batch_input_file = client.files.create(file=open(jsonl_file_path, "rb"), purpose="batch")
     batch_input_file_id = batch_input_file.id
     batch_obj = client.batches.create(
         input_file_id=batch_input_file_id,
@@ -112,9 +104,7 @@ def submit_batch(
         metadata={"description": "persona attributes selection"},
     )
     print(batch_obj)
-    with open(
-        jsonl_file_path.replace(".jsonl", "_meta.json"), "w", encoding="utf-8"
-    ) as meta_file:
+    with open(jsonl_file_path.replace(".jsonl", "_meta.json"), "w", encoding="utf-8") as meta_file:
         json.dump(batch_obj.to_dict(), meta_file, indent=4)
 
 
@@ -123,9 +113,7 @@ if __name__ == "__main__":
 
     # Add arguments
     parser.add_argument("--model_name", type=str, default="gpt-4o-mini-2024-07-18")
-    parser.add_argument(
-        "--starting_index", type=int, help="starting index", required=True
-    )
+    parser.add_argument("--starting_index", type=int, help="starting index", required=True)
     parser.add_argument("--ending_index", type=int, help="ending index", required=True)
 
     # Parse the arguments
@@ -139,16 +127,12 @@ if __name__ == "__main__":
     persona_df = load_dataset()
 
     user1_jsonl_inputs_list = prepare_batch_json(
-        generate_input_contents(
-            persona_df.to_dict(orient="records"), tested_user="User 1"
-        ),
+        generate_input_contents(persona_df.to_dict(orient="records"), tested_user="User 1"),
         args.model_name,
     )
 
     user2_jsonl_inputs_list = prepare_batch_json(
-        generate_input_contents(
-            persona_df.to_dict(orient="records"), tested_user="User 2"
-        ),
+        generate_input_contents(persona_df.to_dict(orient="records"), tested_user="User 2"),
         args.model_name,
     )
 

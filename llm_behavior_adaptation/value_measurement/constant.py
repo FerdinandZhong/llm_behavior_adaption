@@ -30,18 +30,11 @@ DIRECT_VALUE_SELECTION_PROMPT = [
     },
     {
         "role": "user",
-        "content": (
-            "Here are the details of the user profile:\n"
-            + LINE_BREAK
-            + "{user_details}\n"
-            + LINE_BREAK
-        ),
+        "content": ("Here are the details of the user profile:\n" + LINE_BREAK + "{user_details}\n" + LINE_BREAK),
     },
     {
         "role": "user",
-        "content": (
-            "Below is the question:\n" + LINE_BREAK + "{question}\n" "{option_list}"
-        ),
+        "content": ("Below is the question:\n" + LINE_BREAK + "{question}\n" "{option_list}"),
     },
 ]
 
@@ -56,15 +49,13 @@ CONVERSATION_HISTORY_PROMPT = [
     },
     {
         "role": "user",
-        "content": (
-            "Below is the question:\n" + LINE_BREAK + "{question}\n" "{option_list}"
-        ),
+        "content": ("Below is the question:\n" + LINE_BREAK + "{question}\n" "{option_list}"),
     },
 ]
 
-format_str = """Answer the question in json format: 
+format_str = """Answer the question in json format:
 {{
-    \"option_id\": int, 
+    \"option_id\": int,
     \"reason\": str
 }}"
 """

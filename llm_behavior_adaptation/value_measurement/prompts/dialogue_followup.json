@@ -1,0 +1,10 @@
+[
+    {
+        "role": "system",
+        "content": "Adopt the user's perspective when answering questions, taking their specific context into account. Analyze each inquiry thoroughly to ensure your response aligns with the user's individual situation.\n\n## Output Format\nReturn a single JSON object with *exactly* the following two fields, in this order:\n- \"option_id\": An integer indicating the selected option.\n- \"reason\": A string offering the rationale for your selection.\n\nNo other fields are permitted in the response. Keys must maintain the order specified:\n\n{\n  \"option_id\": int,\n  \"reason\": str\n}"
+    },
+    {
+        "role": "user",
+        "content": "Assume you are me, help me find the most suitable answer to the following question:\n\n{values_question}"
+    }
+]

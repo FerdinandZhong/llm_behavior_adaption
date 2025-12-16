@@ -9,9 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    calculate_age,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import calculate_age
 from llm_behavior_adaptation.value_measurement.formulas import (
     compute_emd,
     compute_js_centroid,
@@ -185,12 +183,8 @@ class ValuesComparison:
         full_user_dataset = _read_csv(args.user_profile_dataset)
         user_profile_dataset = full_user_dataset[args.starting_row : args.ending_row]
 
-        generated_dialogues = load_jsonl_file(
-            args.dialogue_file, args.starting_row, args.ending_row
-        )
-        direct_values_prediction = load_jsonl_file(
-            args.direct_output_file_path, args.starting_row, args.ending_row
-        )
+        generated_dialogues = load_jsonl_file(args.dialogue_file, args.starting_row, args.ending_row)
+        direct_values_prediction = load_jsonl_file(args.direct_output_file_path, args.starting_row, args.ending_row)
         dialogue_values_prediction = load_jsonl_file(
             args.dialogue_output_file_path, args.starting_row, args.ending_row
         )
@@ -236,15 +230,11 @@ class ValuesComparison:
             )
         elif target_col == "Position_Level":
             job_classifier = JobClassifier()
-            self.user_profile_dataset["Position_Level"] = (
-                self.user_profile_dataset.apply(
-                    lambda x: job_classifier.get_classification(x["Job Title"]), axis=1
-                )
+            self.user_profile_dataset["Position_Level"] = self.user_profile_dataset.apply(
+                lambda x: job_classifier.get_classification(x["Job Title"]), axis=1
             )
 
-        grouped_data = self.user_profile_dataset.groupby(target_col).apply(
-            lambda x: x.index.tolist()
-        )
+        grouped_data = self.user_profile_dataset.groupby(target_col).apply(lambda x: x.index.tolist())
         return grouped_data.to_dict()
 
     def _get_index_list_for_groups_age(self, target_col="Age"):
@@ -267,20 +257,14 @@ class ValuesComparison:
         )
 
         # Group indices by the range_group column
-        grouped_data = self.user_profile_dataset.groupby("range_group").apply(
-            lambda x: x.index.tolist()
-        )
+        grouped_data = self.user_profile_dataset.groupby("range_group").apply(lambda x: x.index.tolist())
 
         # Convert to a dictionary and remove empty groups
-        grouped_data_dict = {
-            group: indices for group, indices in grouped_data.items() if indices
-        }
+        grouped_data_dict = {group: indices for group, indices in grouped_data.items() if indices}
 
         return grouped_data_dict
 
-    def _calculate_divergence_for_groups_with_custom_function(
-        self, formula, group1, group2
-    ):
+    def _calculate_divergence_for_groups_with_custom_function(self, formula, group1, group2):
         """
         Calculate the average Divergence between two groups of users' probability distributions,
         handling failed distributions.
@@ -300,22 +284,16 @@ class ValuesComparison:
         pairwise_user_divergences = []
         failed_distributions_count = 0
 
-        with tqdm(
-            total=len(group1) * len(group2), desc="Pairwise User Comparisons"
-        ) as pbar:
+        with tqdm(total=len(group1) * len(group2), desc="Pairwise User Comparisons") as pbar:
             # Pairwise divergence for each user in group1 and group2
             for user1 in group1:
                 for user2 in group2:
                     user_divergences = []
                     for dist1, dist2 in zip(user1, user2):
                         # Check if distributions are valid
-                        if not np.allclose(np.sum(dist1), 1) or not np.allclose(
-                            np.sum(dist2), 1
-                        ):
+                        if not np.allclose(np.sum(dist1), 1) or not np.allclose(np.sum(dist2), 1):
                             failed_distributions_count += 1
-                            user_divergences.append(
-                                1.0
-                            )  # Assign a score of 1 for failed distributions
+                            user_divergences.append(1.0)  # Assign a score of 1 for failed distributions
                         else:
                             divergence = formula(dist1, dist2)
                             user_divergences.append(divergence)
@@ -336,9 +314,7 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_comparison(
-        self, formula, target_col, values_selection_results, groups=None
-    ):
+    def inner_dataset_comparison(self, formula, target_col, values_selection_results, groups=None):
         """
         Efficiently compare distributions across groups in a dataset, avoiding redundant comparisons.
 
@@ -366,10 +342,7 @@ class ValuesComparison:
         # Precompute distributions for each group
         group_distributions = {
             group: [
-                [
-                    question_selection["normalized_probs"]
-                    for question_selection in values_selections_dict[user_idx]
-                ]
+                [question_selection["normalized_probs"] for question_selection in values_selections_dict[user_idx]]
                 for user_idx in idx_list
             ]
             for group, idx_list in groups.items()
@@ -382,12 +355,10 @@ class ValuesComparison:
             # Iterate over unique group pairs
             for base_group, target_group in combinations(groups.keys(), 2):
                 # Calculate cross-group divergence
-                cross_group_divergence = (
-                    self._calculate_divergence_for_groups_with_custom_function(
-                        formula_func,
-                        group_distributions[base_group],
-                        group_distributions[target_group],
-                    )
+                cross_group_divergence = self._calculate_divergence_for_groups_with_custom_function(
+                    formula_func,
+                    group_distributions[base_group],
+                    group_distributions[target_group],
                 )
 
                 # Store the result
@@ -440,13 +411,9 @@ class ValuesComparison:
 
                 for dist1, dist2 in zip(direct_values_group, dialogue_values_group):
                     # Check if distributions are valid
-                    if not np.allclose(np.sum(dist1), 1) or not np.allclose(
-                        np.sum(dist2), 1
-                    ):
+                    if not np.allclose(np.sum(dist1), 1) or not np.allclose(np.sum(dist2), 1):
                         failed_distributions_count += 1
-                        user_divergences.append(
-                            1.0
-                        )  # Assign a score of 1 for failed distributions
+                        user_divergences.append(1.0)  # Assign a score of 1 for failed distributions
                     else:
                         divergence = formula_func(dist1, dist2)
                         user_divergences.append(divergence)
@@ -475,17 +442,12 @@ class ValuesComparison:
         # Create a dictionary of user_idx to value selections
         values_selections_dict = {
             value_selections["user_idx"]: np.array(
-                [
-                    question["normalized_probs"]
-                    for question in value_selections["value_selections"]
-                ]
+                [question["normalized_probs"] for question in value_selections["value_selections"]]
             )
             for value_selections in values_selection_results
         }
 
-        distributions_arry = np.array(list(values_selections_dict.values())).swapaxes(
-            0, 1
-        )
+        distributions_arry = np.array(list(values_selections_dict.values())).swapaxes(0, 1)
 
         user_indices = list(values_selections_dict.keys())
         user_pairs = list(combinations(user_indices, 2))  # All unique pairs
@@ -499,9 +461,7 @@ class ValuesComparison:
             question_divergences = 0
 
             question_all_distributions = distributions_arry[q_idx]  # [1000, 5]
-            with tqdm(
-                total=len(user_pairs), desc="Pairwise Baseline Computation"
-            ) as pbar:
+            with tqdm(total=len(user_pairs), desc="Pairwise Baseline Computation") as pbar:
                 for user1_idx, user2_idx in user_pairs:
                     user1_distribution = question_all_distributions[user1_idx]  # [5]
                     user2_distribution = question_all_distributions[user2_idx]
@@ -514,9 +474,7 @@ class ValuesComparison:
                         question_divergences += 1.0
                     else:
                         # Compute divergence using vectorized operations
-                        question_divergences += formula_func(
-                            user1_distribution, user2_distribution
-                        )
+                        question_divergences += formula_func(user1_distribution, user2_distribution)
                     pbar.update(1)
 
                 avg_divergence = question_divergences / len(user_pairs)
@@ -544,20 +502,14 @@ class ValuesComparison:
 
         direct_values_selections_dict = {
             value_selections["user_idx"]: np.array(
-                [
-                    question["normalized_probs"]
-                    for question in value_selections["value_selections"]
-                ]
+                [question["normalized_probs"] for question in value_selections["value_selections"]]
             )
             for value_selections in self.direct_values_predictions
         }
 
         dialogue_values_selection_dict = {
             value_selections["user_idx"]: np.array(
-                [
-                    question["normalized_probs"]
-                    for question in value_selections["value_selections"]
-                ]
+                [question["normalized_probs"] for question in value_selections["value_selections"]]
             )
             for value_selections in self.dialogue_values_predictions
         }
@@ -578,16 +530,10 @@ class ValuesComparison:
         all_users_divergence = []
         failed_distributions_count = 0
 
-        with tqdm(
-            total=total_comparisons, desc="Cross Datasets Baseline Computation"
-        ) as pbar:
+        with tqdm(total=total_comparisons, desc="Cross Datasets Baseline Computation") as pbar:
             for current_user_idx in user_indices:
-                current_direct_user_distributions = direct_values_selections_dict[
-                    current_user_idx
-                ]
-                current_dialogue_user_distributions = dialogue_values_selection_dict[
-                    current_user_idx
-                ]
+                current_direct_user_distributions = direct_values_selections_dict[current_user_idx]
+                current_dialogue_user_distributions = dialogue_values_selection_dict[current_user_idx]
                 current_direct_valid = direct_valid_distributions[current_user_idx]
                 current_dialogue_valid = dialogue_valid_distributions[current_user_idx]
 
@@ -598,36 +544,20 @@ class ValuesComparison:
                     random_selected_user_idx_list = random.choices(user_indices, k=2)
 
                 for compared_user_idx in random_selected_user_idx_list:
-                    compared_user_direct_distributions = direct_values_selections_dict[
-                        compared_user_idx
-                    ]
-                    compared_direct_valid = direct_valid_distributions[
-                        compared_user_idx
-                    ]
+                    compared_user_direct_distributions = direct_values_selections_dict[compared_user_idx]
+                    compared_direct_valid = direct_valid_distributions[compared_user_idx]
 
-                    compared_user_dialogue_distributions = (
-                        dialogue_values_selection_dict[compared_user_idx]
-                    )
-                    compared_dialogue_valid = dialogue_valid_distributions[
-                        compared_user_idx
-                    ]
+                    compared_user_dialogue_distributions = dialogue_values_selection_dict[compared_user_idx]
+                    compared_dialogue_valid = dialogue_valid_distributions[compared_user_idx]
 
                     if not current_direct_valid or not compared_dialogue_valid:
-                        failed_distributions_count += len(
-                            current_direct_user_distributions
-                        )
-                        user_divergences.extend(
-                            [1.0] * len(current_direct_user_distributions)
-                        )
+                        failed_distributions_count += len(current_direct_user_distributions)
+                        user_divergences.extend([1.0] * len(current_direct_user_distributions))
                         continue
 
                     if not current_dialogue_valid or not compared_direct_valid:
-                        failed_distributions_count += len(
-                            current_dialogue_user_distributions
-                        )
-                        user_divergences.extend(
-                            [1.0] * len(current_dialogue_user_distributions)
-                        )
+                        failed_distributions_count += len(current_dialogue_user_distributions)
+                        user_divergences.extend([1.0] * len(current_dialogue_user_distributions))
                         continue
 
                     # Compute divergence using vectorized operations
@@ -669,9 +599,7 @@ class ValuesComparison:
             "failed_distributions_count": failed_distributions_count,
         }
 
-    def inner_dataset_groups_comparison(
-        self, target_col, values_selection_results, groups=None
-    ):
+    def inner_dataset_groups_comparison(self, target_col, values_selection_results, groups=None):
         """
         Compute per group divergences with Jenson-shannon centroids of each group.
 
@@ -697,10 +625,7 @@ class ValuesComparison:
         # Precompute distributions for each group
         all_group_distributions = {
             group: [
-                [
-                    question_selection["normalized_probs"]
-                    for question_selection in values_selections_dict[user_idx]
-                ]
+                [question_selection["normalized_probs"] for question_selection in values_selections_dict[user_idx]]
                 for user_idx in idx_list
             ]
             for group, idx_list in groups.items()
@@ -708,12 +633,7 @@ class ValuesComparison:
 
         distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in values_selection_results
             ]
         ).swapaxes(0, 1)
@@ -722,9 +642,7 @@ class ValuesComparison:
         per_question_centroids = {}
         per_question_baseline = {}
         for q_idx in tqdm(range(num_questions), desc="Compute Centroid Globally"):
-            per_question_centroids[q_idx] = compute_js_centroid(
-                distributions_arry[q_idx]
-            )[0]
+            per_question_centroids[q_idx] = compute_js_centroid(distributions_arry[q_idx])[0]
             per_question_baseline[q_idx] = {
                 "avg_baseline_value": 0,
                 "baseline_std": 0,
@@ -734,9 +652,7 @@ class ValuesComparison:
         groups_details = {}
 
         for group in tqdm(groups.keys(), desc="Baseline Computation"):
-            group_distributions = np.array(all_group_distributions[group]).swapaxes(
-                0, 1
-            )
+            group_distributions = np.array(all_group_distributions[group]).swapaxes(0, 1)
             group_details = {}
             for q_idx in range(num_questions):
                 (
@@ -744,12 +660,8 @@ class ValuesComparison:
                     failed_count,
                     inner_group_divergence,
                 ) = compute_js_centroid_and_avg(group_distributions[q_idx])
-                to_centroid_divergence = jensen_shannon_divergence(
-                    group_centroid, per_question_centroids[q_idx]
-                )
-                per_question_baseline[q_idx]["baseline_values"].append(
-                    to_centroid_divergence
-                )
+                to_centroid_divergence = jensen_shannon_divergence(group_centroid, per_question_centroids[q_idx])
+                per_question_baseline[q_idx]["baseline_values"].append(to_centroid_divergence)
                 group_details[q_idx] = {
                     "centroid": group_centroid,
                     "to_centroid_divergence": to_centroid_divergence,
@@ -762,9 +674,7 @@ class ValuesComparison:
         for q_idx in range(num_questions):
             baseline_avg = np.mean(per_question_baseline[q_idx]["baseline_values"])
             per_question_baseline[q_idx]["avg_baseline_value"] = baseline_avg
-            per_question_baseline[q_idx]["baseline_std"] = np.std(
-                per_question_baseline[q_idx]["baseline_values"]
-            )
+            per_question_baseline[q_idx]["baseline_std"] = np.std(per_question_baseline[q_idx]["baseline_values"])
             cross_questions_divergence_total += baseline_avg
 
         # Initialize results and progress bar
@@ -785,21 +695,13 @@ class ValuesComparison:
                     per_question_divergence = {}
                     total_divergence = 0
                     for question_idx in range(num_questions):
-                        base_group_centroid = base_group_details[question_idx][
-                            "centroid"
-                        ]
-                        target_group_centroid = target_group_details[question_idx][
-                            "centroid"
-                        ]
+                        base_group_centroid = base_group_details[question_idx]["centroid"]
+                        target_group_centroid = target_group_details[question_idx]["centroid"]
                         # Calculate cross-group divergence
-                        cross_group_divergence = jensen_shannon_divergence(
-                            base_group_centroid, target_group_centroid
-                        )
+                        cross_group_divergence = jensen_shannon_divergence(base_group_centroid, target_group_centroid)
                         total_divergence += cross_group_divergence
 
-                        per_question_divergence[f"question_{question_idx}"] = {
-                            "divergence": cross_group_divergence
-                        }
+                        per_question_divergence[f"question_{question_idx}"] = {"divergence": cross_group_divergence}
 
                         # Update inner progress bar
                         inner_pbar.update(1)
@@ -835,12 +737,7 @@ class ValuesComparison:
 
         distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in values_selection_results
             ]
         ).swapaxes(0, 1)
@@ -850,9 +747,7 @@ class ValuesComparison:
         per_question_results = {}
         with tqdm(total=num_question, desc="Questions Comparison") as pbar:
             for question_idx in range(num_question):
-                centroid, failed_count, avg_divergence = compute_js_centroid_and_avg(
-                    distributions_arry[question_idx]
-                )
+                centroid, failed_count, avg_divergence = compute_js_centroid_and_avg(distributions_arry[question_idx])
                 per_question_results[f"question_{question_idx}"] = {
                     "average_divergence": avg_divergence,
                     "centroid": centroid.tolist(),
@@ -875,24 +770,14 @@ class ValuesComparison:
         """Compute the cross dataset centroids divergences"""
         user_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.direct_values_predictions
             ]
         ).swapaxes(0, 1)
 
         dialogue_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.dialogue_values_predictions
             ]
         ).swapaxes(0, 1)
@@ -902,9 +787,7 @@ class ValuesComparison:
         overall_divergences = []
         for q_idx in tqdm(range(num_questions), desc="Compute Centroid Globally"):
             user_centroid = compute_js_centroid(user_distributions_arry[q_idx])[0]
-            dialogue_centroid = compute_js_centroid(dialogue_distributions_arry[q_idx])[
-                0
-            ]
+            dialogue_centroid = compute_js_centroid(dialogue_distributions_arry[q_idx])[0]
             divergence = jensen_shannon_divergence(user_centroid, dialogue_centroid)
             overall_divergences.append(divergence)
             per_question_centroids[q_idx] = {
@@ -923,24 +806,14 @@ class ValuesComparison:
         """Compute the cross dataset pairwise divergences"""
         user_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.direct_values_predictions
             ]
         ).swapaxes(0, 1)
 
         dialogue_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.dialogue_values_predictions
             ]
         ).swapaxes(0, 1)
@@ -949,12 +822,8 @@ class ValuesComparison:
         per_question_divergences = {}
         overall_divergences = []
         for q_idx in tqdm(range(num_questions), desc="Compute Centroid Globally"):
-            user_valid_distributions, u_failed_count = filter_rows(
-                user_distributions_arry[q_idx]
-            )
-            dialogue_valid_distributions, d_failed_count = filter_rows(
-                dialogue_distributions_arry[q_idx]
-            )
+            user_valid_distributions, u_failed_count = filter_rows(user_distributions_arry[q_idx])
+            dialogue_valid_distributions, d_failed_count = filter_rows(dialogue_distributions_arry[q_idx])
             per_question_divergences_list = []
 
             for user_distribution, dialogue_distribution in zip(
@@ -982,24 +851,14 @@ class ValuesComparison:
         """Compute the cross dataset divergences baseline"""
         user_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.direct_values_predictions
             ]
         ).swapaxes(0, 1)
 
         dialogue_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["normalized_probs"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["normalized_probs"] for question in value_selections["value_selections"]])
                 for value_selections in self.dialogue_values_predictions
             ]
         ).swapaxes(0, 1)
@@ -1008,28 +867,18 @@ class ValuesComparison:
         per_question_divergences = {}
         overall_divergences = []
         for q_idx in tqdm(range(num_questions), desc="Compute Centroid Globally"):
-            user_valid_distributions, u_failed_count = filter_rows(
-                user_distributions_arry[q_idx]
-            )
-            dialogue_valid_distributions, d_failed_count = filter_rows(
-                dialogue_distributions_arry[q_idx]
-            )
+            user_valid_distributions, u_failed_count = filter_rows(user_distributions_arry[q_idx])
+            dialogue_valid_distributions, d_failed_count = filter_rows(dialogue_distributions_arry[q_idx])
             per_question_divergences_list = []
 
-            for _ in range(
-                len(user_valid_distributions)
-            ):  # Loop over the desired number of comparisons
+            for _ in range(len(user_valid_distributions)):  # Loop over the desired number of comparisons
                 # Randomly sample a user distribution and a dialogue distribution
                 random_user_distribution = random.choice(user_valid_distributions)
-                random_dialogue_distribution = random.choice(
-                    dialogue_valid_distributions
-                )
+                random_dialogue_distribution = random.choice(dialogue_valid_distributions)
 
                 # Compute the divergence and append to the list
                 per_question_divergences_list.append(
-                    jensen_shannon_divergence(
-                        random_user_distribution, random_dialogue_distribution
-                    )
+                    jensen_shannon_divergence(random_user_distribution, random_dialogue_distribution)
                 )
 
             avg_divergence = np.mean(per_question_divergences_list)
@@ -1050,36 +899,22 @@ class ValuesComparison:
         """Compute the cross dataset pairwise divergences"""
         user_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["selected_option_id"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["selected_option_id"] for question in value_selections["value_selections"]])
                 for value_selections in self.direct_values_predictions
             ]
         )
 
         dialogue_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["selected_option_id"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["selected_option_id"] for question in value_selections["value_selections"]])
                 for value_selections in self.dialogue_values_predictions
             ]
         )
 
         overall_divergences = []
 
-        for user_distribution, dialogue_distribution in zip(
-            user_distributions_arry, dialogue_distributions_arry
-        ):
-            overall_divergences.append(
-                compute_emd(user_distribution, dialogue_distribution)
-            )
+        for user_distribution, dialogue_distribution in zip(user_distributions_arry, dialogue_distributions_arry):
+            overall_divergences.append(compute_emd(user_distribution, dialogue_distribution))
 
         return {
             "avg_divergence": np.mean(overall_divergences),
@@ -1090,24 +925,14 @@ class ValuesComparison:
         """Compute the cross dataset divergences baseline"""
         user_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["selected_option_id"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["selected_option_id"] for question in value_selections["value_selections"]])
                 for value_selections in self.direct_values_predictions
             ]
         )
 
         dialogue_distributions_arry = np.array(
             [
-                np.array(
-                    [
-                        question["selected_option_id"]
-                        for question in value_selections["value_selections"]
-                    ]
-                )
+                np.array([question["selected_option_id"] for question in value_selections["value_selections"]])
                 for value_selections in self.dialogue_values_predictions
             ]
         )
@@ -1124,9 +949,7 @@ class ValuesComparison:
             random_dialogue_distribution = dialogue_distributions_arry[random_idx]
 
             # Compute the divergence and append to the list
-            overall_divergences.append(
-                compute_emd(user_distribution, random_dialogue_distribution)
-            )
+            overall_divergences.append(compute_emd(user_distribution, random_dialogue_distribution))
 
         return {
             "avg_divergence": np.mean(overall_divergences),

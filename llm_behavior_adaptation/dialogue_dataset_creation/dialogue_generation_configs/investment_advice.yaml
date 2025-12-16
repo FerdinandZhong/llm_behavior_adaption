@@ -1,0 +1,38 @@
+# config.yaml
+
+# openai_api_key: "${OPENAI_API_KEY}"   # or a literal string
+
+seed_dataset_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+starting_row: 700
+ending_row: 1000
+
+prompts_folder: "llm_behavior_adaptation/dialogue_dataset_creation/prompts/investment_advice"
+
+# Models
+models:
+  user_sim: "gpt-5"
+  chatbot: "gpt-4.1-nano"
+  ooc: "gpt-5-mini"
+  reviewer: "gpt-5-mini"
+
+params:
+  user_sim:
+    reasoning_effort: low
+    verbosity: low
+  chatbot: {}
+  ooc:
+    reasoning_effort: low
+    response_format:
+      type: json_object
+  reviewer:
+    reasoning_effort: low
+    verbosity: low
+    response_format:
+      type: json_object
+
+dialogue_runs_threshold: 5
+
+# Output
+output_file_path: "datasets/wvs_generated_dialogues/investment_advice/sampled_700_1000.jsonl"
+storage_step: 5   # write every 50 rows
+verbose: 0
