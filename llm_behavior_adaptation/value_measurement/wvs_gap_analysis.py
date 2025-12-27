@@ -484,8 +484,43 @@ class GapAnalysisController:
             logger.warning("Not enough samples for correlation: %d", len(predicted_values))
             return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
 
+        # Convert to float arrays and check for issues
+        import numpy as np
+        pred_arr = np.array(predicted_values, dtype=float)
+        human_arr = np.array(human_values, dtype=float)
+
+        # Check for NaN values
+        pred_has_nan = np.isnan(pred_arr).any()
+        human_has_nan = np.isnan(human_arr).any()
+        if pred_has_nan or human_has_nan:
+            logger.warning(
+                "Found NaN values: predicted=%s, human=%s",
+                pred_has_nan,
+                human_has_nan
+            )
+            return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
+
+        # Check for zero variance
+        pred_std = np.std(pred_arr)
+        human_std = np.std(human_arr)
+        if pred_std == 0 or human_std == 0:
+            logger.warning(
+                "Zero variance detected: predicted_std=%.4f, human_std=%.4f",
+                pred_std,
+                human_std
+            )
+            return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
+
         try:
-            corr, p_value = pearsonr(predicted_values, human_values)
+            corr, p_value = pearsonr(pred_arr, human_arr)
+
+            # Check if result is NaN
+            if np.isnan(corr) or np.isnan(p_value):
+                logger.warning("Pearson correlation resulted in NaN")
+                logger.debug("Predicted values sample: %s", pred_arr[:10])
+                logger.debug("Human values sample: %s", human_arr[:10])
+                return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
+
             return {
                 "correlation": float(corr),
                 "p_value": float(p_value),
@@ -493,6 +528,8 @@ class GapAnalysisController:
             }
         except Exception as e:
             logger.error("Error computing correlation: %s", str(e))
+            logger.debug("Predicted values sample: %s", predicted_values[:10])
+            logger.debug("Human values sample: %s", human_values[:10])
             return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
 
     async def _generate_gap_rationale(
