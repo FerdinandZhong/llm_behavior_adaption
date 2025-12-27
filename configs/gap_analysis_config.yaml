@@ -1,0 +1,41 @@
+# Configuration for Gap Analysis Script
+# This script compares BA dialogue results with human values and generates rationales for gaps
+
+# Model configuration
+evaluated_model: "gpt-4o"  # Model to use for generating rationales
+llm_server: "llm_platform"  # Options: "llm_platform", "gpt", "vllm", "sglang"
+reasoning: false  # Set to true if using a reasoning model
+
+# Input paths
+ba_dialogue_results_path: "results/ba_dialogue_career_results.jsonl"  # Path to BA dialogue results
+human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"  # Path to human results CSV
+generated_dialogues_path: "results/generated_dialogues_career.jsonl"  # Path to generated dialogues
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"  # Path to question metadata
+prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"  # Path to prompts folder
+
+# Output configuration
+output_file_path: "results/gap_analysis_results.jsonl"  # Path to output file
+
+# Optional settings
+storage_step: 10  # Save results every N users (optional, set to null to disable)
+verbose: 1  # 0 = minimal logging, 1 = detailed logging
+
+# Experimental settings for testing/debugging
+starting_row: null  # Start processing from this row (0-indexed, optional)
+ending_row: null    # Stop processing at this row (exclusive, optional, -1 for all)
+                    # Example: starting_row: 0, ending_row: 10 processes first 10 users
+                    # Example: starting_row: 10, ending_row: 20 processes users 10-19
+                    # Example: starting_row: 5, ending_row: -1 processes from user 5 to end
+
+# Gap threshold configuration
+gap_threshold: 0.0  # Relative threshold (0.0-1.0). 0.0 = query all gaps, 1.0 = only maximum gaps
+                    # Calculated as |predicted - human| / (scale_max - scale_min)
+                    # Example: For a 1-4 scale, gap of 2 = 2/3 = 0.67
+                    # Example: 0.33 means only query gaps >= 33% of scale range
+
+# API configuration (optional, can use environment variables instead)
+# openai_api_key: "your-api-key-here"
+# model_base_url: "http://localhost:8000/v1"  # For non-OpenAI models
+
+# Extra parameters for API calls (optional)
+extra_body: null

@@ -1,0 +1,16 @@
+{
+  "summary": {
+    "gap_threshold": 0.5,
+    "total_questions": 44935,
+    "original_gaps": 33485,
+    "queried_gaps": 11122,
+    "skipped_gaps": 22363,
+    "adapted_gaps": 11111,
+    "remaining_gaps_after_adaptation": 11,
+    "total_remaining_gaps": 22374,
+    "adaptation_rate_percent": 99.9,
+    "remaining_gap_rate_percent": 0.1,
+    "original_accuracy_percent": 25.48,
+    "post_adaptation_accuracy_percent": 50.21
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "summary": {
+    "total_questions": 550,
+    "original_gaps": 419,
+    "adapted_gaps": 410,
+    "remaining_gaps": 9,
+    "adaptation_rate_percent": 97.85,
+    "remaining_gap_rate_percent": 2.15,
+    "original_accuracy_percent": 23.82,
+    "post_adaptation_accuracy_percent": 98.36
+  }
+}

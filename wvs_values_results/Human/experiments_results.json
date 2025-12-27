@@ -1,0 +1,410 @@
+{
+  "age": {
+    "baseline": {
+      "overall_baseline": 2.87936507936508
+    },
+    "group_distances": [
+      {
+        "compared_groups": "<30--30-40",
+        "compared_details": {
+          "average_divergence": 2.781746031746032
+        }
+      },
+      {
+        "compared_groups": "<30--40-50",
+        "compared_details": {
+          "average_divergence": 3.5000000000000004
+        }
+      },
+      {
+        "compared_groups": "<30--50-60",
+        "compared_details": {
+          "average_divergence": 4.420634920634922
+        }
+      },
+      {
+        "compared_groups": "<30-->60",
+        "compared_details": {
+          "average_divergence": 5.92063492063492
+        }
+      },
+      {
+        "compared_groups": "30-40--40-50",
+        "compared_details": {
+          "average_divergence": 4.448412698412699
+        }
+      },
+      {
+        "compared_groups": "30-40--50-60",
+        "compared_details": {
+          "average_divergence": 3.861111111111112
+        }
+      },
+      {
+        "compared_groups": "30-40-->60",
+        "compared_details": {
+          "average_divergence": 7.027777777777775
+        }
+      },
+      {
+        "compared_groups": "40-50--50-60",
+        "compared_details": {
+          "average_divergence": 4.698412698412699
+        }
+      },
+      {
+        "compared_groups": "40-50-->60",
+        "compared_details": {
+          "average_divergence": 3.9761904761904767
+        }
+      },
+      {
+        "compared_groups": "50-60-->60",
+        "compared_details": {
+          "average_divergence": 4.944444444444443
+        }
+      }
+    ]
+  },
+  "continent_of_residence": {
+    "baseline": {
+      "overall_baseline": 6.659391534391532
+    },
+    "group_distances": [
+      {
+        "compared_groups": "Europe--Asia",
+        "compared_details": {
+          "average_divergence": 8.091269841269838
+        }
+      },
+      {
+        "compared_groups": "Europe--Africa",
+        "compared_details": {
+          "average_divergence": 13.265873015873016
+        }
+      },
+      {
+        "compared_groups": "Europe--South America",
+        "compared_details": {
+          "average_divergence": 9.484126984126984
+        }
+      },
+      {
+        "compared_groups": "Europe--North America",
+        "compared_details": {
+          "average_divergence": 6.369047619047617
+        }
+      },
+      {
+        "compared_groups": "Europe--Oceania",
+        "compared_details": {
+          "average_divergence": 8.095238095238091
+        }
+      },
+      {
+        "compared_groups": "Asia--Africa",
+        "compared_details": {
+          "average_divergence": 8.952380952380949
+        }
+      },
+      {
+        "compared_groups": "Asia--South America",
+        "compared_details": {
+          "average_divergence": 7.281746031746029
+        }
+      },
+      {
+        "compared_groups": "Asia--North America",
+        "compared_details": {
+          "average_divergence": 7.83333333333333
+        }
+      },
+      {
+        "compared_groups": "Asia--Oceania",
+        "compared_details": {
+          "average_divergence": 11.519841269841269
+        }
+      },
+      {
+        "compared_groups": "Africa--South America",
+        "compared_details": {
+          "average_divergence": 5.559523809523808
+        }
+      },
+      {
+        "compared_groups": "Africa--North America",
+        "compared_details": {
+          "average_divergence": 12.007936507936504
+        }
+      },
+      {
+        "compared_groups": "Africa--Oceania",
+        "compared_details": {
+          "average_divergence": 16.805555555555557
+        }
+      },
+      {
+        "compared_groups": "South America--North America",
+        "compared_details": {
+          "average_divergence": 8.003968253968251
+        }
+      },
+      {
+        "compared_groups": "South America--Oceania",
+        "compared_details": {
+          "average_divergence": 13.690476190476192
+        }
+      },
+      {
+        "compared_groups": "North America--Oceania",
+        "compared_details": {
+          "average_divergence": 9.019841269841267
+        }
+      }
+    ]
+  },
+  "immigration_status": {
+    "baseline": {
+      "overall_baseline": 3.59126984126984
+    },
+    "group_distances": [
+      {
+        "compared_groups": "not immigrant--immigrant",
+        "compared_details": {
+          "average_divergence": 7.18253968253968
+        }
+      }
+    ]
+  },
+  "highest_level_of_education": {
+    "baseline": {
+      "overall_baseline": 3.8198412698412687
+    },
+    "group_distances": [
+      {
+        "compared_groups": "Basic education--High school & equivalent",
+        "compared_details": {
+          "average_divergence": 4.976190476190475
+        }
+      },
+      {
+        "compared_groups": "Basic education--Short-cycle tertiary",
+        "compared_details": {
+          "average_divergence": 4.702380952380952
+        }
+      },
+      {
+        "compared_groups": "Basic education--Bachelor",
+        "compared_details": {
+          "average_divergence": 8.035714285714283
+        }
+      },
+      {
+        "compared_groups": "Basic education--Master’s & Doctoral",
+        "compared_details": {
+          "average_divergence": 10.452380952380954
+        }
+      },
+      {
+        "compared_groups": "High school & equivalent--Short-cycle tertiary",
+        "compared_details": {
+          "average_divergence": 3.6706349206349205
+        }
+      },
+      {
+        "compared_groups": "High school & equivalent--Bachelor",
+        "compared_details": {
+          "average_divergence": 4.67063492063492
+        }
+      },
+      {
+        "compared_groups": "High school & equivalent--Master’s & Doctoral",
+        "compared_details": {
+          "average_divergence": 7.031746031746029
+        }
+      },
+      {
+        "compared_groups": "Short-cycle tertiary--Bachelor",
+        "compared_details": {
+          "average_divergence": 3.777777777777778
+        }
+      },
+      {
+        "compared_groups": "Short-cycle tertiary--Master’s & Doctoral",
+        "compared_details": {
+          "average_divergence": 5.97222222222222
+        }
+      },
+      {
+        "compared_groups": "Bachelor--Master’s & Doctoral",
+        "compared_details": {
+          "average_divergence": 5.138888888888888
+        }
+      }
+    ]
+  },
+  "socioeconomic_status": {
+    "baseline": {
+      "overall_baseline": 4.408730158730159
+    },
+    "group_distances": [
+      {
+        "compared_groups": "Working class--Lower middle class",
+        "compared_details": {
+          "average_divergence": 2.392857142857143
+        }
+      },
+      {
+        "compared_groups": "Working class--Upper middle class",
+        "compared_details": {
+          "average_divergence": 4.999999999999999
+        }
+      },
+      {
+        "compared_groups": "Working class--Lower class",
+        "compared_details": {
+          "average_divergence": 4.226190476190476
+        }
+      },
+      {
+        "compared_groups": "Working class--Upper class",
+        "compared_details": {
+          "average_divergence": 10.980158730158731
+        }
+      },
+      {
+        "compared_groups": "Lower middle class--Upper middle class",
+        "compared_details": {
+          "average_divergence": 3.6150793650793656
+        }
+      },
+      {
+        "compared_groups": "Lower middle class--Lower class",
+        "compared_details": {
+          "average_divergence": 4.5
+        }
+      },
+      {
+        "compared_groups": "Lower middle class--Upper class",
+        "compared_details": {
+          "average_divergence": 12.365079365079364
+        }
+      },
+      {
+        "compared_groups": "Upper middle class--Lower class",
+        "compared_details": {
+          "average_divergence": 7.615079365079362
+        }
+      },
+      {
+        "compared_groups": "Upper middle class--Upper class",
+        "compared_details": {
+          "average_divergence": 12.369047619047615
+        }
+      },
+      {
+        "compared_groups": "Lower class--Upper class",
+        "compared_details": {
+          "average_divergence": 8.53174603174603
+        }
+      }
+    ]
+  },
+  "occupation_group": {
+    "baseline": {
+      "overall_baseline": 3.395502645502645
+    },
+    "group_distances": [
+      {
+        "compared_groups": "Clerical & Sales--Skilled & Semi-Skilled",
+        "compared_details": {
+          "average_divergence": 2.3373015873015874
+        }
+      },
+      {
+        "compared_groups": "Clerical & Sales--Service & Labor",
+        "compared_details": {
+          "average_divergence": 3.30952380952381
+        }
+      },
+      {
+        "compared_groups": "Clerical & Sales--Managerial / Professional",
+        "compared_details": {
+          "average_divergence": 5.03174603174603
+        }
+      },
+      {
+        "compared_groups": "Clerical & Sales--Agricultural Related",
+        "compared_details": {
+          "average_divergence": 5.4722222222222205
+        }
+      },
+      {
+        "compared_groups": "Clerical & Sales--No Job",
+        "compared_details": {
+          "average_divergence": 4.722222222222221
+        }
+      },
+      {
+        "compared_groups": "Skilled & Semi-Skilled--Service & Labor",
+        "compared_details": {
+          "average_divergence": 2.916666666666667
+        }
+      },
+      {
+        "compared_groups": "Skilled & Semi-Skilled--Managerial / Professional",
+        "compared_details": {
+          "average_divergence": 5.138888888888887
+        }
+      },
+      {
+        "compared_groups": "Skilled & Semi-Skilled--Agricultural Related",
+        "compared_details": {
+          "average_divergence": 6.587301587301584
+        }
+      },
+      {
+        "compared_groups": "Skilled & Semi-Skilled--No Job",
+        "compared_details": {
+          "average_divergence": 4.837301587301586
+        }
+      },
+      {
+        "compared_groups": "Service & Labor--Managerial / Professional",
+        "compared_details": {
+          "average_divergence": 4.277777777777778
+        }
+      },
+      {
+        "compared_groups": "Service & Labor--Agricultural Related",
+        "compared_details": {
+          "average_divergence": 5.448412698412698
+        }
+      },
+      {
+        "compared_groups": "Service & Labor--No Job",
+        "compared_details": {
+          "average_divergence": 5.698412698412696
+        }
+      },
+      {
+        "compared_groups": "Managerial / Professional--Agricultural Related",
+        "compared_details": {
+          "average_divergence": 8.615079365079362
+        }
+      },
+      {
+        "compared_groups": "Managerial / Professional--No Job",
+        "compared_details": {
+          "average_divergence": 9.531746031746032
+        }
+      },
+      {
+        "compared_groups": "Agricultural Related--No Job",
+        "compared_details": {
+          "average_divergence": 4.75
+        }
+      }
+    ]
+  }
+}

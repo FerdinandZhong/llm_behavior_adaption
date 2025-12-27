@@ -1,0 +1,26 @@
+# Expected YAML keys:
+user_profile_dataset_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+dialogue_file: "datasets/wvs_generated_dialogues/investment_advice/all_samples.jsonl"
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"
+evaluated_model: qwen/qwen3-30b-a3b-instruct-2507
+direct_output_file_path: wvs_values_results/Qwen3-30B-A3B-Instruct/BA_user_values_results/total_1000.jsonl
+dialogue_output_file_path: ignore
+prompts_folder: llm_behavior_adaptation/value_measurement/prompts
+# Optional:
+starting_row: 0
+ending_row: 1000
+llm_server: llm_platform
+verbose: 1
+storage_step: 10
+reasoning: true
+model_base_url: https://openrouter.ai/api/v1
+run_mode: profiles
+extra_body:
+  reasoning: 
+    effort: "low"
+  provider:
+    only:
+      # - deepinfra/fp4
+      # - inference-net
+      # - novita/bf16
+      - chutes

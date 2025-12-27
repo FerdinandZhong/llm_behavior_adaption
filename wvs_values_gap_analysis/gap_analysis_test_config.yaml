@@ -1,0 +1,41 @@
+# Configuration for Gap Analysis Test - Qwen3-30B-A3B-Instruct Career Topic
+# Tests behavior adaptation capability with a small data slice
+
+# Model configuration
+evaluated_model: "qwen/qwen3-30b-a3b-instruct-2507"  # Model to use for generating rationales
+llm_server: "llm_platform"  # Options: "llm_platform", "gpt", "vllm", "sglang"
+reasoning: true  # Qwen3-30B-A3B-Instruct is a reasoning model
+
+# Input paths
+ba_dialogue_results_path: "wvs_values_results/Qwen3-30B-A3B-Instruct/career/BA_dialogue_values_results/total_1000.jsonl"  # Path to BA dialogue results
+human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"  # Path to human results CSV
+generated_dialogues_path: "datasets/wvs_generated_dialogues/career_advice/all_samples.jsonl"  # Path to generated dialogues
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"  # Path to question metadata
+prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"  # Path to prompts folder
+
+# Output configuration
+output_file_path: "wvs_values_gap_analysis/qwen3_30b_a3b_career_gap_analysis_test.jsonl"  # Path to output file
+
+# Optional settings
+storage_step: 5  # Save results every 5 users for testing
+verbose: 1  # 1 = detailed logging
+
+# Experimental settings for testing - process only first 10 users
+starting_row: 0  # Start from first user
+ending_row: 10   # Process first 10 users only
+
+# Gap threshold configuration
+gap_threshold: 0.0  # Relative threshold (0.0-1.0). 0.0 = query all gaps, 1.0 = only maximum gaps
+                    # Example: 0.33 means only query gaps where |predicted - human| / scale_range >= 0.33
+
+# API configuration
+# export api_key="your-openai-api-key"
+model_base_url: "https://openrouter.ai/api/v1"
+
+# Extra parameters for API calls - reasoning model configuration
+extra_body:
+  reasoning:
+    effort: "low"
+  provider:
+    only:
+      - chutes
