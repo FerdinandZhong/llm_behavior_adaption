@@ -14,6 +14,7 @@ import pandas as pd
 import yaml
 from openai import AsyncOpenAI
 from pydantic import BaseModel
+from scipy.stats import pearsonr
 from tqdm.asyncio import tqdm
 
 from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
@@ -456,6 +457,44 @@ class GapAnalysisController:
 
         return Response(option_id=int(selected_option_id), reason=reason_for_selection).model_dump()
 
+    def _compute_correlation(
+        self,
+        predicted_values: List[int],
+        human_values: List[int],
+    ) -> Dict[str, float]:
+        """
+        Compute Pearson correlation between predicted and human values.
+
+        Args:
+            predicted_values: List of predicted option IDs
+            human_values: List of human option IDs
+
+        Returns:
+            Dictionary with correlation coefficient and p-value
+        """
+        if len(predicted_values) != len(human_values):
+            logger.warning(
+                "Mismatch in value counts: predicted=%d, human=%d",
+                len(predicted_values),
+                len(human_values)
+            )
+            return {"correlation": None, "p_value": None, "n_samples": 0}
+
+        if len(predicted_values) < 2:
+            logger.warning("Not enough samples for correlation: %d", len(predicted_values))
+            return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
+
+        try:
+            corr, p_value = pearsonr(predicted_values, human_values)
+            return {
+                "correlation": float(corr),
+                "p_value": float(p_value),
+                "n_samples": len(predicted_values)
+            }
+        except Exception as e:
+            logger.error("Error computing correlation: %s", str(e))
+            return {"correlation": None, "p_value": None, "n_samples": len(predicted_values)}
+
     async def _generate_gap_rationale(
         self,
         question_id: str,
@@ -544,6 +583,12 @@ class GapAnalysisController:
         skipped_gaps = 0  # Gaps below threshold that were not queried
         skipped_users = 0  # Users skipped due to missing data
 
+        # Correlation tracking - collect all predicted and human values
+        before_adaptation_predicted = []
+        before_adaptation_human = []
+        after_adaptation_predicted = []
+        after_adaptation_human = []
+
         try:
             with tqdm(
                 total=len(self.ba_dialogue_results),
@@ -594,6 +639,10 @@ class GapAnalysisController:
                         # Count total questions processed
                         total_questions += 1
 
+                        # Collect values for correlation (before adaptation)
+                        before_adaptation_predicted.append(predicted_option)
+                        before_adaptation_human.append(human_option)
+
                         # Check if there's a gap
                         if predicted_option != human_option:
                             original_gaps += 1
@@ -642,6 +691,25 @@ class GapAnalysisController:
                             if adapted_option != human_option:
                                 remaining_gaps += 1
 
+                    # Collect after-adaptation values for correlation
+                    # For each question, use adapted value if available, otherwise original predicted value
+                    for question_id, ba_answer in ba_answers.items():
+                        if question_id not in human_answers or question_id not in self.all_questions:
+                            continue
+
+                        human_option = human_answers[question_id]
+
+                        # Use adapted value if this question had a gap and was queried
+                        if question_id in user_gaps:
+                            adapted_option = user_gaps[question_id]["gap_rationale"]["option_id"]
+                            after_adaptation_predicted.append(adapted_option)
+                        else:
+                            # No gap or gap was skipped - use original prediction
+                            predicted_option = ba_answer.get("option_id")
+                            after_adaptation_predicted.append(predicted_option)
+
+                        after_adaptation_human.append(human_option)
+
                     if user_gaps:
                         gap_analysis_results.append({user_id: user_gaps})
 
@@ -662,6 +730,17 @@ class GapAnalysisController:
             remaining_rate = (remaining_gaps / queried_gaps * 100) if queried_gaps > 0 else 0
             total_remaining_gaps = skipped_gaps + remaining_gaps  # Total gaps still present
 
+            # Compute Pearson correlations
+            logger.info("Computing Pearson correlations...")
+            before_correlation = self._compute_correlation(
+                before_adaptation_predicted,
+                before_adaptation_human
+            )
+            after_correlation = self._compute_correlation(
+                after_adaptation_predicted,
+                after_adaptation_human
+            )
+
             stats = {
                 "summary": {
                     "gap_threshold": self.gap_threshold,
@@ -679,6 +758,13 @@ class GapAnalysisController:
                     "remaining_gap_rate_percent": round(remaining_rate, 2),
                     "original_accuracy_percent": round((total_questions - original_gaps) / total_questions * 100, 2) if total_questions > 0 else 0,
                     "post_adaptation_accuracy_percent": round((total_questions - total_remaining_gaps) / total_questions * 100, 2) if total_questions > 0 else 0,
+                },
+                "correlation": {
+                    "before_adaptation": before_correlation,
+                    "after_adaptation": after_correlation,
+                    "improvement": {
+                        "correlation_delta": round(after_correlation["correlation"] - before_correlation["correlation"], 4) if before_correlation["correlation"] is not None and after_correlation["correlation"] is not None else None
+                    }
                 }
             }
 
@@ -716,6 +802,27 @@ class GapAnalysisController:
             logger.info("  Original accuracy: %.2f%%", stats["summary"]["original_accuracy_percent"])
             logger.info("  Post-adaptation accuracy: %.2f%%", stats["summary"]["post_adaptation_accuracy_percent"])
             logger.info("  Accuracy improvement: %.2f%%", stats["summary"]["post_adaptation_accuracy_percent"] - stats["summary"]["original_accuracy_percent"])
+            logger.info("")
+            logger.info("Pearson Correlation (Predicted vs Human):")
+            if before_correlation["correlation"] is not None:
+                logger.info("  Before adaptation: r = %.4f (p = %.4e, n = %d)",
+                          before_correlation["correlation"],
+                          before_correlation["p_value"],
+                          before_correlation["n_samples"])
+            else:
+                logger.info("  Before adaptation: N/A (insufficient data)")
+
+            if after_correlation["correlation"] is not None:
+                logger.info("  After adaptation:  r = %.4f (p = %.4e, n = %d)",
+                          after_correlation["correlation"],
+                          after_correlation["p_value"],
+                          after_correlation["n_samples"])
+            else:
+                logger.info("  After adaptation: N/A (insufficient data)")
+
+            if before_correlation["correlation"] is not None and after_correlation["correlation"] is not None:
+                delta = after_correlation["correlation"] - before_correlation["correlation"]
+                logger.info("  Correlation improvement: %.4f", delta)
             logger.info("=" * 80)
             logger.info("Statistics saved to: %s", stats_file_path)
 
