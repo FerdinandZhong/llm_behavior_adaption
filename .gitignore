@@ -200,3 +200,4 @@ values_results/**/**2.json
 wvs_images
 vsm_images
 values_results/*
+local_backup/**
