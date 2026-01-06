@@ -395,7 +395,7 @@ class ValuesPredictionController:
             if reasoning:
                 full_chat_response = await self.query_llm(
                     messages=full_messages,
-                    temperature=0.6,  # default setting for reasoning model
+                    # temperature=0.6,  # default setting for reasoning model
                     max_completion_tokens=2048,
                 )
 

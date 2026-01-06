@@ -1,16 +1,34 @@
 {
   "summary": {
     "gap_threshold": 0.5,
-    "total_questions": 44935,
-    "original_gaps": 33485,
-    "queried_gaps": 11122,
-    "skipped_gaps": 22363,
-    "adapted_gaps": 11111,
-    "remaining_gaps_after_adaptation": 11,
-    "total_remaining_gaps": 22374,
-    "adaptation_rate_percent": 99.9,
-    "remaining_gap_rate_percent": 0.1,
-    "original_accuracy_percent": 25.48,
-    "post_adaptation_accuracy_percent": 50.21
+    "total_users": 10,
+    "processed_users": 10,
+    "skipped_users": 0,
+    "total_questions": 550,
+    "original_gaps": 419,
+    "queried_gaps": 136,
+    "skipped_gaps": 283,
+    "adapted_gaps": 136,
+    "remaining_gaps_after_adaptation": 0,
+    "total_remaining_gaps": 283,
+    "adaptation_rate_percent": 100.0,
+    "remaining_gap_rate_percent": 0.0,
+    "original_accuracy_percent": 23.82,
+    "post_adaptation_accuracy_percent": 48.55
+  },
+  "correlation": {
+    "before_adaptation": {
+      "correlation": 0.5787275055876602,
+      "p_value": 1.085002563136238e-49,
+      "n_samples": 541
+    },
+    "after_adaptation": {
+      "correlation": 0.8522344810060958,
+      "p_value": 8.893998255189033e-154,
+      "n_samples": 541
+    },
+    "improvement": {
+      "correlation_delta": 0.2735
+    }
   }
 }

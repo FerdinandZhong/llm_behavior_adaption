@@ -1,0 +1,28 @@
+# Configuration for Individual vs Group Alignment Analysis
+# Analyzes whether Qwen2.5-72B-Instruct predictions are more aligned with
+# individual users or their demographic group medians
+
+# Input paths
+ba_dialogue_results_path: "wvs_values_results/Qwen2.5-72B-Instruct/investment/BA_dialogue_values_results/total_1000.jsonl"
+human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"
+user_profile_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"
+
+# Output configuration
+output_file_path: "wvs_values_results/Qwen2.5-72B-Instruct/investment/individual_vs_group_analysis/alignment_full.jsonl"
+
+# Analysis configuration
+demographic_attributes: # Options: age, highest_level_of_education, occupation_group, continent_of_residence, immigration_status, socioeconomic_status
+  - age
+  - highest_level_of_education
+  - occupation_group
+  - continent_of_residence
+  - immigration_status
+  - socioeconomic_status
+
+# Data slicing - process all users
+starting_row: null  # Start from first user (null means 0)
+ending_row: null    # Process all users (null means no limit)
+
+# Optional settings
+verbose: 1  # 1 = detailed logging

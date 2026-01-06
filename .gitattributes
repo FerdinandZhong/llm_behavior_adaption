@@ -13,3 +13,5 @@ values_results/ filter=lfs diff=lfs merge=lfs -text
 datasets/seed_dataset.csv filter=lfs diff=lfs merge=lfs -text
 datasets/generated_dialogues/generated_dialogues.jsonl filter=lfs diff=lfs merge=lfs -text
 wvs_values_results/**/total_1000.jsonl filter=lfs diff=lfs merge=lfs -text
+/Users/qishuai.zhong/Projects/llm_behavior_adaptation/wvs_values_results/gpt-oss-20b-low/career/BA_dialogue_values_results/new_total_1000.jsonl filter=lfs diff=lfs merge=lfs -text
+wvs_values_results/gpt-oss-20b-low/career/BA_dialogue_values_results/total_1000.jsonl filter=lfs diff=lfs merge=lfs -text

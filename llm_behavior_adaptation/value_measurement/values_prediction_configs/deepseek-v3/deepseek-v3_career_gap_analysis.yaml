@@ -1,0 +1,33 @@
+# Configuration for Full Gap Analysis - DeepSeek-V3 Career Topic
+# Tests behavior adaptation capability on the complete dataset (1000 users)
+
+# Model configuration
+evaluated_model: "deepseek/deepseek-chat"  # Model to use for generating rationales
+llm_server: "llm_platform"  # Options: "llm_platform", "gpt", "vllm", "sglang"
+reasoning: false  # DeepSeek-V3 is not configured as a reasoning model
+
+# Input paths
+ba_dialogue_results_path: "wvs_values_results/DeepSeek-V3/career/BA_dialogue_values_results/total_1000.jsonl"  # Path to BA dialogue results
+human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"  # Path to human results CSV
+generated_dialogues_path: "datasets/wvs_generated_dialogues/career_advice/all_samples.jsonl"  # Path to generated dialogues
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"  # Path to question metadata
+prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"  # Path to prompts folder
+
+# Output configuration
+output_file_path: "wvs_values_results/DeepSeek-V3/career/gap_analysis/full.jsonl"  # Path to output file
+
+# Optional settings
+storage_step: 50  # Save results every 50 users (for safety during long runs)
+verbose: 1  # 1 = detailed logging
+
+# Data slicing - process all users
+starting_row: null  # Start from first user (null means 0)
+ending_row: 1000      # Process all 1000 users (null means no limit)
+
+# Gap threshold configuration
+gap_threshold: 0.5  # Relative threshold (0.0-1.0). 0.0 = query all gaps, 1.0 = only maximum gaps
+                    # Example: 0.33 means only query gaps where |predicted - human| / scale_range >= 0.33
+                    # Set to 0.0 to get complete adaptation analysis
+
+# API configuration
+model_base_url: "https://openrouter.ai/api/v1"

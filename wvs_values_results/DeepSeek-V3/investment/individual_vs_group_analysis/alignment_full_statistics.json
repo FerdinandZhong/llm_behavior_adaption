@@ -1,0 +1,208 @@
+{
+  "demographic_attributes": [
+    "age",
+    "highest_level_of_education",
+    "occupation_group",
+    "continent_of_residence",
+    "immigration_status",
+    "socioeconomic_status"
+  ],
+  "total_users": 1000,
+  "attribute_results": {
+    "age": {
+      "num_groups": 5,
+      "groups": {
+        "<30": 260,
+        "30-40": 191,
+        "40-50": 185,
+        "50-60": 158,
+        ">60": 206
+      },
+      "alignment_summary": {
+        "total_comparisons": 53159,
+        "individual_wins": 12774,
+        "group_wins": 21888,
+        "ties": 18497,
+        "skipped": 1841
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 24.03,
+        "group_alignment_rate": 41.17,
+        "tie_rate": 34.8
+      },
+      "bias_score": -0.1714,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    },
+    "highest_level_of_education": {
+      "num_groups": 5,
+      "groups": {
+        "Basic education": 332,
+        "High school & equivalent": 350,
+        "Short-cycle tertiary": 84,
+        "Bachelor": 174,
+        "Master's & Doctoral": 60
+      },
+      "alignment_summary": {
+        "total_comparisons": 53159,
+        "individual_wins": 12798,
+        "group_wins": 21272,
+        "ties": 19089,
+        "skipped": 1841
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 24.07,
+        "group_alignment_rate": 40.02,
+        "tie_rate": 35.91
+      },
+      "bias_score": -0.1594,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    },
+    "occupation_group": {
+      "num_groups": 6,
+      "groups": {
+        "Clerical & Sales": 241,
+        "Skilled & Semi-Skilled": 144,
+        "Service & Labor": 176,
+        "Managerial / Professional": 173,
+        "Agricultural Related": 77,
+        "No Job": 127
+      },
+      "alignment_summary": {
+        "total_comparisons": 49984,
+        "individual_wins": 11831,
+        "group_wins": 20491,
+        "ties": 17662,
+        "skipped": 5016
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 23.67,
+        "group_alignment_rate": 41.0,
+        "tie_rate": 35.34
+      },
+      "bias_score": -0.1733,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    },
+    "continent_of_residence": {
+      "num_groups": 6,
+      "groups": {
+        "Europe": 198,
+        "Asia": 444,
+        "Africa": 101,
+        "South America": 115,
+        "North America": 113,
+        "Oceania": 29
+      },
+      "alignment_summary": {
+        "total_comparisons": 53159,
+        "individual_wins": 12847,
+        "group_wins": 21069,
+        "ties": 19243,
+        "skipped": 1841
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 24.17,
+        "group_alignment_rate": 39.63,
+        "tie_rate": 36.2
+      },
+      "bias_score": -0.1547,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    },
+    "immigration_status": {
+      "num_groups": 2,
+      "groups": {
+        "not immigrant": 947,
+        "immigrant": 50
+      },
+      "alignment_summary": {
+        "total_comparisons": 53021,
+        "individual_wins": 12929,
+        "group_wins": 22281,
+        "ties": 17811,
+        "skipped": 1979
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 24.38,
+        "group_alignment_rate": 42.02,
+        "tie_rate": 33.59
+      },
+      "bias_score": -0.1764,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    },
+    "socioeconomic_status": {
+      "num_groups": 5,
+      "groups": {
+        "Working class": 255,
+        "Lower middle class": 381,
+        "Upper middle class": 183,
+        "Lower class": 121,
+        "Upper class": 15
+      },
+      "alignment_summary": {
+        "total_comparisons": 50931,
+        "individual_wins": 12317,
+        "group_wins": 21074,
+        "ties": 17540,
+        "skipped": 4069
+      },
+      "alignment_rates": {
+        "individual_alignment_rate": 24.18,
+        "group_alignment_rate": 41.38,
+        "tie_rate": 34.44
+      },
+      "bias_score": -0.1719,
+      "bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking"
+    }
+  },
+  "overall_alignment_summary": {
+    "total_comparisons": 313413,
+    "individual_wins": 75496,
+    "group_wins": 128075,
+    "ties": 109842,
+    "skipped": 16587
+  },
+  "overall_bias_score": -0.1678,
+  "overall_bias_interpretation": "Moderate group alignment - model exhibits some stereotypical thinking",
+  "groups_by_attribute": {
+    "age": {
+      "<30": 260,
+      "30-40": 191,
+      "40-50": 185,
+      "50-60": 158,
+      ">60": 206
+    },
+    "highest_level_of_education": {
+      "Basic education": 332,
+      "High school & equivalent": 350,
+      "Short-cycle tertiary": 84,
+      "Bachelor": 174,
+      "Master's & Doctoral": 60
+    },
+    "occupation_group": {
+      "Clerical & Sales": 241,
+      "Skilled & Semi-Skilled": 144,
+      "Service & Labor": 176,
+      "Managerial / Professional": 173,
+      "Agricultural Related": 77,
+      "No Job": 127
+    },
+    "continent_of_residence": {
+      "Europe": 198,
+      "Asia": 444,
+      "Africa": 101,
+      "South America": 115,
+      "North America": 113,
+      "Oceania": 29
+    },
+    "immigration_status": {
+      "not immigrant": 947,
+      "immigrant": 50
+    },
+    "socioeconomic_status": {
+      "Working class": 255,
+      "Lower middle class": 381,
+      "Upper middle class": 183,
+      "Lower class": 121,
+      "Upper class": 15
+    }
+  }
+}

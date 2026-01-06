@@ -61,6 +61,8 @@ class ValuesPredictionController:
         storage_step: int = None,
         llm_server: str = "llm_platform",
         reasoning: bool = False,
+        extra_body: Dict = None,
+        prompt_append_format: bool = True
     ) -> None:
         """
         Initializes the ValuesPredictionController class with the specified parameters.
@@ -101,6 +103,7 @@ class ValuesPredictionController:
         self._dialogue_continue_value_questions = dialogue_continue_value_questions
         self._storage_step = storage_step
         self._reasoning = reasoning
+        self._extra_body = extra_body if extra_body is not None else {}
         if openai_client is None:
             if "gpt" in evaluated_model:
                 self._openai_client = AsyncOpenAI(api_key=os.environ["api_key"])
@@ -110,7 +113,7 @@ class ValuesPredictionController:
         else:
             self._openai_client = openai_client
 
-        self.prompt_append_format = False
+        self.prompt_append_format = prompt_append_format
         if llm_server == "llm_platform":
             self.query_llm = partial(
                 self.openai_client.chat.completions.create,
@@ -119,7 +122,6 @@ class ValuesPredictionController:
                 logprobs=True,
                 top_logprobs=5,
             )
-            self.prompt_append_format = True
         elif llm_server == "gpt" or llm_server == "sglang":
             self.query_llm = partial(
                 self.openai_client.chat.completions.create,
@@ -134,7 +136,6 @@ class ValuesPredictionController:
                 logprobs=True,
                 top_logprobs=5,
             )
-            self.prompt_append_format = True
         elif llm_server == "vllm":
             # use vllm
             self.query_llm = partial(
@@ -145,7 +146,6 @@ class ValuesPredictionController:
                 response_format={"type": "json_object"},
                 # extra_body={"guided_json": Response.model_json_schema()},
             )
-            self.prompt_append_format = True
         else:
             raise ValueError("invalid llm server type")
         self.llm_server = llm_server
@@ -330,6 +330,11 @@ class ValuesPredictionController:
             action="store_true",
             help="Define doing the reasoning",
         )
+        parser.add_argument(
+            "--prompt_append_format",
+            action="store_true",
+            help="In the first request append format",
+        )
         return parser
 
     @classmethod
@@ -385,6 +390,7 @@ class ValuesPredictionController:
             llm_server=args.llm_server,
             verbose=args.verbose,
             reasoning=args.reasoning,
+            prompt_append_format=args.prompt_append_format
         )
 
     def _normalize_logprobs(self, logprobs, all_tokens):
@@ -455,34 +461,45 @@ class ValuesPredictionController:
             question=full_question, option_list=options_str
         )
 
-        if self.reasoning:
-            reasoning_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=direct_value_selection_prompt,
-                temperature=0.6,  # default setting for reasoning model
-                max_tokens=4096,  # larger window
-            )
-
-            reasoning_output = reasoning_response.choices[0].message.content.split("</think>")[0]
-
-            direct_value_selection_prompt.append(
-                {
-                    "role": "assistant",
-                    "content": f"<think>\n{reasoning_output}\n</think>\n",
-                }
-            )
-
-            # direct_value_selection_prompt.append({
-            #     "role": "user",
-            #     "content": "Select the option for the question, given the reasoning."
-            # })
-        else:
-            reasoning_output = None
-
         if self.prompt_append_format:
             direct_value_selection_prompt.append(EXTRA_FORMAT)
 
-        full_chat_response = await self.query_llm(messages=direct_value_selection_prompt)
+        # Single API call - reasoning models return reasoning in separate field
+        if self.reasoning:
+            full_chat_response = await self.openai_client.chat.completions.create(
+                model=self.evaluated_model,
+                messages=direct_value_selection_prompt,
+                response_format={"type": "json_object"},
+                # logprobs=False,
+                # top_logprobs=5,
+                # temperature=0.6,  # default setting for reasoning model
+                max_tokens=4096,  # larger window
+                extra_body=self._extra_body,
+            )
+
+            # Extract reasoning from response if available
+            reasoning_output = None
+            if hasattr(full_chat_response.choices[0].message, 'reasoning') and full_chat_response.choices[0].message.reasoning:
+                reasoning_output = full_chat_response.choices[0].message.reasoning
+                logger.info("reasoning from reasoning")
+            elif hasattr(full_chat_response.choices[0].message, 'reasoning_content') and full_chat_response.choices[0].message.reasoning_content:
+                reasoning_output = full_chat_response.choices[0].message.reasoning_content
+                logger.info("reasoning from reasoning_content")
+            else:
+                # Fallback: try to extract from content with <think> tags
+                content = full_chat_response.choices[0].message.content
+                if "</think>" in content:
+                    reasoning_output = content.split("</think>")[0].replace("<think>", "").strip()
+                    direct_value_selection_prompt.append(
+                        {
+                            "role": "assistant",
+                            "content": f"<think>\n{reasoning_output}\n</think>\n",
+                        }
+                    )
+                    full_chat_response = await self.query_llm(messages=direct_value_selection_prompt)
+        else:
+            full_chat_response = await self.query_llm(messages=direct_value_selection_prompt)
+            reasoning_output = None
 
         (
             selected_option_id,
@@ -509,29 +526,45 @@ class ValuesPredictionController:
         )
         dialogue_based_msgs.append(dialogue_continue_prompt[2])
 
-        if self.reasoning:
-            reasoning_response = await self.openai_client.chat.completions.create(
-                model=self.evaluated_model,
-                messages=dialogue_based_msgs,
-                temperature=0.6,  # default setting for reasoning model
-                max_tokens=4096,  # larger window
-            )
-
-            reasoning_output = reasoning_response.choices[0].message.content.split("</think>")[0]
-
-            dialogue_based_msgs.append(
-                {
-                    "role": "assistant",
-                    "content": f"<think>\n{reasoning_output}\n</think>\n",
-                }
-            )
-        else:
-            reasoning_output = None
-
         if self.prompt_append_format:
             dialogue_based_msgs.append(EXTRA_FORMAT)
 
-        full_chat_response = await self.query_llm(messages=dialogue_based_msgs)
+        # Single API call - reasoning models return reasoning in separate field
+        if self.reasoning:
+            full_chat_response = await self.openai_client.chat.completions.create(
+                model=self.evaluated_model,
+                messages=dialogue_based_msgs,
+                response_format={"type": "json_object"},
+                # logprobs=True,
+                # top_logprobs=5,
+                # temperature=0.6,  # default setting for reasoning model
+                max_tokens=4096,  # larger window
+                extra_body=self._extra_body,
+            )
+
+            # Extract reasoning from response if available
+            reasoning_output = None
+            if hasattr(full_chat_response.choices[0].message, 'reasoning') and full_chat_response.choices[0].message.reasoning:
+                reasoning_output = full_chat_response.choices[0].message.reasoning
+                print("Extracted reasoning from 'reasoning' field")
+            elif hasattr(full_chat_response.choices[0].message, 'reasoning_content') and full_chat_response.choices[0].message.reasoning_content:
+                reasoning_output = full_chat_response.choices[0].message.reasoning_content
+                print("Extracted reasoning from 'reasoning_content' field")
+            else:
+                # Fallback: try to extract from content with <think> tags
+                content = full_chat_response.choices[0].message.content
+                if "</think>" in content:
+                    reasoning_output = content.split("</think>")[0].replace("<think>", "").strip()
+                    dialogue_based_msgs.append(
+                        {
+                            "role": "assistant",
+                            "content": f"<think>\n{reasoning_output}\n</think>\n",
+                        }
+                    )
+                    full_chat_response = await self.query_llm(messages=dialogue_based_msgs)
+        else:
+            full_chat_response = await self.query_llm(messages=dialogue_based_msgs)
+            reasoning_output = None
 
         (
             selected_option_id,

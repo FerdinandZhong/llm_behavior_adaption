@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "gap_threshold": 0.5,
+    "total_users": 1000,
+    "processed_users": 1000,
+    "skipped_users": 0,
+    "total_questions": 55000,
+    "original_gaps": 40976,
+    "queried_gaps": 13527,
+    "skipped_gaps": 27449,
+    "adapted_gaps": 13519,
+    "remaining_gaps_after_adaptation": 8,
+    "total_remaining_gaps": 27457,
+    "adaptation_rate_percent": 99.94,
+    "remaining_gap_rate_percent": 0.06,
+    "original_accuracy_percent": 25.5,
+    "post_adaptation_accuracy_percent": 50.08
+  },
+  "correlation": {
+    "before_adaptation": {
+      "correlation": 0.5530515620332058,
+      "p_value": 0.0,
+      "n_samples": 53160
+    },
+    "after_adaptation": {
+      "correlation": 0.8580547500699517,
+      "p_value": 0.0,
+      "n_samples": 53160
+    },
+    "improvement": {
+      "correlation_delta": 0.305
+    }
+  }
+}
