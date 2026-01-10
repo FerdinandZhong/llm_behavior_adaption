@@ -1,0 +1,26 @@
+# Investment Dialogue Translation Configuration
+# This config translates investment advice dialogues based on user profiles
+
+# Input/Output paths
+input_file_path: "datasets/generated_dialogues/investment_dialogues.jsonl"
+output_file_path: "datasets/translated_dialogues/investment_translated.jsonl"
+
+# User profiles for language selection
+# The CSV should contain columns: place_of_residence, place_of_birth (or country_of_birth)
+user_profiles_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+
+# Translation settings
+translation_model: "gpt-4.1-mini"  # Options: gpt-4.1-mini, gpt-5-mini, gpt-4o, etc.
+translation_temperature: 0.3  # Lower = more consistent translations
+
+# Processing options
+max_dialogues: null  # null means translate all, or specify a number for testing
+batch_size: 10  # Number of dialogues to process before flushing to disk
+verbose: 1  # 0=quiet, 1=info, 2=debug
+
+# Range control (for resuming interrupted translations)
+starting_row: 0  # Starting row index (0-indexed, inclusive)
+ending_row: null  # Ending row index (exclusive, null means till end)
+
+# OpenAI API key (or use OPENAI_API_KEY environment variable)
+# openai_api_key: "sk-..."
