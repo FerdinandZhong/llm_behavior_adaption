@@ -1,0 +1,37 @@
+# Production configuration for scam adaptation with Qwen3-30B-A3B-Instruct
+# Tests full dataset on career questions
+
+# Dataset paths
+user_profile_dataset_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"
+human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"
+
+# Output path
+output_file_path: "wvs_values_results/Qwen3-30B-A3B-Instruct/scam_adaptation/career/results.jsonl"
+
+# Prompts folder
+prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"
+
+# Model configuration
+evaluated_model: "qwen/qwen3-30b-a3b-instruct-2507"
+llm_server: "llm_platform"
+model_base_url: "https://openrouter.ai/api/v1"
+
+# Run on all users
+starting_row: 0
+ending_row: -1
+
+# Storage step for periodic saves
+storage_step: 50
+
+# Verbose logging
+verbose: 1
+
+# Reasoning disabled for faster processing
+reasoning: false
+
+# Extra API parameters
+extra_body:
+  provider:
+    only:
+      - atlas-cloud/bf16

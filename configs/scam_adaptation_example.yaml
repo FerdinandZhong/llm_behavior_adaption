@@ -1,0 +1,33 @@
+# Example configuration for scam adaptation experiment
+# This tests whether models will switch to wrong answers (scam options) that belong to neither model nor human
+
+# Dataset paths
+user_profile_dataset_path: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"
+
+# Output path
+output_file_path: "results/scam_adaptation/model_name_scam.jsonl"
+
+# Prompts folder containing the feedback templates
+prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"
+
+# Model configuration
+evaluated_model: "your-model-name"  # e.g., "gpt-4", "claude-3-sonnet", etc.
+llm_server: "llm_platform"  # Options: "llm_platform", "gpt", "vllm", "sglang"
+
+# Optional: Dataset slicing (useful for testing)
+starting_row: 0
+ending_row: -1  # -1 means all rows
+
+# Optional: Storage settings
+storage_step: 10  # Save progress every N users (null to save only at end)
+
+# Optional: Verbose logging
+verbose: 1  # 0 = errors only, 1 = detailed logs
+
+# Optional: For reasoning models (o1, o3, etc.)
+reasoning: false
+
+# Optional: Extra API parameters (if needed)
+# extra_body:
+#   temperature: 0.7

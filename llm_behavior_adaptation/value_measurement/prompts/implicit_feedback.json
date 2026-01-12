@@ -1,0 +1,10 @@
+[
+    {
+        "role": "system",
+        "content": "You are a helpful assistant having a thoughtful conversation about personal values and preferences. The user has expressed uncertainty about your previous response. Re-examine the conversation carefully and reconsider whether your answer truly reflects the user's values based on everything they've shared.\n\n## Output Format\nReturn a single JSON object with *exactly* the following two fields, in this order:\n- \"option_id\": An integer indicating which option best represents the user's values after reconsideration.\n- \"reason\": A string explaining your reasoning, with specific references to the conversation context.\n- \"confidence\": A string indicating your confidence level: \"high\", \"medium\", or \"low\".\n\nNo other fields are permitted in the response. Keys must maintain the order specified:\n\n{\n  \"option_id\": int,\n  \"reason\": str,\n  \"confidence\": str\n}"
+    },
+    {
+        "role": "user",
+        "content": "Hmm, I'm not entirely sure that answer fits me. Can you think about it again based on what we've discussed?"
+    }
+]

@@ -14,12 +14,9 @@ import pandas as pd
 import yaml
 from openai import AsyncOpenAI
 from pydantic import BaseModel
-from scipy.stats import pearsonr
 from tqdm.asyncio import tqdm
 
-from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import (
-    load_json_folder,
-)
+from llm_behavior_adaptation.dialogue_dataset_creation.generation_utils import load_json_folder
 from llm_behavior_adaptation.utils import register_logger
 
 logger = logging.getLogger(__name__)
@@ -38,7 +35,7 @@ def setup_file_logging(output_file_path: str, logger: logging.Logger) -> None:
     log_file_path = output_file_path.replace(".jsonl", ".log")
 
     # Create file handler with detailed formatting
-    file_handler = logging.FileHandler(log_file_path, mode='a', encoding='utf-8')
+    file_handler = logging.FileHandler(log_file_path, mode="a", encoding="utf-8")
     file_formatter = logging.Formatter(
         "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s"
     )
@@ -51,6 +48,7 @@ def setup_file_logging(output_file_path: str, logger: logging.Logger) -> None:
         logger.info("=" * 80)
         logger.info("Gap analysis logging started - log file: %s", log_file_path)
         logger.info("=" * 80)
+
 
 DATASET_DIR = "datasets/wvs_benchmarks"
 
@@ -75,6 +73,7 @@ def load_jsonl_file(file_path: str) -> List[Dict]:
 
 class Response(BaseModel):
     """Response schema for LLM output."""
+
     option_id: int
     reason: str
 
@@ -222,9 +221,9 @@ class GapAnalysisController:
 
         # Apply slicing to BA results
         if self._ending_row is not None and self._ending_row >= 0:
-            ba_results_list = ba_results_list[self._starting_row:self._ending_row]
+            ba_results_list = ba_results_list[self._starting_row : self._ending_row]
         else:
-            ba_results_list = ba_results_list[self._starting_row:]
+            ba_results_list = ba_results_list[self._starting_row :]
 
         self._ba_dialogue_results = self._process_model_outputs(ba_results_list)
 
@@ -233,17 +232,14 @@ class GapAnalysisController:
             "Loaded BA dialogue results: rows %d to %s (%d users)",
             self._starting_row,
             ending_display,
-            len(self._ba_dialogue_results)
+            len(self._ba_dialogue_results),
         )
 
         # Load human results
         human_df = pd.read_csv(self._human_results_path)
         human_df = human_df.loc[:, ~human_df.columns.str.contains("^Unnamed")]
         self._human_results = (
-            human_df.astype({"D_INTERVIEW": str})
-            .groupby("D_INTERVIEW", as_index=True)
-            .last()
-            .to_dict(orient="index")
+            human_df.astype({"D_INTERVIEW": str}).groupby("D_INTERVIEW", as_index=True).last().to_dict(orient="index")
         )
 
         # Load generated dialogues
@@ -252,9 +248,9 @@ class GapAnalysisController:
 
             # Apply slicing to dialogues
             if self._ending_row is not None and self._ending_row >= 0:
-                all_dialogues = all_dialogues[self._starting_row:self._ending_row]
+                all_dialogues = all_dialogues[self._starting_row : self._ending_row]
             else:
-                all_dialogues = all_dialogues[self._starting_row:]
+                all_dialogues = all_dialogues[self._starting_row :]
 
             dialogue_list = [json.loads(dialogue) for dialogue in all_dialogues]
             self._generated_dialogues = {k: v for d in dialogue_list for k, v in d.items()}
@@ -270,7 +266,7 @@ class GapAnalysisController:
             logger.warning(
                 "Found %d user(s) in BA results but not in generated dialogues: %s",
                 len(missing_dialogues),
-                sorted(list(missing_dialogues))
+                sorted(list(missing_dialogues)),
             )
             logger.warning(
                 "These users will be skipped during gap analysis. "
@@ -479,9 +475,7 @@ class GapAnalysisController:
 
         if len(predicted_values) != len(human_values):
             logger.warning(
-                "Mismatch in value counts: predicted=%d, human=%d",
-                len(predicted_values),
-                len(human_values)
+                "Mismatch in value counts: predicted=%d, human=%d", len(predicted_values), len(human_values)
             )
             return {"correlation": None, "p_value": None, "n_samples": 0}
 
@@ -509,11 +503,7 @@ class GapAnalysisController:
 
         # Guard against constant vectors (zero variance)
         if np.allclose(x, x[0]) or np.allclose(y, y[0]):
-            logger.warning(
-                "Constant vector detected: x_std=%.6f, y_std=%.6f",
-                np.std(x),
-                np.std(y)
-            )
+            logger.warning("Constant vector detected: x_std=%.6f, y_std=%.6f", np.std(x), np.std(y))
             return {"correlation": None, "p_value": None, "n_samples": len(x)}
 
         # Numerically stable Pearson correlation (from wvs_values_comparison.py)
@@ -531,6 +521,7 @@ class GapAnalysisController:
         # Compute p-value using scipy if available
         try:
             from scipy.stats import pearsonr as scipy_pearsonr
+
             _, p_value = scipy_pearsonr(x, y)
             p_value = float(p_value)
         except ImportError:
@@ -540,11 +531,7 @@ class GapAnalysisController:
             logger.warning("Could not compute p-value: %s", str(e))
             p_value = None
 
-        return {
-            "correlation": r,
-            "p_value": p_value,
-            "n_samples": len(x)
-        }
+        return {"correlation": r, "p_value": p_value, "n_samples": len(x)}
 
     async def _generate_gap_rationale(
         self,
@@ -575,8 +562,7 @@ class GapAnalysisController:
         # Prepare dialogue context - convert chatbot role to assistant
         dialogue_based_msgs = deepcopy(dialogue_history)
         dialogue_based_msgs = [
-            {**m, "role": "assistant"} if m.get("role") == "chatbot" else m
-            for m in dialogue_based_msgs
+            {**m, "role": "assistant"} if m.get("role") == "chatbot" else m for m in dialogue_based_msgs
         ]
 
         # Insert the full dialogue context before the user's feedback
@@ -589,16 +575,12 @@ class GapAnalysisController:
         assistant_response = f"For this question:\n\n{full_question}\n\n"
         assistant_response += json.dumps(ba_answer, ensure_ascii=False)
 
-        full_messages.append({
-            "role": "assistant",
-            "content": assistant_response
-        })
+        full_messages.append({"role": "assistant", "content": assistant_response})
 
         # Add user's feedback (hint at preferring the human option)
-        full_messages.append({
-            "role": "user",
-            "content": gap_rationale_prompt[1]["content"].format(human_option_id=human_option_id)
-        })
+        full_messages.append(
+            {"role": "user", "content": gap_rationale_prompt[1]["content"].format(human_option_id=human_option_id)}
+        )
 
         structured_output = await self._retry_llm(
             lambda: self._llm_output_processing(full_messages=full_messages, reasoning=self.reasoning),
@@ -736,7 +718,7 @@ class GapAnalysisController:
                             user_gaps.update(rationale)
 
                         # Count remaining gaps (where model didn't change to human option)
-                        for question_id, gap_info in user_gaps.items():
+                        for _question_id, gap_info in user_gaps.items():
                             adapted_option = gap_info["gap_rationale"]["option_id"]
                             human_option = gap_info["human_option_id"]
                             if adapted_option != human_option:
@@ -783,14 +765,8 @@ class GapAnalysisController:
 
             # Compute Pearson correlations
             logger.info("Computing Pearson correlations...")
-            before_correlation = self._compute_correlation(
-                before_adaptation_predicted,
-                before_adaptation_human
-            )
-            after_correlation = self._compute_correlation(
-                after_adaptation_predicted,
-                after_adaptation_human
-            )
+            before_correlation = self._compute_correlation(before_adaptation_predicted, before_adaptation_human)
+            after_correlation = self._compute_correlation(after_adaptation_predicted, after_adaptation_human)
 
             stats = {
                 "summary": {
@@ -807,16 +783,29 @@ class GapAnalysisController:
                     "total_remaining_gaps": total_remaining_gaps,
                     "adaptation_rate_percent": round(adaptation_rate, 2),
                     "remaining_gap_rate_percent": round(remaining_rate, 2),
-                    "original_accuracy_percent": round((total_questions - original_gaps) / total_questions * 100, 2) if total_questions > 0 else 0,
-                    "post_adaptation_accuracy_percent": round((total_questions - total_remaining_gaps) / total_questions * 100, 2) if total_questions > 0 else 0,
+                    "original_accuracy_percent": (
+                        round((total_questions - original_gaps) / total_questions * 100, 2)
+                        if total_questions > 0
+                        else 0
+                    ),
+                    "post_adaptation_accuracy_percent": (
+                        round((total_questions - total_remaining_gaps) / total_questions * 100, 2)
+                        if total_questions > 0
+                        else 0
+                    ),
                 },
                 "correlation": {
                     "before_adaptation": before_correlation,
                     "after_adaptation": after_correlation,
                     "improvement": {
-                        "correlation_delta": round(after_correlation["correlation"] - before_correlation["correlation"], 4) if before_correlation["correlation"] is not None and after_correlation["correlation"] is not None else None
-                    }
-                }
+                        "correlation_delta": (
+                            round(after_correlation["correlation"] - before_correlation["correlation"], 4)
+                            if before_correlation["correlation"] is not None
+                            and after_correlation["correlation"] is not None
+                            else None
+                        )
+                    },
+                },
             }
 
             # Save statistics to a separate JSON file
@@ -834,40 +823,61 @@ class GapAnalysisController:
             logger.info("  Ending row: %s", self._ending_row if self._ending_row is not None else "end")
             logger.info("")
             logger.info("User Statistics:")
-            logger.info("  Total users in BA results: %d", len(self.ba_dialogue_results))
+            logger.info("  Total users: %d", len(self.ba_dialogue_results))
             logger.info("  Successfully processed users: %d", len(self.ba_dialogue_results) - skipped_users)
             logger.info("  Skipped users (missing data): %d", skipped_users)
             logger.info("")
             logger.info("Question Statistics:")
             logger.info("  Total questions processed: %d", total_questions)
-            logger.info("  Original gaps (model != human): %d (%.2f%%)", original_gaps, (original_gaps / total_questions * 100) if total_questions > 0 else 0)
-            logger.info("    - Queried gaps (>= threshold): %d (%.2f%% of gaps)", queried_gaps, (queried_gaps / original_gaps * 100) if original_gaps > 0 else 0)
-            logger.info("    - Skipped gaps (< threshold): %d (%.2f%% of gaps)", skipped_gaps, (skipped_gaps / original_gaps * 100) if original_gaps > 0 else 0)
+            logger.info(
+                "  Original gaps (model != human): %d (%.2f%%)",
+                original_gaps,
+                (original_gaps / total_questions * 100) if total_questions > 0 else 0,
+            )
+            logger.info(
+                "    - Queried gaps (>= threshold): %d (%.2f%% of gaps)",
+                queried_gaps,
+                (queried_gaps / original_gaps * 100) if original_gaps > 0 else 0,
+            )
+            logger.info(
+                "    - Skipped gaps (< threshold): %d (%.2f%% of gaps)",
+                skipped_gaps,
+                (skipped_gaps / original_gaps * 100) if original_gaps > 0 else 0,
+            )
             logger.info("")
             logger.info("Adaptation Results:")
-            logger.info("  Gaps adapted (model changed to human): %d (%.2f%% of queried)", adapted_gaps, adaptation_rate)
+            logger.info(
+                "  Gaps adapted (model changed to human): %d (%.2f%% of queried)", adapted_gaps, adaptation_rate
+            )
             logger.info("  Remaining gaps after adaptation: %d (%.2f%% of queried)", remaining_gaps, remaining_rate)
             logger.info("  Total remaining gaps (skipped + unadapted): %d", total_remaining_gaps)
             logger.info("")
             logger.info("Accuracy Metrics:")
             logger.info("  Original accuracy: %.2f%%", stats["summary"]["original_accuracy_percent"])
             logger.info("  Post-adaptation accuracy: %.2f%%", stats["summary"]["post_adaptation_accuracy_percent"])
-            logger.info("  Accuracy improvement: %.2f%%", stats["summary"]["post_adaptation_accuracy_percent"] - stats["summary"]["original_accuracy_percent"])
+            logger.info(
+                "  Accuracy improvement: %.2f%%",
+                stats["summary"]["post_adaptation_accuracy_percent"] - stats["summary"]["original_accuracy_percent"],
+            )
             logger.info("")
             logger.info("Pearson Correlation (Predicted vs Human):")
             if before_correlation["correlation"] is not None:
-                logger.info("  Before adaptation: r = %.4f (p = %.4e, n = %d)",
-                          before_correlation["correlation"],
-                          before_correlation["p_value"],
-                          before_correlation["n_samples"])
+                logger.info(
+                    "  Before adaptation: r = %.4f (p = %.4e, n = %d)",
+                    before_correlation["correlation"],
+                    before_correlation["p_value"] if before_correlation["p_value"] is not None else 0,
+                    before_correlation["n_samples"],
+                )
             else:
                 logger.info("  Before adaptation: N/A (insufficient data)")
 
             if after_correlation["correlation"] is not None:
-                logger.info("  After adaptation:  r = %.4f (p = %.4e, n = %d)",
-                          after_correlation["correlation"],
-                          after_correlation["p_value"],
-                          after_correlation["n_samples"])
+                logger.info(
+                    "  After adaptation:  r = %.4f (p = %.4e, n = %d)",
+                    after_correlation["correlation"],
+                    after_correlation["p_value"] if after_correlation["p_value"] is not None else 0,
+                    after_correlation["n_samples"],
+                )
             else:
                 logger.info("  After adaptation: N/A (insufficient data)")
 
