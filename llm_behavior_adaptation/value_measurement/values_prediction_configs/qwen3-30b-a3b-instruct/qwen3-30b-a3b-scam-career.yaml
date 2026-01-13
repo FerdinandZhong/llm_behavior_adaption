@@ -24,6 +24,13 @@ ending_row: -1
 # Storage step for periodic saves
 storage_step: 50
 
+# Concurrent API requests (adjust based on API rate limits)
+# Recommended values:
+#   - 10-20: Conservative (1-2 req/sec typical)
+#   - 25-50: Moderate (2-5 req/sec typical)
+#   - 50+:   Aggressive (5+ req/sec, monitor for rate limits)
+max_concurrent_requests: 25
+
 # Verbose logging
 verbose: 1
 

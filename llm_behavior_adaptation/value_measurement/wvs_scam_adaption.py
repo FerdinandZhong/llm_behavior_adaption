@@ -88,6 +88,7 @@ class ScamAdaptationController:
         llm_server: str = "llm_platform",
         reasoning: bool = False,
         extra_body: Dict = None,
+        max_concurrent_requests: int = 10,
     ) -> None:
         """
         Initialize the ScamAdaptationController.
@@ -105,6 +106,8 @@ class ScamAdaptationController:
             llm_server: One of {"llm_platform", "gpt", "vllm", "sglang"}.
             reasoning: Whether the tested model is a reasoning model.
             extra_body: Additional parameters for API calls.
+            max_concurrent_requests: Maximum concurrent API requests (default: 10). Higher values
+                increase throughput but may hit API rate limits. Recommended: 25-50.
 
         Raises:
             ValueError: If required arguments are invalid or missing.
@@ -132,6 +135,7 @@ class ScamAdaptationController:
         self._verbose = verbose
         self._storage_step = storage_step
         self._reasoning = reasoning
+        self._max_concurrent_requests = max_concurrent_requests
 
         # Setup file logging
         setup_file_logging(output_file_path, logger)
@@ -251,6 +255,32 @@ class ScamAdaptationController:
     def all_questions(self) -> Dict:
         return self._all_questions
 
+    # Concurrency helper
+    async def _gather_with_limit(self, tasks: List, max_concurrent: Optional[int] = None):
+        """
+        Run async tasks with concurrency limit using semaphore.
+
+        Args:
+            tasks: List of coroutines/tasks to run
+            max_concurrent: Maximum concurrent tasks. If None, uses self._max_concurrent_requests
+
+        Returns:
+            List of results in same order as input tasks
+        """
+        if max_concurrent is None:
+            max_concurrent = self._max_concurrent_requests
+
+        if not tasks:
+            return []
+
+        semaphore = asyncio.Semaphore(max_concurrent)
+
+        async def bounded_task(task):
+            async with semaphore:
+                return await task
+
+        return await asyncio.gather(*[bounded_task(t) for t in tasks])
+
     # Retry helper
     async def _retry_llm(self, call_factory, *, max_attempts: int = 3, base_delay: float = 1.0):
         """Retry wrapper for LLM calls with exponential backoff and jitter."""
@@ -360,6 +390,7 @@ class ScamAdaptationController:
             verbose=int(cfg.get("verbose", 0) or 0),
             reasoning=bool(cfg.get("reasoning", False)),
             extra_body=cfg.get("extra_body"),
+            max_concurrent_requests=int(cfg.get("max_concurrent_requests", 10) or 10),
         )
 
     def _prompt(self, key: str) -> list[dict]:
@@ -662,8 +693,8 @@ class ScamAdaptationController:
                                 }
                             )
 
-                        initial_responses = await asyncio.gather(
-                            *[self._initial_value_query(**kwargs) for kwargs in initial_kwargs]
+                        initial_responses = await self._gather_with_limit(
+                            [self._initial_value_query(**kwargs) for kwargs in initial_kwargs]
                         )
 
                         # Step 2: Identify gaps and scam options
@@ -740,8 +771,8 @@ class ScamAdaptationController:
                         # Step 3: Test scam questions
                         scam_responses = []
                         if scam_kwargs:
-                            scam_responses = await asyncio.gather(
-                                *[self._scam_query(**kwargs) for kwargs in scam_kwargs]
+                            scam_responses = await self._gather_with_limit(
+                                [self._scam_query(**kwargs) for kwargs in scam_kwargs]
                             )
 
                         # Store results
