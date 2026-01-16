@@ -2,8 +2,8 @@
 # This config translates investment advice dialogues based on user profiles
 
 # Input/Output paths
-input_file_path: "datasets/generated_dialogues/investment_dialogues.jsonl"
-output_file_path: "datasets/translated_dialogues/investment_translated.jsonl"
+input_file_path: "datasets/wvs_generated_dialogues/investment_advice/all_samples.jsonl"
+output_file_path: "wvs_generated_dialogues/translated_dialogues/investment/investment_translated.jsonl"
 
 # User profiles for language selection
 # The CSV should contain columns: place_of_residence, place_of_birth (or country_of_birth)
@@ -19,7 +19,7 @@ batch_size: 10  # Number of dialogues to process before flushing to disk
 verbose: 1  # 0=quiet, 1=info, 2=debug
 
 # Range control (for resuming interrupted translations)
-starting_row: 0  # Starting row index (0-indexed, inclusive)
+starting_row: 680  # Starting row index (0-indexed, inclusive)
 ending_row: null  # Ending row index (exclusive, null means till end)
 
 # OpenAI API key (or use OPENAI_API_KEY environment variable)

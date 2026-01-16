@@ -18,18 +18,18 @@ llm_server: "llm_platform"
 model_base_url: "https://openrouter.ai/api/v1"
 
 # Run on all users
-starting_row: 0
+starting_row: 880
 ending_row: -1
 
 # Storage step for periodic saves
-storage_step: 50
+storage_step: 10
 
 # Concurrent API requests (adjust based on API rate limits)
 # Recommended values:
 #   - 10-20: Conservative (1-2 req/sec typical)
 #   - 25-50: Moderate (2-5 req/sec typical)
 #   - 50+:   Aggressive (5+ req/sec, monitor for rate limits)
-max_concurrent_requests: 25
+max_concurrent_requests: 50
 
 # Verbose logging
 verbose: 1
@@ -42,3 +42,4 @@ extra_body:
   provider:
     only:
       - atlas-cloud/bf16
+      - nebius/fp8

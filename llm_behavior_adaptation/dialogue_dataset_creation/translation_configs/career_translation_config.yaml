@@ -19,7 +19,7 @@ batch_size: 1  # Number of dialogues to process before flushing to disk
 verbose: 2  # 0=quiet, 1=info, 2=debug
 
 # Range control (for resuming interrupted translations)
-starting_row: 492  # Starting row index (0-indexed, inclusive)
+starting_row: 785  # Starting row index (0-indexed, inclusive)
 ending_row: 1000  # Ending row index (exclusive, null means till end)
 
 # OpenAI API key (or use OPENAI_API_KEY environment variable)
