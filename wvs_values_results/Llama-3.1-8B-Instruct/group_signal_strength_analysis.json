@@ -1,0 +1,408 @@
+{
+  "human": {
+    "age": {
+      "within_mean": 13.495071428571428,
+      "within_n": 1000,
+      "between_mean": 4.557936507936508,
+      "between_n": 10,
+      "between_over_within": 0.33774823142370025,
+      "residual_ratio": 0.9863121684083281,
+      "permutation_test": {
+        "observed_ratio": 0.33774823142370025,
+        "permuted_mean": 0.21904085677718826,
+        "permuted_std": 0.018633135656674203,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    },
+    "continent_of_residence": {
+      "within_mean": 12.925492063492063,
+      "within_n": 1000,
+      "between_mean": 9.732010582010583,
+      "between_n": 15,
+      "between_over_within": 0.7529315351559078,
+      "residual_ratio": 0.9446834107077446,
+      "permutation_test": {
+        "observed_ratio": 0.7529315351559078,
+        "permuted_mean": 0.27794151031119585,
+        "permuted_std": 0.023110153758697693,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    },
+    "immigration_status": {
+      "within_mean": 13.633925586282658,
+      "within_n": 997,
+      "between_mean": 7.182539682539682,
+      "between_n": 1,
+      "between_over_within": 0.5268137659315206,
+      "residual_ratio": 0.9955793262439794,
+      "permutation_test": {
+        "observed_ratio": 0.5268137659315206,
+        "permuted_mean": 0.2947011109798129,
+        "permuted_std": 0.05911639908738835,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    },
+    "highest_level_of_education": {
+      "within_mean": 13.30694841269841,
+      "within_n": 1000,
+      "between_mean": 5.8428571428571425,
+      "between_n": 10,
+      "between_over_within": 0.43908317381628115,
+      "residual_ratio": 0.9725628510597446,
+      "permutation_test": {
+        "observed_ratio": 0.43908317381628115,
+        "permuted_mean": 0.24990110071416033,
+        "permuted_std": 0.02273810891831777,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    },
+    "socioeconomic_status": {
+      "within_mean": 13.53938336242001,
+      "within_n": 955,
+      "between_mean": 7.15952380952381,
+      "between_n": 10,
+      "between_over_within": 0.5287924581111888,
+      "residual_ratio": 0.9857247269462266,
+      "permutation_test": {
+        "observed_ratio": 0.5287924581111888,
+        "permuted_mean": 0.30694870392676077,
+        "permuted_std": 0.029601875280111645,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    },
+    "occupation_group": {
+      "within_mean": 13.371260195620536,
+      "within_n": 938,
+      "between_mean": 5.244973544973545,
+      "between_n": 15,
+      "between_over_within": 0.3922572344147055,
+      "residual_ratio": 0.9758456477829669,
+      "permutation_test": {
+        "observed_ratio": 0.3922572344147055,
+        "permuted_mean": 0.24401342151716282,
+        "permuted_std": 0.017991513182417793,
+        "p_value": 0.0,
+        "n_permutations": 200
+      }
+    }
+  },
+  "models": {
+    "ba_user": {
+      "age": {
+        "within_mean": 10.068103174603173,
+        "within_n": 1000,
+        "between_mean": 1.496031746031746,
+        "between_n": 10,
+        "between_over_within": 0.148591221214885,
+        "residual_ratio": 0.9939964411166211,
+        "vs_human_ratio": 0.43994670405388286,
+        "residual_vs_human": 1.0077909134191192,
+        "permutation_test": {
+          "observed_ratio": 0.148591221214885,
+          "permuted_mean": 0.10467846682811269,
+          "permuted_std": 0.018543798530051833,
+          "p_value": 0.005,
+          "n_permutations": 200
+        }
+      },
+      "continent_of_residence": {
+        "within_mean": 10.057059523809524,
+        "within_n": 1000,
+        "between_mean": 2.77989417989418,
+        "between_n": 15,
+        "between_over_within": 0.27641222300742446,
+        "residual_ratio": 0.9929061315125726,
+        "vs_human_ratio": 0.36711468453793533,
+        "residual_vs_human": 1.0510464355129303,
+        "permutation_test": {
+          "observed_ratio": 0.27641222300742446,
+          "permuted_mean": 0.15827840588831074,
+          "permuted_std": 0.024632476550855032,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "immigration_status": {
+        "within_mean": 10.113781821655442,
+        "within_n": 997,
+        "between_mean": 1.8333333333333333,
+        "between_n": 1,
+        "between_over_within": 0.18127080113670577,
+        "residual_ratio": 0.9987893590953526,
+        "vs_human_ratio": 0.34408896057638094,
+        "residual_vs_human": 1.0032242863695089,
+        "permutation_test": {
+          "observed_ratio": 0.18127080113670577,
+          "permuted_mean": 0.162240995177558,
+          "permuted_std": 0.057289059879942685,
+          "p_value": 0.38,
+          "n_permutations": 200
+        }
+      },
+      "highest_level_of_education": {
+        "within_mean": 9.976912698412697,
+        "within_n": 1000,
+        "between_mean": 2.555555555555556,
+        "between_n": 10,
+        "between_over_within": 0.2561469296972137,
+        "residual_ratio": 0.9849934534410766,
+        "vs_human_ratio": 0.5833676737619404,
+        "residual_vs_human": 1.012781284384641,
+        "permutation_test": {
+          "observed_ratio": 0.2561469296972137,
+          "permuted_mean": 0.12833681273895675,
+          "permuted_std": 0.02172350437447948,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "socioeconomic_status": {
+        "within_mean": 9.947257541760157,
+        "within_n": 955,
+        "between_mean": 3.327777777777778,
+        "between_n": 10,
+        "between_over_within": 0.3345422357677221,
+        "residual_ratio": 0.9838521156108132,
+        "vs_human_ratio": 0.6326531905592687,
+        "residual_vs_human": 0.9981002694928687,
+        "permutation_test": {
+          "observed_ratio": 0.3345422357677221,
+          "permuted_mean": 0.19550579083541827,
+          "permuted_std": 0.031059662768055205,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "occupation_group": {
+        "within_mean": 9.871683250414591,
+        "within_n": 938,
+        "between_mean": 2.9444444444444446,
+        "between_n": 15,
+        "between_over_within": 0.2982717708573949,
+        "residual_ratio": 0.9770328533367721,
+        "vs_human_ratio": 0.7603983934227546,
+        "residual_vs_human": 1.0012165915342273,
+        "permutation_test": {
+          "observed_ratio": 0.2982717708573949,
+          "permuted_mean": 0.1319584072400543,
+          "permuted_std": 0.017038412031134004,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      }
+    },
+    "ba_dialogue_career": {
+      "age": {
+        "within_mean": 10.045626984126985,
+        "within_n": 1000,
+        "between_mean": 1.4404761904761902,
+        "between_n": 10,
+        "between_over_within": 0.14339335839886103,
+        "residual_ratio": 0.9962221055622414,
+        "vs_human_ratio": 0.42455694821678025,
+        "residual_vs_human": 1.0100474651650153,
+        "permutation_test": {
+          "observed_ratio": 0.14339335839886103,
+          "permuted_mean": 0.14546349829138056,
+          "permuted_std": 0.01507599266264306,
+          "p_value": 0.535,
+          "n_permutations": 200
+        }
+      },
+      "continent_of_residence": {
+        "within_mean": 9.973297619047619,
+        "within_n": 1000,
+        "between_mean": 3.47010582010582,
+        "between_n": 15,
+        "between_over_within": 0.3479396637555865,
+        "residual_ratio": 0.9890492220292174,
+        "vs_human_ratio": 0.4621132832263951,
+        "residual_vs_human": 1.0469636820320942,
+        "permutation_test": {
+          "observed_ratio": 0.3479396637555865,
+          "permuted_mean": 0.1953559784932225,
+          "permuted_std": 0.02505070372697487,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "immigration_status": {
+        "within_mean": 10.078433713839932,
+        "within_n": 997,
+        "between_mean": 2.611111111111111,
+        "between_n": 1,
+        "between_over_within": 0.2590790578426363,
+        "residual_ratio": 0.9994805526982444,
+        "vs_human_ratio": 0.49178490502147093,
+        "residual_vs_human": 1.0039185490813507,
+        "permutation_test": {
+          "observed_ratio": 0.2590790578426363,
+          "permuted_mean": 0.22334030937748736,
+          "permuted_std": 0.05538708475979453,
+          "p_value": 0.28,
+          "n_permutations": 200
+        }
+      },
+      "highest_level_of_education": {
+        "within_mean": 10.037781746031746,
+        "within_n": 1000,
+        "between_mean": 1.78015873015873,
+        "between_n": 10,
+        "between_over_within": 0.1773458295068513,
+        "residual_ratio": 0.9954440954264653,
+        "vs_human_ratio": 0.40390030883090816,
+        "residual_vs_human": 1.023526751347523,
+        "permutation_test": {
+          "observed_ratio": 0.1773458295068513,
+          "permuted_mean": 0.17100666555638952,
+          "permuted_std": 0.023229727666942843,
+          "p_value": 0.39,
+          "n_permutations": 200
+        }
+      },
+      "socioeconomic_status": {
+        "within_mean": 10.036786337571678,
+        "within_n": 955,
+        "between_mean": 2.479365079365079,
+        "between_n": 10,
+        "between_over_within": 0.24702778319429106,
+        "residual_ratio": 0.9945775835020849,
+        "vs_human_ratio": 0.467154512900312,
+        "residual_vs_human": 1.0089810636923804,
+        "permutation_test": {
+          "observed_ratio": 0.24702778319429106,
+          "permuted_mean": 0.22734744136599047,
+          "permuted_std": 0.03263679941995175,
+          "p_value": 0.275,
+          "n_permutations": 200
+        }
+      },
+      "occupation_group": {
+        "within_mean": 9.971253426743832,
+        "within_n": 938,
+        "between_mean": 2.253968253968254,
+        "between_n": 15,
+        "between_over_within": 0.2260466320034451,
+        "residual_ratio": 0.9904496044025864,
+        "vs_human_ratio": 0.5762714162320897,
+        "residual_vs_human": 1.0149654370573855,
+        "permutation_test": {
+          "observed_ratio": 0.2260466320034451,
+          "permuted_mean": 0.16233169055449806,
+          "permuted_std": 0.017531983900213852,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      }
+    },
+    "ba_dialogue_investment": {
+      "age": {
+        "within_mean": 9.216984126984126,
+        "within_n": 1000,
+        "between_mean": 1.7634920634920632,
+        "between_n": 10,
+        "between_over_within": 0.1913307041865431,
+        "residual_ratio": 0.9924502713056899,
+        "vs_human_ratio": 0.566489137130437,
+        "residual_vs_human": 1.0062232861906866,
+        "permutation_test": {
+          "observed_ratio": 0.1913307041865431,
+          "permuted_mean": 0.11551781898400744,
+          "permuted_std": 0.021783650148177475,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "continent_of_residence": {
+        "within_mean": 9.170345238095237,
+        "within_n": 1000,
+        "between_mean": 2.7687830687830686,
+        "between_n": 15,
+        "between_over_within": 0.30192789877539766,
+        "residual_ratio": 0.9874283707259045,
+        "vs_human_ratio": 0.4010031253543898,
+        "residual_vs_human": 1.0452479206617336,
+        "permutation_test": {
+          "observed_ratio": 0.30192789877539766,
+          "permuted_mean": 0.17537000799870242,
+          "permuted_std": 0.027925294927968122,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "immigration_status": {
+        "within_mean": 9.28005046886692,
+        "within_n": 997,
+        "between_mean": 1.7777777777777777,
+        "between_n": 1,
+        "between_over_within": 0.1915698393820095,
+        "residual_ratio": 0.9993519265825402,
+        "vs_human_ratio": 0.363638636213829,
+        "residual_vs_human": 1.0037893518267336,
+        "permutation_test": {
+          "observed_ratio": 0.1915698393820095,
+          "permuted_mean": 0.164339395410938,
+          "permuted_std": 0.06330099591648103,
+          "p_value": 0.34,
+          "n_permutations": 200
+        }
+      },
+      "highest_level_of_education": {
+        "within_mean": 9.21536111111111,
+        "within_n": 1000,
+        "between_mean": 2.0357142857142856,
+        "between_n": 10,
+        "between_over_within": 0.2209044508586638,
+        "residual_ratio": 0.9922755110455747,
+        "vs_human_ratio": 0.5031038856230311,
+        "residual_vs_human": 1.0202687774516066,
+        "permutation_test": {
+          "observed_ratio": 0.2209044508586638,
+          "permuted_mean": 0.1454755917167091,
+          "permuted_std": 0.02763491878371887,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "socioeconomic_status": {
+        "within_mean": 9.195192387600763,
+        "within_n": 955,
+        "between_mean": 3.026190476190476,
+        "between_n": 10,
+        "between_over_within": 0.3291057270613648,
+        "residual_ratio": 0.9907542467963785,
+        "vs_human_ratio": 0.6223722029563515,
+        "residual_vs_human": 1.005102357395186,
+        "permutation_test": {
+          "observed_ratio": 0.3291057270613648,
+          "permuted_mean": 0.19924135234959078,
+          "permuted_std": 0.03837141553682288,
+          "p_value": 0.0,
+          "n_permutations": 200
+        }
+      },
+      "occupation_group": {
+        "within_mean": 9.227252343723558,
+        "within_n": 938,
+        "between_mean": 1.8706349206349207,
+        "between_n": 15,
+        "between_over_within": 0.20272935549522927,
+        "residual_ratio": 0.9916763965576192,
+        "vs_human_ratio": 0.5168275756538324,
+        "residual_vs_human": 1.0162225950493486,
+        "permutation_test": {
+          "observed_ratio": 0.20272935549522927,
+          "permuted_mean": 0.14901745254256832,
+          "permuted_std": 0.02373130266486059,
+          "p_value": 0.01,
+          "n_permutations": 200
+        }
+      }
+    }
+  }
+}

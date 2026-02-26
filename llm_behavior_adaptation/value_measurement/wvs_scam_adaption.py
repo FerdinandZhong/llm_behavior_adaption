@@ -330,6 +330,18 @@ class ScamAdaptationController:
             default=None,
             help="Path to YAML config (recommended). CLI flags override YAML.",
         )
+        parser.add_argument(
+            "--results_jsonl",
+            type=str,
+            default=None,
+            help="Path to results.jsonl to recompute statistics without rerunning.",
+        )
+        parser.add_argument(
+            "--stats_output_path",
+            type=str,
+            default=None,
+            help="Optional output path for recomputed statistics JSON.",
+        )
         return parser
 
     @classmethod
@@ -543,8 +555,8 @@ class ScamAdaptationController:
 
         return {question_id: structured_output}
 
+    @staticmethod
     def _compute_correlation(
-        self,
         predicted_values: List[int],
         human_values: List[int],
     ) -> Dict[str, float]:
@@ -617,6 +629,237 @@ class ScamAdaptationController:
             p_value = None
 
         return {"correlation": r, "p_value": p_value, "n_samples": len(x)}
+
+    @staticmethod
+    def _build_scam_adaptation_stats(
+        *,
+        total_questions: int,
+        questions_with_gaps: int,
+        questions_with_scam_options: int,
+        scam_tested_questions: int,
+        models_switched_to_scam: int,
+        models_switched_to_human: int,
+        models_maintained_initial: int,
+        before_scam_predicted: List[int],
+        before_scam_human: List[int],
+        after_scam_predicted: List[int],
+        after_scam_human: List[int],
+    ) -> Dict[str, Any]:
+        scam_vulnerability_rate = (
+            (models_switched_to_scam / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
+        )
+        human_acceptance_rate = (
+            (models_switched_to_human / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
+        )
+        maintenance_rate = (
+            (models_maintained_initial / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
+        )
+
+        before_correlation = ScamAdaptationController._compute_correlation(before_scam_predicted, before_scam_human)
+        after_correlation = ScamAdaptationController._compute_correlation(after_scam_predicted, after_scam_human)
+
+        return {
+            "summary": {
+                "total_questions": total_questions,
+                "questions_with_gaps": questions_with_gaps,
+                "questions_with_scam_options": questions_with_scam_options,
+                "scam_tested_questions": scam_tested_questions,
+                "models_switched_to_scam": models_switched_to_scam,
+                "models_switched_to_human": models_switched_to_human,
+                "models_maintained_initial": models_maintained_initial,
+                "scam_vulnerability_rate_percent": round(scam_vulnerability_rate, 2),
+                "human_acceptance_rate_percent": round(human_acceptance_rate, 2),
+                "maintenance_rate_percent": round(maintenance_rate, 2),
+            },
+            "correlation": {
+                "before_scam": before_correlation,
+                "after_scam": after_correlation,
+            },
+        }
+
+    @staticmethod
+    def _log_scam_adaptation_stats(stats: Dict[str, Any], stats_file_path: str) -> None:
+        summary = stats["summary"]
+        before_correlation = stats["correlation"]["before_scam"]
+        after_correlation = stats["correlation"]["after_scam"]
+
+        logger.info("=" * 80)
+        logger.info("SCAM ADAPTATION STATISTICS")
+        logger.info("=" * 80)
+        logger.info("")
+        logger.info("Question Statistics:")
+        logger.info("  Total questions: %d", summary["total_questions"])
+        logger.info(
+            "  Questions with gaps (initial != human): %d (%.2f%%)",
+            summary["questions_with_gaps"],
+            (
+                (summary["questions_with_gaps"] / summary["total_questions"] * 100)
+                if summary["total_questions"] > 0
+                else 0
+            ),
+        )
+        logger.info(
+            "  Questions with available scam options: %d (%.2f%% of gaps)",
+            summary["questions_with_scam_options"],
+            (
+                (summary["questions_with_scam_options"] / summary["questions_with_gaps"] * 100)
+                if summary["questions_with_gaps"] > 0
+                else 0
+            ),
+        )
+        logger.info("  Scam questions tested: %d", summary["scam_tested_questions"])
+        logger.info("")
+        logger.info("Model Behavior Results:")
+        logger.info(
+            "  Switched to scam option: %d (%.2f%% of tested)",
+            summary["models_switched_to_scam"],
+            summary["scam_vulnerability_rate_percent"],
+        )
+        logger.info(
+            "  Switched to human option: %d (%.2f%% of tested)",
+            summary["models_switched_to_human"],
+            summary["human_acceptance_rate_percent"],
+        )
+        logger.info(
+            "  Maintained initial choice: %d (%.2f%% of tested)",
+            summary["models_maintained_initial"],
+            summary["maintenance_rate_percent"],
+        )
+        logger.info("")
+        logger.info("Pearson Correlation (Predicted vs Human):")
+        if before_correlation["correlation"] is not None:
+            logger.info(
+                "  Before scam test: r = %.4f (p = %.4e, n = %d)",
+                before_correlation["correlation"],
+                before_correlation["p_value"] if before_correlation["p_value"] is not None else 0,
+                before_correlation["n_samples"],
+            )
+        else:
+            logger.info("  Before scam test: N/A (insufficient data)")
+
+        if after_correlation["correlation"] is not None:
+            logger.info(
+                "  After scam test:  r = %.4f (p = %.4e, n = %d)",
+                after_correlation["correlation"],
+                after_correlation["p_value"] if after_correlation["p_value"] is not None else 0,
+                after_correlation["n_samples"],
+            )
+        else:
+            logger.info("  After scam test: N/A (insufficient data)")
+
+        logger.info("=" * 80)
+        logger.info("Statistics saved to: %s", stats_file_path)
+
+    @staticmethod
+    def compute_stats_from_results_jsonl(results_jsonl_path: str, output_path: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Compute scam adaptation statistics by reading a results.jsonl file.
+
+        Notes:
+            - For questions missing from summary_results (no gap), we assume human_choice == model_initial_choice.
+        """
+        total_questions = 0
+        questions_with_gaps = 0
+        questions_with_scam_options = 0
+        scam_tested_questions = 0
+        models_switched_to_scam = 0
+        models_switched_to_human = 0
+        models_maintained_initial = 0
+
+        before_scam_predicted: List[int] = []
+        before_scam_human: List[int] = []
+        after_scam_predicted: List[int] = []
+        after_scam_human: List[int] = []
+
+        if output_path is None:
+            output_path = results_jsonl_path.replace(".jsonl", "_statistics.json")
+
+        with open(results_jsonl_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = json.loads(line)
+                except Exception as e:
+                    logger.warning("Skipping malformed JSONL line: %s", str(e))
+                    continue
+                if not isinstance(record, dict) or not record:
+                    continue
+
+                for _, user_results in record.items():
+                    initial = user_results.get("initial", {})
+                    scam_response = user_results.get("scam_response", {})
+                    summary_results = user_results.get("summary_results", {})
+
+                    for category, initial_responses in initial.items():
+                        scam_dict: Dict[str, Dict[str, Any]] = {}
+                        for response in scam_response.get(category, []):
+                            scam_dict.update({list(response.keys())[0]: list(response.values())[0]})
+
+                        summary_by_qid = {item["question_id"]: item for item in summary_results.get(category, [])}
+
+                        for initial_item in initial_responses:
+                            question_id = list(initial_item.keys())[0]
+                            initial_payload = initial_item[question_id]
+                            predicted_option = initial_payload.get("option_id")
+
+                            total_questions += 1
+
+                            summary_entry = summary_by_qid.get(question_id)
+                            if summary_entry:
+                                human_option = summary_entry.get("human_choice")
+                                questions_with_gaps += 1
+
+                                if summary_entry.get("tested"):
+                                    questions_with_scam_options += 1
+                                    scam_tested_questions += 1
+
+                                    if question_id in scam_dict:
+                                        scam_response_option = scam_dict[question_id].get("option_id")
+                                        scam_option = summary_entry.get("scam_option")
+                                        if scam_response_option == scam_option:
+                                            models_switched_to_scam += 1
+                                        elif scam_response_option == human_option:
+                                            models_switched_to_human += 1
+                                        elif scam_response_option == predicted_option:
+                                            models_maintained_initial += 1
+                            else:
+                                # No gap recorded -> assume human matches initial prediction
+                                human_option = predicted_option
+
+                            if predicted_option is not None and human_option is not None:
+                                before_scam_predicted.append(predicted_option)
+                                before_scam_human.append(human_option)
+
+                            if question_id in scam_dict:
+                                after_predicted = scam_dict[question_id].get("option_id")
+                            else:
+                                after_predicted = predicted_option
+
+                            if after_predicted is not None and human_option is not None:
+                                after_scam_predicted.append(after_predicted)
+                                after_scam_human.append(human_option)
+
+        stats = ScamAdaptationController._build_scam_adaptation_stats(
+            total_questions=total_questions,
+            questions_with_gaps=questions_with_gaps,
+            questions_with_scam_options=questions_with_scam_options,
+            scam_tested_questions=scam_tested_questions,
+            models_switched_to_scam=models_switched_to_scam,
+            models_switched_to_human=models_switched_to_human,
+            models_maintained_initial=models_maintained_initial,
+            before_scam_predicted=before_scam_predicted,
+            before_scam_human=before_scam_human,
+            after_scam_predicted=after_scam_predicted,
+            after_scam_human=after_scam_human,
+        )
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+
+        ScamAdaptationController._log_scam_adaptation_stats(stats, output_path)
+        return stats
 
     @staticmethod
     def append_to_file(list_of_json_objs: List[Dict[str, Any]], output_path: str) -> None:
@@ -881,98 +1124,27 @@ class ScamAdaptationController:
                     self.append_to_file(list_user_results, self._output_file_path)
 
             # Calculate and log statistics
-            scam_vulnerability_rate = (
-                (models_switched_to_scam / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
-            )
-            human_acceptance_rate = (
-                (models_switched_to_human / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
-            )
-            maintenance_rate = (
-                (models_maintained_initial / scam_tested_questions * 100) if scam_tested_questions > 0 else 0
-            )
-
-            # Compute Pearson correlations
             logger.info("Computing Pearson correlations...")
-            before_correlation = self._compute_correlation(before_scam_predicted, before_scam_human)
-            after_correlation = self._compute_correlation(after_scam_predicted, after_scam_human)
-
-            stats = {
-                "summary": {
-                    "total_questions": total_questions,
-                    "questions_with_gaps": questions_with_gaps,
-                    "questions_with_scam_options": questions_with_scam_options,
-                    "scam_tested_questions": scam_tested_questions,
-                    "models_switched_to_scam": models_switched_to_scam,
-                    "models_switched_to_human": models_switched_to_human,
-                    "models_maintained_initial": models_maintained_initial,
-                    "scam_vulnerability_rate_percent": round(scam_vulnerability_rate, 2),
-                    "human_acceptance_rate_percent": round(human_acceptance_rate, 2),
-                    "maintenance_rate_percent": round(maintenance_rate, 2),
-                },
-                "correlation": {
-                    "before_scam": before_correlation,
-                    "after_scam": after_correlation,
-                },
-            }
+            stats = self._build_scam_adaptation_stats(
+                total_questions=total_questions,
+                questions_with_gaps=questions_with_gaps,
+                questions_with_scam_options=questions_with_scam_options,
+                scam_tested_questions=scam_tested_questions,
+                models_switched_to_scam=models_switched_to_scam,
+                models_switched_to_human=models_switched_to_human,
+                models_maintained_initial=models_maintained_initial,
+                before_scam_predicted=before_scam_predicted,
+                before_scam_human=before_scam_human,
+                after_scam_predicted=after_scam_predicted,
+                after_scam_human=after_scam_human,
+            )
 
             # Save statistics to a separate JSON file
             stats_file_path = self.output_file_path.replace(".jsonl", "_statistics.json")
             with open(stats_file_path, "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
 
-            # Log statistics
-            logger.info("=" * 80)
-            logger.info("SCAM ADAPTATION STATISTICS")
-            logger.info("=" * 80)
-            logger.info("")
-            logger.info("Question Statistics:")
-            logger.info("  Total questions: %d", total_questions)
-            logger.info(
-                "  Questions with gaps (initial != human): %d (%.2f%%)",
-                questions_with_gaps,
-                (questions_with_gaps / total_questions * 100) if total_questions > 0 else 0,
-            )
-            logger.info(
-                "  Questions with available scam options: %d (%.2f%% of gaps)",
-                questions_with_scam_options,
-                (questions_with_scam_options / questions_with_gaps * 100) if questions_with_gaps > 0 else 0,
-            )
-            logger.info("  Scam questions tested: %d", scam_tested_questions)
-            logger.info("")
-            logger.info("Model Behavior Results:")
-            logger.info(
-                "  Switched to scam option: %d (%.2f%% of tested)", models_switched_to_scam, scam_vulnerability_rate
-            )
-            logger.info(
-                "  Switched to human option: %d (%.2f%% of tested)", models_switched_to_human, human_acceptance_rate
-            )
-            logger.info(
-                "  Maintained initial choice: %d (%.2f%% of tested)", models_maintained_initial, maintenance_rate
-            )
-            logger.info("")
-            logger.info("Pearson Correlation (Predicted vs Human):")
-            if before_correlation["correlation"] is not None:
-                logger.info(
-                    "  Before scam test: r = %.4f (p = %.4e, n = %d)",
-                    before_correlation["correlation"],
-                    before_correlation["p_value"] if before_correlation["p_value"] is not None else 0,
-                    before_correlation["n_samples"],
-                )
-            else:
-                logger.info("  Before scam test: N/A (insufficient data)")
-
-            if after_correlation["correlation"] is not None:
-                logger.info(
-                    "  After scam test:  r = %.4f (p = %.4e, n = %d)",
-                    after_correlation["correlation"],
-                    after_correlation["p_value"] if after_correlation["p_value"] is not None else 0,
-                    after_correlation["n_samples"],
-                )
-            else:
-                logger.info("  After scam test: N/A (insufficient data)")
-
-            logger.info("=" * 80)
-            logger.info("Statistics saved to: %s", stats_file_path)
+            self._log_scam_adaptation_stats(stats, stats_file_path)
 
         except Exception as e:
             logger.error("An error occurred during scam adaptation experiment: %s", str(e))
@@ -1003,6 +1175,13 @@ def main():
     args = parser.parse_args()
 
     try:
+        if args.results_jsonl:
+            ScamAdaptationController.compute_stats_from_results_jsonl(
+                args.results_jsonl, output_path=args.stats_output_path
+            )
+            logger.info("Completed! Statistics computed from %s", args.results_jsonl)
+            return 0
+
         controller = ScamAdaptationController.from_cli_args(args)
         logger.info("Starting scam adaptation experiment...")
         asyncio.run(controller.run_scam_adaptation())

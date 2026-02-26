@@ -1,0 +1,98 @@
+================================================================================
+DIALOGUE QUALITY SCORING RUBRIC
+================================================================================
+
+Please evaluate each dialogue on the following five criteria.
+Read the dialogue and user profile carefully before scoring.
+
+--------------------------------------------------------------------------------
+CRITERION: Attribute Coverage (Score: 0-5)
+--------------------------------------------------------------------------------
+Count how many demographic attributes from the user profile are
+mentioned or clearly inferable from the dialogue.
+
+Target attributes to look for:
+1. Age (or age-related hints: "recent graduate", "mid-career", "near retirement")
+2. Education level (degree, qualifications, academic background)
+3. Occupation/Job title (current role, profession, industry)
+4. Socioeconomic status (income hints, lifestyle indicators, class markers)
+5. Geographic location (country, city, region)
+
+Scoring:
+- 0: No attributes mentioned
+- 1: 1 attribute mentioned/inferable
+- 2: 2 attributes mentioned/inferable
+- 3: 3 attributes mentioned/inferable
+- 4: 4 attributes mentioned/inferable
+- 5: All 5 attributes mentioned/inferable
+
+--------------------------------------------------------------------------------
+CRITERION: Attribute Correctness (Score: 0-5)
+--------------------------------------------------------------------------------
+Of the attributes mentioned in the dialogue, how many CORRECTLY
+match the ground truth user profile?
+
+Important: This score is bounded by the coverage score. If only 3 attributes are
+mentioned, the maximum correctness score is 3.
+
+Scoring:
+- Count only attributes that are BOTH mentioned AND correct
+- An attribute mentioned with wrong value = incorrect (don't count)
+- An attribute not mentioned = N/A (don't count either way)
+
+Example: If profile says "Bachelor's Degree" but dialogue mentions "PhD" = incorrect
+
+--------------------------------------------------------------------------------
+CRITERION: Question Diversity (Score: 1-5)
+--------------------------------------------------------------------------------
+Assess the variety of topics and question types across dialogue turns.
+
+Consider:
+- Number of distinct subtopics covered within the main topic
+- Variety in question framing (advice-seeking, information-gathering, opinion-based)
+- Progressive depth vs. repetitive surface-level questions
+
+Scoring:
+- 5: Questions span ≥4 distinct subtopics with varied question types
+- 4: 3 distinct subtopics with some variety in framing
+- 3: 2 subtopics; questions show moderate variation
+- 2: Single subtopic but different phrasings
+- 1: Repetitive questions on a single narrow topic
+
+--------------------------------------------------------------------------------
+CRITERION: Conversational Relevance (Score: 1-5)
+--------------------------------------------------------------------------------
+Assess whether the user's questions remain contextually appropriate
+for the dialogue topic and maintain coherent flow with prior assistant responses.
+
+Consider:
+- Are questions on-topic for the stated scenario (e.g., career advice)?
+- Do follow-up questions logically build on previous responses?
+- Is there natural conversational progression?
+
+Scoring:
+- 5: All questions are topically appropriate and logically follow from prior context
+- 4: Minor tangents but overall coherent progression
+- 3: Some questions feel disconnected but remain on-topic
+- 2: Frequent topic drift; weak connection to prior turns
+- 1: Questions are off-topic or contextually incoherent
+
+--------------------------------------------------------------------------------
+CRITERION: Naturalness (Score: 1-5)
+--------------------------------------------------------------------------------
+Assess how organically demographic attributes are woven into
+the conversation, rather than being artificially inserted.
+
+Consider:
+- Are attributes revealed through context (e.g., "as a recent graduate" vs. "I am 22")
+- Does the information sharing feel natural for the conversation flow?
+- Would a real user share information this way?
+
+Scoring:
+- 5: Attributes emerge naturally through context; feels like authentic conversation
+- 4: Mostly natural with minor explicit statements
+- 3: Mix of natural embedding and direct declarations
+- 2: Attributes mostly stated explicitly and awkwardly
+- 1: Attributes feel forced or artificially injected (e.g., listing profile at start)
+
+================================================================================

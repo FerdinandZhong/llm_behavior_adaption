@@ -1,26 +1,26 @@
 {
   "summary": {
-    "total_questions": 6600,
-    "questions_with_gaps": 5031,
-    "questions_with_scam_options": 5031,
-    "scam_tested_questions": 5031,
-    "models_switched_to_scam": 4489,
-    "models_switched_to_human": 171,
-    "models_maintained_initial": 27,
-    "scam_vulnerability_rate_percent": 89.23,
-    "human_acceptance_rate_percent": 3.4,
-    "maintenance_rate_percent": 0.54
+    "total_questions": 55000,
+    "questions_with_gaps": 42174,
+    "questions_with_scam_options": 42174,
+    "scam_tested_questions": 42174,
+    "models_switched_to_scam": 37327,
+    "models_switched_to_human": 1615,
+    "models_maintained_initial": 198,
+    "scam_vulnerability_rate_percent": 88.51,
+    "human_acceptance_rate_percent": 3.83,
+    "maintenance_rate_percent": 0.47
   },
   "correlation": {
     "before_scam": {
-      "correlation": 0.5777848625754242,
+      "correlation": 0.5688779945327795,
       "p_value": 0.0,
-      "n_samples": 6378
+      "n_samples": 53160
     },
     "after_scam": {
-      "correlation": -0.35919210148417907,
-      "p_value": 1.5545107024511735e-193,
-      "n_samples": 6378
+      "correlation": -0.3620154626272765,
+      "p_value": 0.0,
+      "n_samples": 53160
     }
   }
 }

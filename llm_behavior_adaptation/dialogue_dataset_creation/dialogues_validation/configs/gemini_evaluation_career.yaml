@@ -1,0 +1,27 @@
+# Gemini-based dialogue evaluation configuration - Career Advice
+# Usage: python dialogue_validator.py --config configs/gemini_evaluation_career.yaml
+
+# Required paths
+user_profile_dataset: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+dialogue_file: "datasets/wvs_generated_dialogues/career_advice/all_samples.jsonl"
+output_file_path: "wvs_values_results/dialogue_validation/gemini_evaluation_career.jsonl"
+
+# API configuration
+openai_api_key: "sk-Njp-nPJ1eK8sbit1YzlhiA"
+model_base_url: "https://ai-gateway.dev.cloudops.cloudera.com"
+model_name: "gemini-3-pro-preview"
+
+# Evaluation settings
+dialogue_topic: "career advice"
+evaluation_mode: "combined"  # "combined" (single LLM call) or "separate" (per-criterion)
+num_seeds: 3  # Number of evaluation seeds for score averaging
+use_seed: false  # Gemini doesn't support seed parameter
+request_delay: 1.0  # Delay between API requests to avoid rate limiting
+
+# Dataset range (0-indexed)
+starting_row: 0
+ending_row: -1  # -1 for all rows
+
+# Output settings
+verbose: 1  # 0 = errors only, 1 = detailed logs
+storage_step: 50  # Flush results to file every N dialogues

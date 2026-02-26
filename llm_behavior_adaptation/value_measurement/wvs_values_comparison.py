@@ -6,6 +6,7 @@ import random
 import sys
 from collections import OrderedDict
 from copy import deepcopy
+from itertools import combinations
 from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional
 
 import numpy as np
@@ -626,6 +627,142 @@ class ValuesComparison:
         )
         return grouped
 
+    def _group_label_series(
+        self,
+        df: pd.DataFrame,
+        target_col: str,
+        include_unknown: bool = False,
+    ) -> pd.Series:
+        """Return a per-row group label series for a target column."""
+        if target_col not in df.columns:
+            raise KeyError(f"Column '{target_col}' not found in user_profile_dataset.")
+
+        raw = df[target_col]
+        norm = raw.astype(str).str.strip().str.lower()
+
+        if target_col.lower() == "age":
+            bins = [-float("inf"), 30, 40, 50, 60, float("inf")]
+            labels = ["<30", "30-40", "40-50", "50-60", ">60"]
+            label_series = pd.cut(raw, bins=bins, labels=labels, right=False)
+        elif target_col == "highest_level_of_education":
+            bins_to_labels = OrderedDict(
+                {
+                    "Basic education": [
+                        "Early childhood education",
+                        "Primary education",
+                        "Lower secondary education",
+                    ],
+                    "High school & equivalent": [
+                        "Upper secondary education",
+                        "Post-secondary non-tertiary education",
+                    ],
+                    "Short-cycle tertiary": [
+                        "Short-cycle tertiary education",
+                    ],
+                    "Bachelor": [
+                        "Bachelor or equivalent",
+                    ],
+                    "Master’s & Doctoral": [
+                        "Master or equivalent",
+                        "Doctoral or equivalent",
+                    ],
+                }
+            )
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
+            label_series = raw.map(label_to_bin)
+            if include_unknown:
+                label_series = label_series.fillna("Unknown")
+        elif target_col == "occupation_group":
+            bins_to_labels = OrderedDict(
+                {
+                    "Clerical & Sales": [
+                        "Clerical",
+                        "Sales",
+                    ],
+                    "Skilled & Semi-Skilled": [
+                        "Skilled worker",
+                        "Semi-skilled worker",
+                    ],
+                    "Service & Labor": [
+                        "Service",
+                        "Unskilled worker",
+                    ],
+                    "Managerial / Professional": [
+                        "Higher administrative",
+                        "Professional and technical",
+                    ],
+                    "Agricultural Related": [
+                        "Farm worker",
+                        "Farm owner, farm manager",
+                    ],
+                    "No Job": [
+                        "Never had a job",
+                    ],
+                }
+            )
+            label_to_bin = {lbl: bin_name for bin_name, labels in bins_to_labels.items() for lbl in labels}
+            label_series = raw.map(label_to_bin)
+            if include_unknown:
+                label_series = label_series.fillna("Unknown")
+        else:
+            label_series = raw
+
+        # Drop explicit "not sure" responses (normalized)
+        label_series = label_series.where(norm != "not sure")
+        return label_series
+
+    def _get_group_dict_for_columns(
+        self,
+        target_cols: Iterable[str],
+        *,
+        return_user_ids: bool,
+        include_unknown: bool = False,
+    ) -> Dict[str, List]:
+        """
+        Group either row indices or user ids by multiple attribute columns.
+        """
+        if "D_INTERVIEW" not in self.user_profile_dataset.columns:
+            raise KeyError("Column 'D_INTERVIEW' not found in user_profile_dataset.")
+
+        df = deepcopy(self.user_profile_dataset)
+        target_cols = list(target_cols)
+        for col in target_cols:
+            if col not in df.columns:
+                raise KeyError(f"Column '{col}' not found in user_profile_dataset.")
+
+        label_df = pd.concat(
+            [self._group_label_series(df, col, include_unknown) for col in target_cols],
+            axis=1,
+        )
+        label_df.columns = target_cols
+        label_df = label_df.dropna()
+
+        if label_df.empty:
+            return {}
+
+        combined = label_df.apply(
+            lambda row: " & ".join([f"{col}={row[col]}" for col in target_cols]),
+            axis=1,
+        )
+
+        grouped: Dict[str, List] = {}
+        for label, idx in combined.groupby(combined, sort=False).groups.items():
+            if return_user_ids:
+                grouped[label] = [str(d_id) for d_id in df.loc[idx, "D_INTERVIEW"].tolist()]
+            else:
+                grouped[label] = idx.tolist()
+        return grouped
+
+    def _get_user_id_list_for_groups_multi(
+        self, target_cols: Iterable[str], include_unknown: bool = False
+    ) -> Dict[str, List[str]]:
+        return self._get_group_dict_for_columns(target_cols, return_user_ids=True, include_unknown=include_unknown)
+
+    def _get_index_list_for_groups_multi(
+        self, target_cols: Iterable[str], include_unknown: bool = False
+    ) -> Dict[str, List[int]]:
+        return self._get_group_dict_for_columns(target_cols, return_user_ids=False, include_unknown=include_unknown)
+
     def _map_human_values_to_groups(
         self,
         group_dict: Dict[str, List[int]],
@@ -1154,8 +1291,13 @@ class ValuesComparison:
 
         return group_centroids
 
-    def compute_attributes_groups_distances(self, results_attribute, show_progress: bool = True):
-        """compute group distances for attributes"""
+    def compute_attributes_groups_distances(
+        self,
+        results_attribute,
+        show_progress: bool = True,
+        group_sizes: Iterable[int] = (1, 2, 3),
+    ):
+        """compute group distances for attribute groups (single or multi-attribute)."""
         computed_results = {}
         user_values_dict = getattr(self, results_attribute)
 
@@ -1168,45 +1310,99 @@ class ValuesComparison:
 
         global_centroid = componentwise_centroid(all_samples, self.all_questions)
 
-        attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
-        for attribute in attributes_iter:
-            id_based_group_dict = self._get_user_id_list_for_groups(attribute)
-            grouped_values = self._map_model_results_to_groups(
-                group_dict=id_based_group_dict,
-                user_values_dict=user_values_dict,
-            )
-            group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
-            group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
-            bassline = {"overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)}
-            computed_results[attribute] = {
-                "baseline": bassline,
-                "group_distances": group_distances,
-            }
+        sizes = sorted(set(group_sizes))
+        for size in sizes:
+            if size == 1:
+                attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
+                for attribute in attributes_iter:
+                    id_based_group_dict = self._get_user_id_list_for_groups(attribute)
+                    grouped_values = self._map_model_results_to_groups(
+                        group_dict=id_based_group_dict,
+                        user_values_dict=user_values_dict,
+                    )
+                    group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+                    group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+                    bassline = {
+                        "overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)
+                    }
+                    computed_results[attribute] = {
+                        "baseline": bassline,
+                        "group_distances": group_distances,
+                    }
+                continue
+
+            combos = list(combinations(ATTRIBUTES, size))
+            combo_iter = tqdm(combos, desc=f"Attribute combos (n={size})", unit="combo") if show_progress else combos
+            for combo in combo_iter:
+                combo_key = "+".join(combo)
+                id_based_group_dict = self._get_user_id_list_for_groups_multi(combo)
+                grouped_values = self._map_model_results_to_groups(
+                    group_dict=id_based_group_dict,
+                    user_values_dict=user_values_dict,
+                )
+                group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+                group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+                bassline = {
+                    "overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)
+                }
+                computed_results[combo_key] = {
+                    "baseline": bassline,
+                    "group_distances": group_distances,
+                }
 
         return computed_results
 
-    def compute_human_groups_distances(self, show_progress: bool = True):
-        """compute group distances for attributes"""
+    def compute_human_groups_distances(
+        self,
+        show_progress: bool = True,
+        group_sizes: Iterable[int] = (1, 2, 3),
+    ):
+        """compute group distances for attribute groups (single or multi-attribute)."""
         computed_results = {}
 
         all_samples = list(self.user_value_dataset.to_dict(orient="index").values())
 
         global_centroid = componentwise_centroid(all_samples, self.all_questions)
 
-        attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
-        for attribute in attributes_iter:
-            human_group_dict = self._get_index_list_for_groups(attribute)
-            grouped_values = self._map_human_values_to_groups(
-                group_dict=human_group_dict,
-                user_values_df=self.user_value_dataset,
-            )
-            group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
-            group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
-            bassline = {"overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)}
-            computed_results[attribute] = {
-                "baseline": bassline,
-                "group_distances": group_distances,
-            }
+        sizes = sorted(set(group_sizes))
+        for size in sizes:
+            if size == 1:
+                attributes_iter = tqdm(ATTRIBUTES, desc="Attributes", unit="attr") if show_progress else ATTRIBUTES
+                for attribute in attributes_iter:
+                    human_group_dict = self._get_index_list_for_groups(attribute)
+                    grouped_values = self._map_human_values_to_groups(
+                        group_dict=human_group_dict,
+                        user_values_df=self.user_value_dataset,
+                    )
+                    group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+                    group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+                    bassline = {
+                        "overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)
+                    }
+                    computed_results[attribute] = {
+                        "baseline": bassline,
+                        "group_distances": group_distances,
+                    }
+                continue
+
+            combos = list(combinations(ATTRIBUTES, size))
+            combo_iter = tqdm(combos, desc=f"Attribute combos (n={size})", unit="combo") if show_progress else combos
+            for combo in combo_iter:
+                combo_key = "+".join(combo)
+                human_group_dict = self._get_index_list_for_groups_multi(combo)
+                grouped_values = self._map_human_values_to_groups(
+                    group_dict=human_group_dict,
+                    user_values_df=self.user_value_dataset,
+                )
+                group_centroids = self._calculate_centroids_among_groups(grouped_output_values=grouped_values)
+                group_distances = self.pairwise_group_emd_list(group_centroids, self.all_questions, normalize=True)
+                bassline = {
+                    "overall_baseline": self.baseline_emd(global_centroid, group_centroids, self.all_questions)
+                }
+                computed_results[combo_key] = {
+                    "baseline": bassline,
+                    "group_distances": group_distances,
+                }
 
         return computed_results
 

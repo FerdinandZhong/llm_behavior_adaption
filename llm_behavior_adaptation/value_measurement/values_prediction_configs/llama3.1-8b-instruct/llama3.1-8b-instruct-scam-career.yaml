@@ -1,4 +1,4 @@
-# Production configuration for scam adaptation with Llama3.1-8B-Instruct
+# Production configuration for scam adaptation with Llama-3.1-8B-Instruct
 # Tests full dataset on career questions
 
 # Dataset paths
@@ -7,7 +7,7 @@ picked_questions_path: "datasets/wvs_benchmarks/picked_questions.json"
 human_results_path: "datasets/wvs_benchmarks/sampled_values_df.csv"
 
 # Output path
-output_file_path: "wvs_values_results/Llama3.1-8B-Instruct/scam_adaptation/career/results.jsonl"
+output_file_path: "wvs_values_results/Llama-3.1-8B-Instruct/scam_adaptation/career/results.jsonl"
 
 # Prompts folder
 prompts_folder: "llm_behavior_adaptation/value_measurement/prompts"

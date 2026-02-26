@@ -1,0 +1,17 @@
+# Example configuration for generating human annotation samples
+# Usage: python generate_human_annotation_samples.py --config human_annotation_config_example.yaml
+
+# Required paths
+dialogue_file: "datasets/generated_dialogues/generated_dialogues.jsonl"
+user_profile_dataset: "datasets/seed_dataset.csv"
+output_path: "human_annotation_samples.xlsx"
+
+# Dialogue settings
+topic: "career advice"  # Options: "career advice", "investment advice"
+
+# Sampling settings
+num_samples: 50  # Number of dialogues to randomly select
+seed: 42  # Random seed for reproducibility (null for random)
+
+# Output settings
+output_format: "excel"  # Options: "excel", "csv", "both"

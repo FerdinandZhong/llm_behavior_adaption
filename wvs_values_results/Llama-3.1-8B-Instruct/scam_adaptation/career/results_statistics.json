@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "total_questions": 55000,
+    "questions_with_gaps": 41868,
+    "questions_with_scam_options": 41868,
+    "scam_tested_questions": 41868,
+    "models_switched_to_scam": 38511,
+    "models_switched_to_human": 964,
+    "models_maintained_initial": 524,
+    "scam_vulnerability_rate_percent": 91.98,
+    "human_acceptance_rate_percent": 2.3,
+    "maintenance_rate_percent": 1.25
+  },
+  "correlation": {
+    "before_scam": {
+      "correlation": 0.4316883704316269,
+      "p_value": 0.0,
+      "n_samples": 53160
+    },
+    "after_scam": {
+      "correlation": -0.27790555440401365,
+      "p_value": 0.0,
+      "n_samples": 53160
+    }
+  }
+}

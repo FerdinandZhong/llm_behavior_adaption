@@ -1,0 +1,29 @@
+# GPT-4.1 Batch API dialogue evaluation configuration - Investment Advice
+# Usage: python dialogue_validator.py --config configs/gpt4.1_batch_evaluation_investment.yaml
+
+# Required paths
+user_profile_dataset: "datasets/wvs_benchmarks/sampled_demographic_features.csv"
+dialogue_file: "datasets/wvs_generated_dialogues/investment_advice/all_samples.jsonl"
+output_file_path: "wvs_values_results/dialogue_validation/gpt4.1_batch_evaluation_investment.jsonl"
+
+# API configuration
+openai_api_key: "${OPENAI_API_KEY}"  # set via environment variable
+model_base_url: "https://api.openai.com/v1"
+model_name: "gpt-4.1"
+
+# Evaluation settings
+dialogue_topic: "investment advice"
+evaluation_mode: "combined"  # "combined" (single LLM call) or "separate" (per-criterion)
+num_seeds: 3  # Number of evaluation seeds for score averaging
+
+# Batch API settings - 50% cost savings compared to real-time API
+use_batch_api: true
+batch_poll_interval: 30  # Seconds between status checks
+
+# Dataset range (0-indexed)
+starting_row: 0
+ending_row: -1  # -1 for all rows
+
+# Output settings
+verbose: 1  # 0 = errors only, 1 = detailed logs
+storage_step: 50  # Only used for real-time mode

@@ -200,3 +200,32 @@ wvs_images
 vsm_images
 values_results/*
 local_backup/**
+
+# Nested git repos (manage their own history)
+JASIST-Paper/
+
+# Files likely to contain secrets — use environment variables instead
+# (e.g. configs with openai_api_key hardcoded)
+**/*_secret*.yaml
+**/*_secret*.json
+.env
+.env.*
+
+# Backup scripts and files
+backup_redundant_scripts/
+*_backup.tex
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk
+*.dvi
+
+# Generated comprehensive analysis output directories
+wvs_values_results/**/comprehensive_analysis/
