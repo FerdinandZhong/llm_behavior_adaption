@@ -229,3 +229,32 @@ backup_redundant_scripts/
 
 # Generated comprehensive analysis output directories
 wvs_values_results/**/comprehensive_analysis/
+.mcp.json
+
+# Local Claude Code config
+.claude/
+
+# Intermediate analysis and gap analysis results
+wvs_values_gap_analysis/
+
+# Old paper version directories (kept locally, not in repo)
+Evaluating_LLM_Adaptation_to_Sociodemographic_Factors__User_Profile_vs__Dialogue_History__New_Edition_Feb_2026_/
+JASIST_submission/
+JASIST_submission_2/
+jasist-main.tex
+
+# Scratch / one-off test scripts
+sglang_test.py
+test_reasoning_extraction.py
+test_translation.py
+test_translation_format.py
+check_translation_progress.py
+verify_scam_updates.py
+cmds.txt
+vllm_test.py
+
+# Legacy analysis module (superseded by llm_behavior_adaptation package)
+understanding/
+
+# Internal implementation notes (not for external users)
+docs/instructions/
