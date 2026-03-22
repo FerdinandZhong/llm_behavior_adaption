@@ -25,14 +25,43 @@ logger = logging.getLogger(__name__)
 # Based on: widespread use, digital presence, and LLM training data availability
 COMMON_LANGUAGES = {
     # Major international languages
-    "English", "Spanish", "French", "German", "Italian", "Portuguese",
-    "Russian", "Arabic", "Japanese", "Korean", "Chinese",
-
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese",
+    "Russian",
+    "Arabic",
+    "Japanese",
+    "Korean",
+    "Chinese",
     # Regional languages with strong LLM support
-    "Hindi", "Bengali", "Urdu", "Turkish", "Vietnamese", "Thai", "Indonesian",
-    "Malay", "Dutch", "Polish", "Ukrainian", "Romanian", "Czech",
-    "Greek", "Hebrew", "Persian", "Swedish", "Norwegian", "Danish",
-    "Finnish", "Hungarian", "Serbian", "Croatian", "Bosnian", "Swahili",
+    "Hindi",
+    "Bengali",
+    "Urdu",
+    "Turkish",
+    "Vietnamese",
+    "Thai",
+    "Indonesian",
+    "Malay",
+    "Dutch",
+    "Polish",
+    "Ukrainian",
+    "Romanian",
+    "Czech",
+    "Greek",
+    "Hebrew",
+    "Persian",
+    "Swedish",
+    "Norwegian",
+    "Danish",
+    "Finnish",
+    "Hungarian",
+    "Serbian",
+    "Croatian",
+    "Bosnian",
+    "Swahili",
 }
 
 # Country to primary language mapping
@@ -45,7 +74,6 @@ COUNTRY_LANGUAGE_MAP = {
     "New Zealand": "English",
     "Ireland": "English",
     "South Africa": "English",
-
     "Spain": "Spanish",
     "Mexico": "Spanish",
     "Argentina": "Spanish",
@@ -53,43 +81,33 @@ COUNTRY_LANGUAGE_MAP = {
     "Chile": "Spanish",
     "Peru": "Spanish",
     "Venezuela": "Spanish",
-
     "France": "French",
     "Belgium": "French",
     "Switzerland": "French",
     "Luxembourg": "French",
-
     "Germany": "German",
     "Austria": "German",
-
     "Italy": "Italian",
-
     "Brazil": "Portuguese",
     "Portugal": "Portuguese",
-
     "Russia": "Russian",
     "Belarus": "Russian",
     "Kazakhstan": "Russian",
-
     "China": "Chinese",
     "Taiwan": "Chinese",
     "Singapore": "Chinese",
     "Hong Kong": "Chinese",
-
     "Japan": "Japanese",
     "South Korea": "Korean",
     "North Korea": "Korean",
-
     "India": "Hindi",
     "Pakistan": "Urdu",
     "Bangladesh": "Bengali",
-
     "Turkey": "Turkish",
     "Vietnam": "Vietnamese",
     "Thailand": "Thai",
     "Indonesia": "Indonesian",
     "Malaysia": "Malay",
-
     "Netherlands": "Dutch",
     "Poland": "Polish",
     "Ukraine": "Ukrainian",
@@ -103,7 +121,6 @@ COUNTRY_LANGUAGE_MAP = {
     "Denmark": "Danish",
     "Finland": "Finnish",
     "Hungary": "Hungarian",
-
     # Middle East
     "Saudi Arabia": "Arabic",
     "Egypt": "Arabic",
@@ -115,7 +132,6 @@ COUNTRY_LANGUAGE_MAP = {
     "Morocco": "Arabic",
     "Algeria": "Arabic",
     "Tunisia": "Arabic",
-
     # Additional countries
     "Serbia": "Serbian",
     "Croatia": "Croatian",
@@ -124,13 +140,26 @@ COUNTRY_LANGUAGE_MAP = {
     "Tanzania": "Swahili",
     "Uganda": "English",
     "Philippines": "English",
-    "Pakistan": "Urdu",
+    # WVS name variants — these were previously missing due to name mismatches
+    "Hong Kong SAR": "Chinese",
+    "Macao SAR": "Chinese",
+    "Taiwan ROC": "Chinese",
+    "Czechia": "Czech",
+    "Bolivia": "Spanish",
+    "Nicaragua": "Spanish",
+    "Ecuador": "Spanish",
+    "Guatemala": "Spanish",
+    "Andorra": "Spanish",
+    "Puerto Rico": "Spanish",
+    "Libya": "Arabic",
+    "Cyprus": "Greek",
 }
 
 
 # ---------- Models ----------
 class TranslatedTurn(BaseModel):
     """A single translated turn in the dialogue."""
+
     user_content: str
     chatbot_content: str
     original_user_content: str
@@ -139,6 +168,7 @@ class TranslatedTurn(BaseModel):
 
 class TranslatedDialogue(BaseModel):
     """Complete translated dialogue with metadata."""
+
     index: int
     target_language: str
     language_selection_reason: str
@@ -172,19 +202,14 @@ def select_target_language(user_profile: Dict[str, Any]) -> tuple[str, str]:
         tuple: (target_language, reason_for_selection)
     """
     current_country = user_profile.get("place_of_residence", "")
-    born_country = user_profile.get(
-        "place_of_birth", user_profile.get("country_of_birth", "")
-    )
+    born_country = user_profile.get("place_of_birth", user_profile.get("country_of_birth", ""))
 
     # Try current living country
     uncommon_lang = None
     if current_country:
         current_language = get_country_language(current_country)
         if current_language and is_common_language(current_language):
-            reason = (
-                f"Selected {current_language} based on "
-                f"current residence: {current_country}"
-            )
+            reason = f"Selected {current_language} based on " f"current residence: {current_country}"
             return current_language, reason
         if current_language:
             # Language exists but uncommon, note it
@@ -213,26 +238,16 @@ def select_target_language(user_profile: Dict[str, Any]) -> tuple[str, str]:
     if current_country:
         current_lang = get_country_language(current_country)
         if current_lang:
-            reason_parts.append(
-                f"current residence language ({current_lang} from "
-                f"{current_country}) is uncommon"
-            )
+            reason_parts.append(f"current residence language ({current_lang} from " f"{current_country}) is uncommon")
         else:
-            reason_parts.append(
-                f"current residence ({current_country}) has no mapped language"
-            )
+            reason_parts.append(f"current residence ({current_country}) has no mapped language")
 
     if born_country:
         born_lang = get_country_language(born_country)
         if born_lang:
-            reason_parts.append(
-                f"birth country language ({born_lang} from "
-                f"{born_country}) is uncommon"
-            )
+            reason_parts.append(f"birth country language ({born_lang} from " f"{born_country}) is uncommon")
         else:
-            reason_parts.append(
-                f"birth country ({born_country}) has no mapped language"
-            )
+            reason_parts.append(f"birth country ({born_country}) has no mapped language")
 
     if not reason_parts:
         reason = "Defaulting to English (no country information available)"
@@ -460,10 +475,7 @@ Remember to return your response as JSON with "user_message" and "chatbot_messag
 
 
 # ---------- Helper function to load user profiles ----------
-def load_user_profiles_from_csv(
-    csv_file: Path | str,
-    id_column: str = "D_INTERVIEW"
-) -> Dict[Any, Dict[str, Any]]:
+def load_user_profiles_from_csv(csv_file: Path | str, id_column: str = "D_INTERVIEW") -> Dict[Any, Dict[str, Any]]:
     """
     Load user profiles from a CSV file.
 
@@ -568,4 +580,5 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

@@ -58,6 +58,8 @@ class ValuesPredictionController:
         reasoning: bool = False,
         run_mode: str = "both",
         extra_body: Dict = None,
+        translated_questions: Optional[Dict] = None,
+        uid_to_language: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Initialize the ValuesPredictionController.
@@ -111,6 +113,11 @@ class ValuesPredictionController:
         self._storage_step = storage_step
         self._reasoning = reasoning
         self._run_mode = run_mode
+        # Optional: per-language translated questions and instruction
+        # {language: {qid: translated_text, "_instruction": translated_instruction}}
+        self._translated_questions: Dict = translated_questions or {}
+        # {uid: target_language}
+        self._uid_to_language: Dict[str, str] = uid_to_language or {}
 
         print(f"reasoning: {reasoning}")
 
@@ -347,6 +354,29 @@ class ValuesPredictionController:
             base_url = cfg.get("model_base_url") or os.environ.get("base_url") or "http://localhost:8000/v1"
             openai_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
+        # -------- Optional: translated questions --------
+        translated_questions = None
+        if cfg.get("translated_questions_path"):
+            with open(cfg["translated_questions_path"], "r", encoding="utf-8") as f:
+                translated_questions = json.load(f)
+            logger.info("Loaded translated questions for %d languages", len(translated_questions))
+
+        # -------- Optional: uid → language map (from translated dialogues JSONL) --------
+        uid_to_language = None
+        if cfg.get("uid_language_map_file"):
+            uid_to_language = {}
+            with open(cfg["uid_language_map_file"], "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    entry = json.loads(line)
+                    uid = str(entry.get("user_profile", {}).get("D_INTERVIEW", ""))
+                    lang = entry.get("target_language", "")
+                    if uid and lang:
+                        uid_to_language[uid] = lang
+            logger.info("Loaded language map for %d users", len(uid_to_language))
+
         # -------- Instantiate controller --------
         return cls(
             evaluated_model=evaluated_model,
@@ -363,6 +393,8 @@ class ValuesPredictionController:
             reasoning=bool(cfg.get("reasoning", False)),
             run_mode=(cfg.get("run_mode") or "both"),
             extra_body=(cfg.get("extra_body") or None),
+            translated_questions=translated_questions,
+            uid_to_language=uid_to_language,
         )
 
     # ---------- Orchestration ----------
@@ -452,9 +484,15 @@ class ValuesPredictionController:
 
         return {question_id: structured_output}
 
-    async def _dialogue_continue_value_query(self, question_id, dialogue_history, full_question):
+    async def _dialogue_continue_value_query(
+        self, question_id, dialogue_history, full_question, target_language: str = None
+    ):
         """
         Query the LLM to answer a values question using prior dialogue context.
+
+        If *target_language* is provided and translated questions are available,
+        both the question text and the instruction are substituted with their
+        translated versions so the entire final turn matches the dialogue language.
         """
         dialogue_continue_prompt = self._prompt("dialogue_followup")
         dialogue_based_msgs = deepcopy(dialogue_history)
@@ -462,9 +500,25 @@ class ValuesPredictionController:
             {**m, "role": "assistant"} if m.get("role") == "chatbot" else m for m in dialogue_based_msgs
         ]
         dialogue_based_msgs.append(dialogue_continue_prompt[0])
-        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1]["content"].format(
-            values_question=full_question
-        )
+
+        # Resolve translated question and instruction if available
+        if target_language and target_language != "English" and self._translated_questions.get(target_language):
+            lang_translations = self._translated_questions[target_language]
+            translated_q = lang_translations.get(question_id, full_question)
+            translated_instruction = lang_translations.get(
+                "_instruction",
+                "Assume you are me, help me find the most suitable answer to the following question:",
+            )
+            user_content = dialogue_continue_prompt[1]["content"].replace(
+                "Assume you are me, help me find the most suitable answer to the following question:\n\n{values_question}",
+                f"{translated_instruction}\n\n{{values_question}}",
+            )
+            dialogue_continue_prompt[1]["content"] = user_content.format(values_question=translated_q)
+        else:
+            dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1]["content"].format(
+                values_question=full_question
+            )
+
         dialogue_based_msgs.append(dialogue_continue_prompt[1])
 
         structured_output = await self._retry_llm(
@@ -578,6 +632,8 @@ class ValuesPredictionController:
                     ) in self.picked_questions.items():
                         one_user_selections[question_category] = {}
                         list_kwargs = []
+                        target_language = self._uid_to_language.get(user_id)
+
                         for question_id, question_details in question_dict.items():
                             full_question = question_details["question"]
 
@@ -586,6 +642,7 @@ class ValuesPredictionController:
                                     "question_id": question_id,
                                     "dialogue_history": user_dialogue,
                                     "full_question": full_question,
+                                    "target_language": target_language,
                                 }
                             )
 
