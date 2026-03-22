@@ -2,6 +2,22 @@
 
 Repository for the paper **"Evaluating LLM Adaptation to Sociodemographic Factors: User Profile vs. Dialogue History"**.
 
+## Overview
+
+This work proposes a unified framework to evaluate how well LLMs adapt their responses to users' sociodemographic characteristics across two interaction formats:
+
+- **Explicit persona** — demographic attributes provided as a direct user profile in a single turn
+- **Persona derived from dialogue** — attributes implicitly accumulated through multi-turn dialogue history
+
+Beyond measuring alignment accuracy at the group level, we introduce **individual preservation** metrics to assess whether models preserve user-specific variation or collapse individuals into demographic stereotypes. We also measure **consistency** — whether a model behaves the same way regardless of how the persona is presented.
+
+![Evaluation Framework](images/ModelEvaluation.png)
+
+**Key findings:**
+1. High alignment accuracy is often achieved through *demographic homogenization* rather than genuine personalization
+2. Larger models improve average alignment while degrading individual preservation
+3. Response consistency across formats does not imply preservation consistency
+
 ---
 
 ## Repository Structure
@@ -40,7 +56,11 @@ export OPENAI_API_KEY=your_key_here
 
 ### Step 1: Use the Built Dialogues
 
-The synthetic dialogues used in the paper are included in the repository and ready to use:
+The synthetic dialogues are generated via a multi-agent pipeline grounded in user sociodemographic profiles:
+
+![Dataset Generation Pipeline](images/DataGen.png)
+
+The dialogues used in the paper are included in the repository and ready to use:
 
 | Topic | Path |
 |---|---|
