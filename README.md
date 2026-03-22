@@ -11,7 +11,7 @@ This work proposes a unified framework to evaluate how well LLMs adapt their res
 
 Beyond measuring alignment accuracy at the group level, we introduce **individual preservation** metrics to assess whether models preserve user-specific variation or collapse individuals into demographic stereotypes. We also measure **consistency** — whether a model behaves the same way regardless of how the persona is presented.
 
-![Evaluation Framework](images/ModelEvaluation.png)
+![Evaluation Framework](images/MainTask.png)
 
 **Key findings:**
 1. High alignment accuracy is often achieved through *demographic homogenization* rather than genuine personalization
