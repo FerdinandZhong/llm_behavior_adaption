@@ -1,0 +1,29 @@
+HUMAN ANNOTATION INSTRUCTIONS (for 50 dialogue samples)
+
+Goal
+- Read the User_Profile and Dialogue.
+- Score the dialogue using the 5 rubric criteria.
+
+Important scoring rule (please read)
+- Score ONLY based on information explicitly stated or clearly inferable from the dialogue.
+- Do NOT assume demographics that are not present. If unsure, give a lower score.
+
+How to annotate (CSV)
+- Open your assigned file (e.g., investment_50_ann_1_to_fill.csv).
+- For each row, fill:
+  - Coverage_0to5 (0–5)
+  - Correctness_0to5 (0–5; must be <= Coverage_0to5)
+  - Diversity_1to5 (1–5)
+  - Relevance_1to5 (1–5)
+  - Naturalness_1to5 (1–5)
+  - Annotator_Notes (optional)
+
+Quality checks
+- Take this seriously; inconsistent or too-fast submissions may be rejected.
+- If a dialogue is obviously broken/off-topic, reflect that in Relevance and Naturalness.
+
+Deliverable
+- Return the completed CSV file.
+
+Rubric
+- Use the rubric text provided in the companion rubric file.

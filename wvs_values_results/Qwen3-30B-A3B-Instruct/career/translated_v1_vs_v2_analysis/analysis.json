@@ -1,0 +1,1455 @@
+{
+  "original_vs_human": {
+    "pearson": {
+      "mean": 0.5666522473468083,
+      "median": 0.5741607165358501,
+      "n_pairs": 1000
+    },
+    "spearman": {
+      "mean": 0.45672041213232684,
+      "median": 0.4675246251333208,
+      "n_pairs": 1000
+    },
+    "jsd": {
+      "avg_divergence": 16.932146825396824,
+      "std_divergence": 3.6148238092006633,
+      "n_pairs": 1000
+    },
+    "jsd_ratio": 0.969
+  },
+  "translated_vs_human": {
+    "pearson": {
+      "mean": 0.5778105230437945,
+      "median": 0.5854756750264953,
+      "n_pairs": 595
+    },
+    "spearman": {
+      "mean": 0.47010782441821664,
+      "median": 0.4803030303030303,
+      "n_pairs": 595
+    },
+    "jsd": {
+      "avg_divergence": 16.667640389489126,
+      "std_divergence": 3.5461175857107006,
+      "n_pairs": 595
+    },
+    "jsd_ratio": 0.961
+  },
+  "cross_condition_agreement": {
+    "overall_agreement_rate": 0.6351,
+    "n_pairs": 32725,
+    "n_agreed": 20784,
+    "per_question": {
+      "Q2": 0.7076,
+      "Q3": 0.5782,
+      "Q5": 0.8,
+      "Q31": 0.963,
+      "Q33": 0.9681,
+      "Q59": 0.8807,
+      "Q61": 0.7311,
+      "Q69": 0.5966,
+      "Q75": 0.5782,
+      "Q76": 0.4773,
+      "Q106": 0.5966,
+      "Q107": 0.4807,
+      "Q108": 0.7193,
+      "Q109": 0.4437,
+      "Q110": 0.4773,
+      "Q112": 0.4303,
+      "Q113": 0.716,
+      "Q116": 0.7496,
+      "Q118": 0.6454,
+      "Q119": 0.3664,
+      "Q121": 0.6739,
+      "Q122": 0.8067,
+      "Q126": 0.9748,
+      "Q128": 0.9143,
+      "Q130": 0.7529,
+      "Q131": 0.6605,
+      "Q132": 0.5933,
+      "Q134": 0.6286,
+      "Q143": 0.7244,
+      "Q146": 0.437,
+      "Q158": 0.7361,
+      "Q160": 0.3966,
+      "Q161": 0.4336,
+      "Q162": 0.6218,
+      "Q163": 0.5697,
+      "Q164": 0.5025,
+      "Q169": 0.6555,
+      "Q170": 0.8891,
+      "Q171": 0.4403,
+      "Q172": 0.4235,
+      "Q179": 0.8353,
+      "Q185": 0.4017,
+      "Q193": 0.5328,
+      "Q194": 0.595,
+      "Q197": 0.5328,
+      "Q203": 0.4639,
+      "Q205": 0.5613,
+      "Q206": 0.7815,
+      "Q226": 0.5378,
+      "Q233": 0.5697,
+      "Q237": 0.9176,
+      "Q238": 0.6824,
+      "Q252": 0.5546,
+      "Q253": 0.6807,
+      "Q257": 0.5429
+    }
+  },
+  "per_language_agreement": {
+    "Arabic": {
+      "agreement_rate": 0.5121,
+      "n_pairs": 2310,
+      "n_agreed": 1183
+    },
+    "Bengali": {
+      "agreement_rate": 0.5414,
+      "n_pairs": 495,
+      "n_agreed": 268
+    },
+    "Chinese": {
+      "agreement_rate": 0.5813,
+      "n_pairs": 2035,
+      "n_agreed": 1183
+    },
+    "Dutch": {
+      "agreement_rate": 0.6406,
+      "n_pairs": 715,
+      "n_agreed": 458
+    },
+    "English": {
+      "agreement_rate": 0.7533,
+      "n_pairs": 13970,
+      "n_agreed": 10523
+    },
+    "German": {
+      "agreement_rate": 0.6283,
+      "n_pairs": 495,
+      "n_agreed": 311
+    },
+    "Greek": {
+      "agreement_rate": 0.579,
+      "n_pairs": 715,
+      "n_agreed": 414
+    },
+    "Indonesian": {
+      "agreement_rate": 0.5886,
+      "n_pairs": 880,
+      "n_agreed": 518
+    },
+    "Japanese": {
+      "agreement_rate": 0.4713,
+      "n_pairs": 715,
+      "n_agreed": 337
+    },
+    "Korean": {
+      "agreement_rate": 0.5039,
+      "n_pairs": 385,
+      "n_agreed": 194
+    },
+    "Malay": {
+      "agreement_rate": 0.5879,
+      "n_pairs": 660,
+      "n_agreed": 388
+    },
+    "Persian": {
+      "agreement_rate": 0.5273,
+      "n_pairs": 550,
+      "n_agreed": 290
+    },
+    "Portuguese": {
+      "agreement_rate": 0.607,
+      "n_pairs": 715,
+      "n_agreed": 434
+    },
+    "Romanian": {
+      "agreement_rate": 0.5394,
+      "n_pairs": 330,
+      "n_agreed": 178
+    },
+    "Russian": {
+      "agreement_rate": 0.5258,
+      "n_pairs": 660,
+      "n_agreed": 347
+    },
+    "Serbian": {
+      "agreement_rate": 0.56,
+      "n_pairs": 275,
+      "n_agreed": 154
+    },
+    "Spanish": {
+      "agreement_rate": 0.6117,
+      "n_pairs": 2475,
+      "n_agreed": 1514
+    },
+    "Swahili": {
+      "agreement_rate": 0.36,
+      "n_pairs": 275,
+      "n_agreed": 99
+    },
+    "Thai": {
+      "agreement_rate": 0.5778,
+      "n_pairs": 495,
+      "n_agreed": 286
+    },
+    "Turkish": {
+      "agreement_rate": 0.4197,
+      "n_pairs": 1320,
+      "n_agreed": 554
+    },
+    "Ukrainian": {
+      "agreement_rate": 0.5322,
+      "n_pairs": 605,
+      "n_agreed": 322
+    },
+    "Urdu": {
+      "agreement_rate": 0.4823,
+      "n_pairs": 1045,
+      "n_agreed": 504
+    },
+    "Vietnamese": {
+      "agreement_rate": 0.5372,
+      "n_pairs": 605,
+      "n_agreed": 325
+    }
+  },
+  "per_language_correlation_delta": {
+    "Arabic": {
+      "n_users": 42,
+      "original_mean_corr": 0.5459,
+      "translated_mean_corr": 0.57,
+      "delta": 0.0241
+    },
+    "Bengali": {
+      "n_users": 9,
+      "original_mean_corr": 0.5205,
+      "translated_mean_corr": 0.53,
+      "delta": 0.0094
+    },
+    "Chinese": {
+      "n_users": 37,
+      "original_mean_corr": 0.5991,
+      "translated_mean_corr": 0.6292,
+      "delta": 0.0301
+    },
+    "Dutch": {
+      "n_users": 13,
+      "original_mean_corr": 0.7372,
+      "translated_mean_corr": 0.7037,
+      "delta": -0.0335
+    },
+    "English": {
+      "n_users": 254,
+      "original_mean_corr": 0.5583,
+      "translated_mean_corr": 0.5605,
+      "delta": 0.0022
+    },
+    "German": {
+      "n_users": 9,
+      "original_mean_corr": 0.6585,
+      "translated_mean_corr": 0.654,
+      "delta": -0.0044
+    },
+    "Greek": {
+      "n_users": 13,
+      "original_mean_corr": 0.6098,
+      "translated_mean_corr": 0.5734,
+      "delta": -0.0364
+    },
+    "Indonesian": {
+      "n_users": 16,
+      "original_mean_corr": 0.5566,
+      "translated_mean_corr": 0.5708,
+      "delta": 0.0142
+    },
+    "Japanese": {
+      "n_users": 13,
+      "original_mean_corr": 0.5951,
+      "translated_mean_corr": 0.6256,
+      "delta": 0.0305
+    },
+    "Korean": {
+      "n_users": 7,
+      "original_mean_corr": 0.6836,
+      "translated_mean_corr": 0.6493,
+      "delta": -0.0343
+    },
+    "Malay": {
+      "n_users": 12,
+      "original_mean_corr": 0.5774,
+      "translated_mean_corr": 0.585,
+      "delta": 0.0076
+    },
+    "Persian": {
+      "n_users": 10,
+      "original_mean_corr": 0.5291,
+      "translated_mean_corr": 0.5566,
+      "delta": 0.0275
+    },
+    "Portuguese": {
+      "n_users": 13,
+      "original_mean_corr": 0.4889,
+      "translated_mean_corr": 0.5168,
+      "delta": 0.028
+    },
+    "Romanian": {
+      "n_users": 6,
+      "original_mean_corr": 0.598,
+      "translated_mean_corr": 0.5796,
+      "delta": -0.0184
+    },
+    "Russian": {
+      "n_users": 12,
+      "original_mean_corr": 0.5708,
+      "translated_mean_corr": 0.5751,
+      "delta": 0.0043
+    },
+    "Serbian": {
+      "n_users": 5,
+      "original_mean_corr": 0.6299,
+      "translated_mean_corr": 0.6124,
+      "delta": -0.0175
+    },
+    "Spanish": {
+      "n_users": 45,
+      "original_mean_corr": 0.5552,
+      "translated_mean_corr": 0.5724,
+      "delta": 0.0172
+    },
+    "Swahili": {
+      "n_users": 5,
+      "original_mean_corr": 0.4204,
+      "translated_mean_corr": 0.5562,
+      "delta": 0.1358
+    },
+    "Thai": {
+      "n_users": 9,
+      "original_mean_corr": 0.5537,
+      "translated_mean_corr": 0.5617,
+      "delta": 0.0081
+    },
+    "Turkish": {
+      "n_users": 24,
+      "original_mean_corr": 0.5995,
+      "translated_mean_corr": 0.6175,
+      "delta": 0.0181
+    },
+    "Ukrainian": {
+      "n_users": 11,
+      "original_mean_corr": 0.6106,
+      "translated_mean_corr": 0.6136,
+      "delta": 0.0029
+    },
+    "Urdu": {
+      "n_users": 19,
+      "original_mean_corr": 0.5018,
+      "translated_mean_corr": 0.5473,
+      "delta": 0.0456
+    },
+    "Vietnamese": {
+      "n_users": 11,
+      "original_mean_corr": 0.6414,
+      "translated_mean_corr": 0.6208,
+      "delta": -0.0207
+    }
+  },
+  "preservation_by_language": {
+    "original": {
+      "deviation_correlation": {
+        "overall": {
+          "n": 1000,
+          "deviation_pearson": 0.2450439713223197,
+          "deviation_spearman": 0.25676828255542045,
+          "rank_pearson": 0.061384877439561836,
+          "rank_spearman": 0.06100736294471708,
+          "interpretation": "poor_preservation"
+        },
+        "per_group": {
+          "Serbian": {
+            "n": 7,
+            "deviation_pearson": 0.06988312622434778,
+            "deviation_spearman": -0.07142857142857144,
+            "rank_pearson": -0.07142857142857145,
+            "rank_spearman": -0.07142857142857144
+          },
+          "Indonesian": {
+            "n": 36,
+            "deviation_pearson": 0.005790174434351758,
+            "deviation_spearman": -0.11095379162579516,
+            "rank_pearson": -0.11196911196911202,
+            "rank_spearman": -0.11196911196911198
+          },
+          "Swahili": {
+            "n": 11,
+            "deviation_pearson": -0.01080948465867028,
+            "deviation_spearman": 0.10478387094298722,
+            "rank_pearson": 0.0999999999999999,
+            "rank_spearman": 0.10000000000000002
+          },
+          "Malay": {
+            "n": 20,
+            "deviation_pearson": -0.20728946091425413,
+            "deviation_spearman": -0.29172932330827067,
+            "rank_pearson": -0.2917293233082708,
+            "rank_spearman": -0.29172932330827067
+          },
+          "Arabic": {
+            "n": 68,
+            "deviation_pearson": 0.060835616069751505,
+            "deviation_spearman": 0.10830207779005786,
+            "rank_pearson": 0.10703515669733175,
+            "rank_spearman": 0.10703515669733174
+          },
+          "English": {
+            "n": 424,
+            "deviation_pearson": 0.16786098274253108,
+            "deviation_spearman": 0.15227143831178483,
+            "rank_pearson": 0.1524051290528255,
+            "rank_spearman": 0.15240512905282544
+          },
+          "Romanian": {
+            "n": 11,
+            "deviation_pearson": -0.5058896704341506,
+            "deviation_spearman": -0.3280190742563077,
+            "rank_pearson": -0.3545454545454545,
+            "rank_spearman": -0.3545454545454546
+          },
+          "Dutch": {
+            "n": 21,
+            "deviation_pearson": -0.24949112763348233,
+            "deviation_spearman": -0.21038961038961035,
+            "rank_pearson": -0.2103896103896104,
+            "rank_spearman": -0.21038961038961035
+          },
+          "Turkish": {
+            "n": 47,
+            "deviation_pearson": -0.16842176167532752,
+            "deviation_spearman": -0.11491860273132344,
+            "rank_pearson": -0.11112395929694727,
+            "rank_spearman": -0.11112395929694727
+          },
+          "Korean": {
+            "n": 16,
+            "deviation_pearson": 0.09405992331273326,
+            "deviation_spearman": 0.09705882352941177,
+            "rank_pearson": 0.09705882352941178,
+            "rank_spearman": 0.09705882352941177
+          },
+          "Chinese": {
+            "n": 54,
+            "deviation_pearson": -0.002215229106762568,
+            "deviation_spearman": 0.03526025883576387,
+            "rank_pearson": 0.03510577472841629,
+            "rank_spearman": 0.035105774728416236
+          },
+          "Portuguese": {
+            "n": 18,
+            "deviation_pearson": -0.41520229784130364,
+            "deviation_spearman": -0.3397006131581359,
+            "rank_pearson": -0.33746130030959753,
+            "rank_spearman": -0.33746130030959753
+          },
+          "Greek": {
+            "n": 18,
+            "deviation_pearson": 0.04363862475215431,
+            "deviation_spearman": 0.1331269349845201,
+            "rank_pearson": 0.13312693498452016,
+            "rank_spearman": 0.1331269349845201
+          },
+          "Spanish": {
+            "n": 77,
+            "deviation_pearson": 0.10834636371209022,
+            "deviation_spearman": 0.11396872767365358,
+            "rank_pearson": 0.11357063988642942,
+            "rank_spearman": 0.11357063988642935
+          },
+          "German": {
+            "n": 17,
+            "deviation_pearson": 0.27683375697298174,
+            "deviation_spearman": -0.07352941176470588,
+            "rank_pearson": -0.07352941176470584,
+            "rank_spearman": -0.07352941176470588
+          },
+          "Urdu": {
+            "n": 31,
+            "deviation_pearson": -0.2459680010263774,
+            "deviation_spearman": -0.1846960388456714,
+            "rank_pearson": -0.18427419354838712,
+            "rank_spearman": -0.1842741935483871
+          },
+          "Japanese": {
+            "n": 16,
+            "deviation_pearson": -0.2317007070295864,
+            "deviation_spearman": -0.21486392866241996,
+            "rank_pearson": -0.20588235294117652,
+            "rank_spearman": -0.2058823529411765
+          },
+          "Thai": {
+            "n": 19,
+            "deviation_pearson": 0.23237925660881636,
+            "deviation_spearman": 0.2614035087719298,
+            "rank_pearson": 0.26140350877192975,
+            "rank_spearman": 0.2614035087719298
+          },
+          "Ukrainian": {
+            "n": 14,
+            "deviation_pearson": -0.25337026433644727,
+            "deviation_spearman": -0.178021978021978,
+            "rank_pearson": -0.17802197802197806,
+            "rank_spearman": -0.178021978021978
+          },
+          "Vietnamese": {
+            "n": 17,
+            "deviation_pearson": -0.40054303526502455,
+            "deviation_spearman": -0.2916666666666667,
+            "rank_pearson": -0.2916666666666667,
+            "rank_spearman": -0.2916666666666667
+          },
+          "Russian": {
+            "n": 25,
+            "deviation_pearson": 0.30743821184281067,
+            "deviation_spearman": 0.36353145508014456,
+            "rank_pearson": 0.3638461538461538,
+            "rank_spearman": 0.3638461538461538
+          },
+          "Bengali": {
+            "n": 15,
+            "deviation_pearson": 0.5527561628320653,
+            "deviation_spearman": 0.532142857142857,
+            "rank_pearson": 0.5321428571428571,
+            "rank_spearman": 0.532142857142857
+          },
+          "Persian": {
+            "n": 18,
+            "deviation_pearson": 0.16588300459666713,
+            "deviation_spearman": 0.17853457172342618,
+            "rank_pearson": 0.17853457172342624,
+            "rank_spearman": 0.17853457172342618
+          }
+        }
+      },
+      "pairwise_distance_preservation": {
+        "n_pairs": 9245,
+        "pearson": 0.16273796595569995,
+        "spearman": 0.15101038337939324,
+        "interpretation": "weak_preservation"
+      },
+      "outlier_preservation": {
+        "overall": {
+          "n_total_outliers": 109,
+          "n_retained": 14,
+          "retention_rate": 0.12844036697247707,
+          "mean_rank_percentile": 0.4773467314753212,
+          "interpretation": "homogenization"
+        },
+        "per_group": {
+          "Indonesian": {
+            "n_outliers": 4,
+            "n_retained": 1,
+            "retention_rate": 0.25,
+            "mean_rank_percentile": 0.41666666666666663
+          },
+          "Swahili": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5
+          },
+          "Malay": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.8999999999999999
+          },
+          "Arabic": {
+            "n_outliers": 7,
+            "n_retained": 1,
+            "retention_rate": 0.14285714285714285,
+            "mean_rank_percentile": 0.5441176470588235
+          },
+          "English": {
+            "n_outliers": 43,
+            "n_retained": 8,
+            "retention_rate": 0.18604651162790697,
+            "mean_rank_percentile": 0.41257130320315927
+          },
+          "Romanian": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.6818181818181819
+          },
+          "Dutch": {
+            "n_outliers": 3,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5079365079365079
+          },
+          "Turkish": {
+            "n_outliers": 5,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.49361702127659574
+          },
+          "Korean": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.59375
+          },
+          "Chinese": {
+            "n_outliers": 6,
+            "n_retained": 1,
+            "retention_rate": 0.16666666666666666,
+            "mean_rank_percentile": 0.36728395061728397
+          },
+          "Portuguese": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.75
+          },
+          "Greek": {
+            "n_outliers": 2,
+            "n_retained": 1,
+            "retention_rate": 0.5,
+            "mean_rank_percentile": 0.16666666666666669
+          },
+          "Spanish": {
+            "n_outliers": 8,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.48051948051948057
+          },
+          "German": {
+            "n_outliers": 2,
+            "n_retained": 1,
+            "retention_rate": 0.5,
+            "mean_rank_percentile": 0.4411764705882353
+          },
+          "Urdu": {
+            "n_outliers": 4,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5725806451612903
+          },
+          "Japanese": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.71875
+          },
+          "Thai": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.631578947368421
+          },
+          "Ukrainian": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.7857142857142857
+          },
+          "Vietnamese": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.9117647058823529
+          },
+          "Russian": {
+            "n_outliers": 3,
+            "n_retained": 1,
+            "retention_rate": 0.3333333333333333,
+            "mean_rank_percentile": 0.5333333333333333
+          },
+          "Bengali": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.16666666666666669
+          },
+          "Persian": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.19444444444444445
+          }
+        }
+      },
+      "outlier_correction": {
+        "outlier_mean_delta": -12.687672928498616,
+        "non_outlier_mean_delta": -7.584500204870576,
+        "delta_difference": -5.10317272362804,
+        "n_outliers": 109,
+        "n_non_outliers": 891,
+        "interpretation": "strong_correction"
+      },
+      "variance_preservation_ratio": {
+        "std_ratio": 0.4887002102622302,
+        "iqr_ratio": 0.42670380034339617,
+        "pooled_std_ratio": 0.4807421536794634,
+        "per_group_std_ratios": {
+          "Serbian": 0.2829172816822827,
+          "Indonesian": 0.3266618005251456,
+          "Swahili": 0.2717086214061312,
+          "Malay": 0.3546192652413482,
+          "Arabic": 0.5549761938470115,
+          "English": 0.5141193287473256,
+          "Romanian": 0.864626833638579,
+          "Dutch": 0.258537566609871,
+          "Turkish": 0.4703394296735735,
+          "Korean": 0.6325887769385685,
+          "Chinese": 0.7267787259359203,
+          "Portuguese": 0.571807050774559,
+          "Greek": 0.554576479488692,
+          "Spanish": 0.43432982381322927,
+          "German": 0.6403591284572545,
+          "Urdu": 0.42726483073168264,
+          "Japanese": 0.8277634502675553,
+          "Thai": 0.4955412030185658,
+          "Ukrainian": 0.37884627784930924,
+          "Vietnamese": 0.3805385348706417,
+          "Russian": 0.4942210985481149,
+          "Bengali": 0.7492862544076291,
+          "Persian": 0.6074120544499253
+        },
+        "per_group_iqr_ratios": {
+          "Serbian": 0.23207885304659495,
+          "Indonesian": 0.2666170634920635,
+          "Swahili": 0.26666666666666655,
+          "Malay": 0.2592694314748694,
+          "Arabic": 0.4982809993123992,
+          "English": 0.5728004956629489,
+          "Romanian": 0.10991233985165187,
+          "Dutch": 0.4240000000000001,
+          "Turkish": 0.5159574468085105,
+          "Korean": 0.3955331412103743,
+          "Chinese": 0.629373177842565,
+          "Portuguese": 0.1969443281707828,
+          "Greek": 0.5369875222816404,
+          "Spanish": 0.47789725209080053,
+          "German": 0.6358381502890175,
+          "Urdu": 0.324,
+          "Japanese": 1.1314229249011842,
+          "Thai": 0.48088410991636776,
+          "Ukrainian": 0.5133446905167519,
+          "Vietnamese": 0.39978094194961655,
+          "Russian": 0.3774193548387087,
+          "Bengali": 0.5922905856189766,
+          "Persian": 0.8206278026905836
+        },
+        "interpretation": "variance_collapse"
+      },
+      "stereotype_amplification": {
+        "overall": {
+          "mean_delta": -8.140746031746032,
+          "median_delta": -8.089285714285715,
+          "std_delta": 3.0919592497339963,
+          "n_individuals": 1000,
+          "n_toward_stereotype": 992,
+          "n_away_from_stereotype": 4,
+          "n_neutral": 4,
+          "pct_toward_stereotype": 99.2,
+          "pct_away_from_stereotype": 0.4,
+          "interpretation": "strong_homogenization"
+        },
+        "per_group": {
+          "Serbian": {
+            "mean_delta": -8.125283446712016,
+            "median_delta": -8.011904761904763,
+            "std_delta": 2.611298797043008,
+            "n": 7,
+            "pct_toward_stereotype": 100.0
+          },
+          "Indonesian": {
+            "mean_delta": -7.029100529100528,
+            "median_delta": -6.859126984126982,
+            "std_delta": 3.3695566606791414,
+            "n": 36,
+            "pct_toward_stereotype": 100.0
+          },
+          "Swahili": {
+            "mean_delta": -9.168831168831169,
+            "median_delta": -9.17063492063492,
+            "std_delta": 2.7014171180924365,
+            "n": 11,
+            "pct_toward_stereotype": 100.0
+          },
+          "Malay": {
+            "mean_delta": -7.862698412698412,
+            "median_delta": -7.763888888888885,
+            "std_delta": 2.58520444026858,
+            "n": 20,
+            "pct_toward_stereotype": 100.0
+          },
+          "Arabic": {
+            "mean_delta": -7.84564659197012,
+            "median_delta": -8.03968253968254,
+            "std_delta": 3.286511387716975,
+            "n": 68,
+            "pct_toward_stereotype": 98.52941176470588
+          },
+          "English": {
+            "mean_delta": -9.130606094639113,
+            "median_delta": -9.101190476190478,
+            "std_delta": 2.8674761934890745,
+            "n": 424,
+            "pct_toward_stereotype": 100.0
+          },
+          "Romanian": {
+            "mean_delta": -7.532828282828283,
+            "median_delta": -7.39285714285714,
+            "std_delta": 2.9735611718650787,
+            "n": 11,
+            "pct_toward_stereotype": 90.9090909090909
+          },
+          "Dutch": {
+            "mean_delta": -4.6832955404383965,
+            "median_delta": -4.82936507936508,
+            "std_delta": 3.529516740397802,
+            "n": 21,
+            "pct_toward_stereotype": 90.47619047619048
+          },
+          "Turkish": {
+            "mean_delta": -7.401637960148599,
+            "median_delta": -7.388888888888891,
+            "std_delta": 2.5835480249106784,
+            "n": 47,
+            "pct_toward_stereotype": 100.0
+          },
+          "Korean": {
+            "mean_delta": -7.049355158730158,
+            "median_delta": -6.736111111111112,
+            "std_delta": 2.29160781582426,
+            "n": 16,
+            "pct_toward_stereotype": 100.0
+          },
+          "Chinese": {
+            "mean_delta": -5.824000587889478,
+            "median_delta": -6.325396825396825,
+            "std_delta": 2.829263882792374,
+            "n": 54,
+            "pct_toward_stereotype": 94.44444444444444
+          },
+          "Portuguese": {
+            "mean_delta": -8.397486772486772,
+            "median_delta": -7.986111111111111,
+            "std_delta": 4.085318102741558,
+            "n": 18,
+            "pct_toward_stereotype": 94.44444444444444
+          },
+          "Greek": {
+            "mean_delta": -7.329365079365079,
+            "median_delta": -7.6011904761904745,
+            "std_delta": 2.027840333545358,
+            "n": 18,
+            "pct_toward_stereotype": 100.0
+          },
+          "Spanish": {
+            "mean_delta": -8.521026592455165,
+            "median_delta": -8.63888888888889,
+            "std_delta": 2.5832039416708534,
+            "n": 77,
+            "pct_toward_stereotype": 100.0
+          },
+          "German": {
+            "mean_delta": -6.280812324929971,
+            "median_delta": -6.444444444444439,
+            "std_delta": 1.9512516990200388,
+            "n": 17,
+            "pct_toward_stereotype": 100.0
+          },
+          "Urdu": {
+            "mean_delta": -7.990271377368151,
+            "median_delta": -7.892857142857142,
+            "std_delta": 3.3694906186941633,
+            "n": 31,
+            "pct_toward_stereotype": 100.0
+          },
+          "Japanese": {
+            "mean_delta": -5.246775793650793,
+            "median_delta": -5.172619047619046,
+            "std_delta": 2.4570027028485515,
+            "n": 16,
+            "pct_toward_stereotype": 100.0
+          },
+          "Thai": {
+            "mean_delta": -8.694862155388472,
+            "median_delta": -8.416666666666668,
+            "std_delta": 2.2255297078601064,
+            "n": 19,
+            "pct_toward_stereotype": 100.0
+          },
+          "Ukrainian": {
+            "mean_delta": -7.299886621315193,
+            "median_delta": -6.246031746031747,
+            "std_delta": 3.555887930097941,
+            "n": 14,
+            "pct_toward_stereotype": 100.0
+          },
+          "Vietnamese": {
+            "mean_delta": -7.235294117647059,
+            "median_delta": -6.130952380952383,
+            "std_delta": 2.9097026386525555,
+            "n": 17,
+            "pct_toward_stereotype": 100.0
+          },
+          "Russian": {
+            "mean_delta": -7.366666666666665,
+            "median_delta": -7.230158730158732,
+            "std_delta": 2.809899087123698,
+            "n": 25,
+            "pct_toward_stereotype": 100.0
+          },
+          "Bengali": {
+            "mean_delta": -6.232010582010579,
+            "median_delta": -5.988095238095236,
+            "std_delta": 1.3988823138903133,
+            "n": 15,
+            "pct_toward_stereotype": 100.0
+          },
+          "Persian": {
+            "mean_delta": -9.21031746031746,
+            "median_delta": -9.444444444444446,
+            "std_delta": 1.3030470209745666,
+            "n": 18,
+            "pct_toward_stereotype": 100.0
+          }
+        }
+      },
+      "cross_group_stereotype": {
+        "own_group_mean_delta": -8.140746031746032,
+        "other_group_mean_delta": -9.839851911976911,
+        "n_own_group": 1000,
+        "n_other_group": 22000,
+        "interpretation": "over_attribution"
+      }
+    },
+    "translated": {
+      "deviation_correlation": {
+        "overall": {
+          "n": 595,
+          "deviation_pearson": 0.22063703535601503,
+          "deviation_spearman": 0.2068948667391375,
+          "rank_pearson": 0.09115031383900213,
+          "rank_spearman": 0.09099032937254528,
+          "interpretation": "poor_preservation"
+        },
+        "per_group": {
+          "Serbian": {
+            "n": 5,
+            "deviation_pearson": -0.8369688145132113,
+            "deviation_spearman": -0.9999999999999999,
+            "rank_pearson": -0.9615239476408232,
+            "rank_spearman": -0.9999999999999999
+          },
+          "Indonesian": {
+            "n": 16,
+            "deviation_pearson": -0.06487472676114123,
+            "deviation_spearman": -0.21764705882352942,
+            "rank_pearson": -0.2373850297033856,
+            "rank_spearman": -0.21764705882352942
+          },
+          "Swahili": {
+            "n": 5,
+            "deviation_pearson": 0.17877444870918263,
+            "deviation_spearman": 0.0,
+            "rank_pearson": 0.26013299085723596,
+            "rank_spearman": 0.0
+          },
+          "Malay": {
+            "n": 12,
+            "deviation_pearson": -0.391225288725062,
+            "deviation_spearman": -0.1958041958041958,
+            "rank_pearson": -0.28341148242419023,
+            "rank_spearman": -0.1958041958041958
+          },
+          "Arabic": {
+            "n": 42,
+            "deviation_pearson": 0.08342596050628757,
+            "deviation_spearman": 0.15956239922732993,
+            "rank_pearson": 0.15256357619284278,
+            "rank_spearman": 0.15954946924884533
+          },
+          "English": {
+            "n": 254,
+            "deviation_pearson": 0.25466479857038793,
+            "deviation_spearman": 0.263331123005081,
+            "rank_pearson": 0.2658192606403729,
+            "rank_spearman": 0.2635032687875187
+          },
+          "Romanian": {
+            "n": 6,
+            "deviation_pearson": -0.2852535117083471,
+            "deviation_spearman": -0.028571428571428574,
+            "rank_pearson": 0.04597284998149173,
+            "rank_spearman": -0.028571428571428574
+          },
+          "Dutch": {
+            "n": 13,
+            "deviation_pearson": 0.09677730610550975,
+            "deviation_spearman": 0.0934065934065934,
+            "rank_pearson": 0.1031746031746032,
+            "rank_spearman": 0.0934065934065934
+          },
+          "Turkish": {
+            "n": 24,
+            "deviation_pearson": -0.04592741461967939,
+            "deviation_spearman": -0.02869565217391304,
+            "rank_pearson": -0.04337670173393143,
+            "rank_spearman": -0.02869565217391304
+          },
+          "Korean": {
+            "n": 7,
+            "deviation_pearson": -0.24164133019641254,
+            "deviation_spearman": -0.4642857142857144,
+            "rank_pearson": -0.38612628950950967,
+            "rank_spearman": -0.4642857142857144
+          },
+          "Chinese": {
+            "n": 37,
+            "deviation_pearson": 0.015936225207756827,
+            "deviation_spearman": 0.13858921161825727,
+            "rank_pearson": 0.14477480708322368,
+            "rank_spearman": 0.13798008534850636
+          },
+          "Portuguese": {
+            "n": 13,
+            "deviation_pearson": -0.5148573876299574,
+            "deviation_spearman": -0.46153846153846156,
+            "rank_pearson": -0.5023558674286476,
+            "rank_spearman": -0.46153846153846156
+          },
+          "Greek": {
+            "n": 13,
+            "deviation_pearson": 0.19114308591288467,
+            "deviation_spearman": 0.24209101306752098,
+            "rank_pearson": 0.2014116312501173,
+            "rank_spearman": 0.23076923076923078
+          },
+          "Spanish": {
+            "n": 45,
+            "deviation_pearson": 0.06013453475808431,
+            "deviation_spearman": 0.07207325926438571,
+            "rank_pearson": 0.07008717505654696,
+            "rank_spearman": 0.07391304347826086
+          },
+          "German": {
+            "n": 9,
+            "deviation_pearson": -0.04021079447132159,
+            "deviation_spearman": -0.049999999999999996,
+            "rank_pearson": -0.15778954649661223,
+            "rank_spearman": -0.049999999999999996
+          },
+          "Urdu": {
+            "n": 19,
+            "deviation_pearson": -0.3685242638759174,
+            "deviation_spearman": -0.20175438596491227,
+            "rank_pearson": -0.2213842667041379,
+            "rank_spearman": -0.20175438596491227
+          },
+          "Japanese": {
+            "n": 13,
+            "deviation_pearson": 0.15583613626966789,
+            "deviation_spearman": 0.08241758241758242,
+            "rank_pearson": 0.03554607786498187,
+            "rank_spearman": 0.08241758241758242
+          },
+          "Thai": {
+            "n": 9,
+            "deviation_pearson": 0.2125863819119067,
+            "deviation_spearman": 0.2833333333333333,
+            "rank_pearson": 0.33501461894678897,
+            "rank_spearman": 0.2833333333333333
+          },
+          "Ukrainian": {
+            "n": 11,
+            "deviation_pearson": -0.3053744565553954,
+            "deviation_spearman": -0.15454545454545454,
+            "rank_pearson": -0.22714553049650765,
+            "rank_spearman": -0.15454545454545454
+          },
+          "Vietnamese": {
+            "n": 11,
+            "deviation_pearson": -0.7622920451332007,
+            "deviation_spearman": -0.7727272727272727,
+            "rank_pearson": -0.7873870228162398,
+            "rank_spearman": -0.7727272727272727
+          },
+          "Russian": {
+            "n": 12,
+            "deviation_pearson": 0.5778232485225413,
+            "deviation_spearman": 0.4685314685314686,
+            "rank_pearson": 0.4994708158717944,
+            "rank_spearman": 0.4685314685314686
+          },
+          "Bengali": {
+            "n": 9,
+            "deviation_pearson": -0.05743070840590127,
+            "deviation_spearman": 0.08333333333333334,
+            "rank_pearson": 0.16966321698117656,
+            "rank_spearman": 0.08333333333333334
+          },
+          "Persian": {
+            "n": 10,
+            "deviation_pearson": -0.026457255285750214,
+            "deviation_spearman": -0.09090909090909088,
+            "rank_pearson": -0.07013923384328544,
+            "rank_spearman": -0.09090909090909088
+          }
+        }
+      },
+      "pairwise_distance_preservation": {
+        "n_pairs": 5072,
+        "pearson": 0.09045686398990664,
+        "spearman": 0.05856108248600567,
+        "interpretation": "weak_preservation"
+      },
+      "outlier_preservation": {
+        "overall": {
+          "n_total_outliers": 61,
+          "n_retained": 9,
+          "retention_rate": 0.14754098360655737,
+          "mean_rank_percentile": 0.4674998642353577,
+          "interpretation": "homogenization"
+        },
+        "per_group": {
+          "Indonesian": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.59375
+          },
+          "Malay": {
+            "n_outliers": 1,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.9166666666666666
+          },
+          "Arabic": {
+            "n_outliers": 5,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.580952380952381
+          },
+          "English": {
+            "n_outliers": 30,
+            "n_retained": 6,
+            "retention_rate": 0.2,
+            "mean_rank_percentile": 0.41404199475065623
+          },
+          "Turkish": {
+            "n_outliers": 3,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.48611111111111116
+          },
+          "Chinese": {
+            "n_outliers": 2,
+            "n_retained": 1,
+            "retention_rate": 0.5,
+            "mean_rank_percentile": 0.16216216216216217
+          },
+          "Portuguese": {
+            "n_outliers": 1,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.9230769230769231
+          },
+          "Greek": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5769230769230769
+          },
+          "Spanish": {
+            "n_outliers": 5,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5555555555555556
+          },
+          "Urdu": {
+            "n_outliers": 3,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.5614035087719298
+          },
+          "Japanese": {
+            "n_outliers": 2,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.2692307692307693
+          },
+          "Ukrainian": {
+            "n_outliers": 1,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.8181818181818182
+          },
+          "Vietnamese": {
+            "n_outliers": 1,
+            "n_retained": 0,
+            "retention_rate": 0.0,
+            "mean_rank_percentile": 0.9090909090909091
+          },
+          "Russian": {
+            "n_outliers": 3,
+            "n_retained": 2,
+            "retention_rate": 0.6666666666666666,
+            "mean_rank_percentile": 0.16666666666666666
+          }
+        }
+      },
+      "outlier_correction": {
+        "outlier_mean_delta": -12.674428104575162,
+        "non_outlier_mean_delta": -7.326187464233006,
+        "delta_difference": -5.348240640342156,
+        "n_outliers": 68,
+        "n_non_outliers": 527,
+        "interpretation": "strong_correction"
+      },
+      "variance_preservation_ratio": {
+        "std_ratio": 0.4472575079836384,
+        "iqr_ratio": 0.400827396000919,
+        "pooled_std_ratio": 0.5190079163019098,
+        "per_group_std_ratios": {
+          "Serbian": 0.17274847390659054,
+          "Indonesian": 0.33892989095394616,
+          "Swahili": 0.6643269898892897,
+          "Malay": 0.34244468764160085,
+          "Arabic": 0.45446202644767575,
+          "English": 0.6156995765441239,
+          "Romanian": 0.6378144717801391,
+          "Dutch": 0.23540818955462767,
+          "Turkish": 0.43494900545524695,
+          "Korean": 0.4849081076748039,
+          "Chinese": 0.6150726492483718,
+          "Portuguese": 0.43007931943385314,
+          "Greek": 0.4244050199582148,
+          "Spanish": 0.4269907865276048,
+          "German": 0.4228116455352051,
+          "Urdu": 0.4353918058641714,
+          "Japanese": 0.6994000521793164,
+          "Thai": 0.47821962814960495,
+          "Ukrainian": 0.23154284919800033,
+          "Vietnamese": 0.3364249201328115,
+          "Russian": 0.6330011278821849,
+          "Bengali": 0.7072086997920455,
+          "Persian": 0.33982814208587936
+        },
+        "per_group_iqr_ratios": {
+          "Serbian": 0.11290322580645161,
+          "Indonesian": 0.21155753968253932,
+          "Swahili": 1.0679365079365066,
+          "Malay": 0.343861576489975,
+          "Arabic": 0.42310336924134717,
+          "English": 0.6288723667905819,
+          "Romanian": 0.32939986513823316,
+          "Dutch": 0.3622857142857145,
+          "Turkish": 0.6382978723404248,
+          "Korean": 0.27161383285302554,
+          "Chinese": 0.7026239067055389,
+          "Portuguese": 0.2812892423608204,
+          "Greek": 0.17468805704099813,
+          "Spanish": 0.3345280764635604,
+          "German": 0.37957610789980695,
+          "Urdu": 0.39657142857142874,
+          "Japanese": 0.8537549407114605,
+          "Thai": 0.32497013142174397,
+          "Ukrainian": 0.2424758659852356,
+          "Vietnamese": 0.3422782037239867,
+          "Russian": 0.33091397849462295,
+          "Bengali": 0.5678280207561153,
+          "Persian": 0.30557335041640005
+        },
+        "interpretation": "variance_collapse"
+      },
+      "stereotype_amplification": {
+        "overall": {
+          "mean_delta": -7.937414965986394,
+          "median_delta": -7.884920634920634,
+          "std_delta": 3.2811822669619626,
+          "n_individuals": 595,
+          "n_toward_stereotype": 589,
+          "n_away_from_stereotype": 3,
+          "n_neutral": 3,
+          "pct_toward_stereotype": 98.99159663865547,
+          "pct_away_from_stereotype": 0.5042016806722689,
+          "interpretation": "strong_homogenization"
+        },
+        "per_group": {
+          "Serbian": {
+            "mean_delta": -8.399206349206349,
+            "median_delta": -7.980158730158731,
+            "std_delta": 2.861908063278872,
+            "n": 5,
+            "pct_toward_stereotype": 100.0
+          },
+          "Indonesian": {
+            "mean_delta": -7.246279761904762,
+            "median_delta": -6.343253968253968,
+            "std_delta": 3.76323237238129,
+            "n": 16,
+            "pct_toward_stereotype": 100.0
+          },
+          "Swahili": {
+            "mean_delta": -5.3761904761904775,
+            "median_delta": -6.642857142857141,
+            "std_delta": 2.9280211983641857,
+            "n": 5,
+            "pct_toward_stereotype": 80.0
+          },
+          "Malay": {
+            "mean_delta": -7.890542328042327,
+            "median_delta": -7.847222222222223,
+            "std_delta": 2.498990651587352,
+            "n": 12,
+            "pct_toward_stereotype": 100.0
+          },
+          "Arabic": {
+            "mean_delta": -6.9840325018896445,
+            "median_delta": -6.414682539682541,
+            "std_delta": 3.1590045118493135,
+            "n": 42,
+            "pct_toward_stereotype": 97.61904761904762
+          },
+          "English": {
+            "mean_delta": -9.155308711411074,
+            "median_delta": -8.896825396825392,
+            "std_delta": 2.906277779062693,
+            "n": 254,
+            "pct_toward_stereotype": 100.0
+          },
+          "Romanian": {
+            "mean_delta": -8.417989417989418,
+            "median_delta": -8.990079365079367,
+            "std_delta": 2.3180023405182486,
+            "n": 6,
+            "pct_toward_stereotype": 100.0
+          },
+          "Dutch": {
+            "mean_delta": -3.9242979242979223,
+            "median_delta": -4.253968253968253,
+            "std_delta": 2.5458794120276447,
+            "n": 13,
+            "pct_toward_stereotype": 92.3076923076923
+          },
+          "Turkish": {
+            "mean_delta": -6.716600529100529,
+            "median_delta": -6.2519841269841265,
+            "std_delta": 2.3011094413236295,
+            "n": 24,
+            "pct_toward_stereotype": 100.0
+          },
+          "Korean": {
+            "mean_delta": -7.082199546485262,
+            "median_delta": -6.503968253968257,
+            "std_delta": 2.3964909760969255,
+            "n": 7,
+            "pct_toward_stereotype": 100.0
+          },
+          "Chinese": {
+            "mean_delta": -4.415808665808666,
+            "median_delta": -4.6349206349206336,
+            "std_delta": 2.625079201774752,
+            "n": 37,
+            "pct_toward_stereotype": 94.5945945945946
+          },
+          "Portuguese": {
+            "mean_delta": -8.53174603174603,
+            "median_delta": -7.722222222222223,
+            "std_delta": 3.9795669022909848,
+            "n": 13,
+            "pct_toward_stereotype": 100.0
+          },
+          "Greek": {
+            "mean_delta": -7.25152625152625,
+            "median_delta": -6.809523809523809,
+            "std_delta": 1.5430598277284584,
+            "n": 13,
+            "pct_toward_stereotype": 100.0
+          },
+          "Spanish": {
+            "mean_delta": -9.162962962962963,
+            "median_delta": -9.071428571428571,
+            "std_delta": 2.7770920544388837,
+            "n": 45,
+            "pct_toward_stereotype": 100.0
+          },
+          "German": {
+            "mean_delta": -6.257936507936507,
+            "median_delta": -5.309523809523808,
+            "std_delta": 1.705790278009334,
+            "n": 9,
+            "pct_toward_stereotype": 100.0
+          },
+          "Urdu": {
+            "mean_delta": -8.093984962406017,
+            "median_delta": -8.396825396825399,
+            "std_delta": 3.6966831976429035,
+            "n": 19,
+            "pct_toward_stereotype": 100.0
+          },
+          "Japanese": {
+            "mean_delta": -4.006105006105006,
+            "median_delta": -4.591269841269839,
+            "std_delta": 1.9741891633151716,
+            "n": 13,
+            "pct_toward_stereotype": 92.3076923076923
+          },
+          "Thai": {
+            "mean_delta": -8.660493827160495,
+            "median_delta": -9.178571428571429,
+            "std_delta": 2.4213880569429382,
+            "n": 9,
+            "pct_toward_stereotype": 100.0
+          },
+          "Ukrainian": {
+            "mean_delta": -7.072871572871573,
+            "median_delta": -6.865079365079366,
+            "std_delta": 3.419536704247296,
+            "n": 11,
+            "pct_toward_stereotype": 100.0
+          },
+          "Vietnamese": {
+            "mean_delta": -6.425685425685426,
+            "median_delta": -5.976190476190476,
+            "std_delta": 2.9249788746200003,
+            "n": 11,
+            "pct_toward_stereotype": 100.0
+          },
+          "Russian": {
+            "mean_delta": -8.233465608465606,
+            "median_delta": -7.666666666666665,
+            "std_delta": 2.686870756828617,
+            "n": 12,
+            "pct_toward_stereotype": 100.0
+          },
+          "Bengali": {
+            "mean_delta": -5.388888888888888,
+            "median_delta": -5.349206349206349,
+            "std_delta": 1.9463987946887003,
+            "n": 9,
+            "pct_toward_stereotype": 100.0
+          },
+          "Persian": {
+            "mean_delta": -9.536507936507938,
+            "median_delta": -9.765873015873016,
+            "std_delta": 0.7379795949686375,
+            "n": 10,
+            "pct_toward_stereotype": 100.0
+          }
+        }
+      },
+      "cross_group_stereotype": {
+        "own_group_mean_delta": -7.937414965986394,
+        "other_group_mean_delta": -6.282099809620818,
+        "n_own_group": 595,
+        "n_other_group": 13090,
+        "interpretation": "over_attribution"
+      }
+    }
+  }
+}

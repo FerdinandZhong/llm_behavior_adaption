@@ -400,24 +400,24 @@ def plot_divergence_comparison_radar(
 
     def _split_pair(pair_full: str):
         if " vs " in pair_full:
-            l, r = pair_full.split(" vs ", 1)
-            return l.strip(), r.strip()
+            left, right = pair_full.split(" vs ", 1)
+            return left.strip(), right.strip()
         return pair_full.strip(), None
 
     def _is_unknown_pair(pair_full: str) -> bool:
-        l, r = _split_pair(pair_full)
-        if (l and l.lower() in unknown_set) or (r and r.lower() in unknown_set):
+        left, right = _split_pair(pair_full)
+        if (left and left.lower() in unknown_set) or (right and right.lower() in unknown_set):
             return True
         return False
 
     def _pair_to_abbrev(pair_full: str) -> str:
         if not group_to_abbrev:
             return pair_full
-        l, r = _split_pair(pair_full)
-        if r is None:
-            return group_to_abbrev.get(l, l)
-        la = group_to_abbrev.get(l, l)
-        ra = group_to_abbrev.get(r, r)
+        left, right = _split_pair(pair_full)
+        if right is None:
+            return group_to_abbrev.get(left, left)
+        la = group_to_abbrev.get(left, left)
+        ra = group_to_abbrev.get(right, right)
         return f"{la} vs {ra}"
 
     # ---- Collect unique FULL group pairs ----

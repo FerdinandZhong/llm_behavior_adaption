@@ -229,3 +229,54 @@ backup_redundant_scripts/
 
 # Generated comprehensive analysis output directories
 wvs_values_results/**/comprehensive_analysis/
+.mcp.json
+
+# Local Claude Code config
+.claude/
+
+# Intermediate analysis and gap analysis results
+wvs_values_gap_analysis/
+
+# Old paper version directories (kept locally, not in repo)
+Evaluating_LLM_Adaptation_to_Sociodemographic_Factors__User_Profile_vs__Dialogue_History__New_Edition_Feb_2026_/
+JASIST_submission/
+JASIST_submission_2/
+JASIST_submission_final/
+jasist-main.tex
+
+# Scratch / one-off test scripts
+sglang_test.py
+test_reasoning_extraction.py
+test_translation.py
+test_translation_format.py
+check_translation_progress.py
+verify_scam_updates.py
+cmds.txt
+vllm_test.py
+
+# Legacy analysis module (superseded by llm_behavior_adaptation package)
+understanding/
+
+# Internal implementation notes (not for external users)
+docs/instructions/
+
+# Translated dialogue backups and intermediate formatted files
+wvs_generated_dialogues/**/*.bak
+wvs_generated_dialogues/**/*_formatted.jsonl
+
+# dialogues_validation — raw annotation data, Qualtrics/Prolific exports, intermediate outputs
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/career_export/
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/investment_export/
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/human_annotation_package/career_50/
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/human_annotation_package/investment_50/
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/human_annotation_package/assignment_plan_6annotators_25each.csv
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/prolific_export_*.csv
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/assignments_*.csv
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/Dialogue*.csv
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/Dialogue*.zip
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/*.qsf
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/iaa_report.json
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/iaa_v2_report.json
+llm_behavior_adaptation/dialogue_dataset_creation/dialogues_validation/compute_iaa.py
+
+.omc

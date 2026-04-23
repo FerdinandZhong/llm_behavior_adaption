@@ -58,6 +58,8 @@ class ValuesPredictionController:
         reasoning: bool = False,
         run_mode: str = "both",
         extra_body: Dict = None,
+        translated_questions: Optional[Dict] = None,
+        uid_language_map: Optional[Dict] = None,
     ) -> None:
         """
         Initialize the ValuesPredictionController.
@@ -111,6 +113,8 @@ class ValuesPredictionController:
         self._storage_step = storage_step
         self._reasoning = reasoning
         self._run_mode = run_mode
+        self._translated_questions = translated_questions  # {lang: {qid: text, "_instruction": text}}
+        self._uid_language_map = uid_language_map  # {uid: language}
 
         print(f"reasoning: {reasoning}")
 
@@ -341,11 +345,32 @@ class ValuesPredictionController:
         llm_server = cfg.get("llm_server", "llm_platform")
 
         # Preserve your previous heuristic for base_url selection
-        if "gpt" in evaluated_model and "oss" not in evaluated_model:
+        # Priority: explicit model_base_url > env base_url > GPT default > localhost
+        base_url = cfg.get("model_base_url") or os.environ.get("base_url")
+        if base_url:
+            openai_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+        elif "gpt" in evaluated_model and "oss" not in evaluated_model:
             openai_client = AsyncOpenAI(api_key=api_key)
         else:
-            base_url = cfg.get("model_base_url") or os.environ.get("base_url") or "http://localhost:8000/v1"
-            openai_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+            openai_client = AsyncOpenAI(api_key=api_key, base_url="http://localhost:8000/v1")
+
+        # -------- Translated questions (optional) --------
+        translated_questions = None
+        if cfg.get("translated_questions_path"):
+            with open(cfg["translated_questions_path"], "r", encoding="utf-8") as f:
+                translated_questions = json.load(f)
+            logger.info("Loaded translated questions for %d languages", len(translated_questions))
+
+        # -------- UID → language map (optional) --------
+        uid_language_map = None
+        if cfg.get("uid_language_map_file"):
+            uid_language_map = {}
+            with open(cfg["uid_language_map_file"], "r", encoding="utf-8") as f:
+                for line in f:
+                    entry = json.loads(line)
+                    uid = str(entry["user_profile"]["D_INTERVIEW"])
+                    uid_language_map[uid] = entry["target_language"]
+            logger.info("Built uid→language map for %d users", len(uid_language_map))
 
         # -------- Instantiate controller --------
         return cls(
@@ -363,6 +388,8 @@ class ValuesPredictionController:
             reasoning=bool(cfg.get("reasoning", False)),
             run_mode=(cfg.get("run_mode") or "both"),
             extra_body=(cfg.get("extra_body") or None),
+            translated_questions=translated_questions,
+            uid_language_map=uid_language_map,
         )
 
     # ---------- Orchestration ----------
@@ -402,7 +429,21 @@ class ValuesPredictionController:
             else:
                 full_chat_response = await self.query_llm(messages=full_messages)
             content = full_chat_response.choices[0].message.content
-            json_output = json.loads(content)
+            try:
+                json_output = json.loads(content)
+            except json.JSONDecodeError:
+                # Sanitize invalid JSON escape sequences (e.g. \e, \a from smaller models)
+                import re
+
+                sanitized = re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", content)
+                try:
+                    json_output = json.loads(sanitized)
+                except json.JSONDecodeError:
+                    logger.warning("JSON still invalid after sanitization: %s", content[:200])
+                    return (
+                        -1,
+                        "Response JSON un-parseable",
+                    )
         except UnicodeDecodeError:
             logger.warning("Error decoding as json: %s", content)
             return (
@@ -452,9 +493,13 @@ class ValuesPredictionController:
 
         return {question_id: structured_output}
 
-    async def _dialogue_continue_value_query(self, question_id, dialogue_history, full_question):
-        """
+    async def _dialogue_continue_value_query(self, question_id, dialogue_history, full_question, instruction=None):
+        r"""
         Query the LLM to answer a values question using prior dialogue context.
+
+        If ``instruction`` is provided (a translated version of the user-turn prefix),
+        the final user message is built as ``"{instruction}\\n\\n{full_question}"``
+        instead of using the English template from dialogue_followup.json.
         """
         dialogue_continue_prompt = self._prompt("dialogue_followup")
         dialogue_based_msgs = deepcopy(dialogue_history)
@@ -462,10 +507,12 @@ class ValuesPredictionController:
             {**m, "role": "assistant"} if m.get("role") == "chatbot" else m for m in dialogue_based_msgs
         ]
         dialogue_based_msgs.append(dialogue_continue_prompt[0])
-        dialogue_continue_prompt[1]["content"] = dialogue_continue_prompt[1]["content"].format(
-            values_question=full_question
-        )
-        dialogue_based_msgs.append(dialogue_continue_prompt[1])
+        user_msg = deepcopy(dialogue_continue_prompt[1])
+        if instruction is not None:
+            user_msg["content"] = f"{instruction}\n\n{full_question}"
+        else:
+            user_msg["content"] = user_msg["content"].format(values_question=full_question)
+        dialogue_based_msgs.append(user_msg)
 
         structured_output = await self._retry_llm(
             lambda: self._llm_output_processing(full_messages=dialogue_based_msgs, reasoning=self.reasoning),
@@ -572,6 +619,15 @@ class ValuesPredictionController:
                     if self._verbose == 1:
                         logger.info("Processing row %s: %s", index, row_dict)
 
+                    # Resolve per-user language and its translations (if available)
+                    user_language = self._uid_language_map.get(user_id) if self._uid_language_map else None
+                    lang_translations = (
+                        self._translated_questions.get(user_language, {})
+                        if (self._translated_questions and user_language)
+                        else {}
+                    )
+                    translated_instruction = lang_translations.get("_instruction") or None
+
                     for (
                         question_category,
                         question_dict,
@@ -579,13 +635,14 @@ class ValuesPredictionController:
                         one_user_selections[question_category] = {}
                         list_kwargs = []
                         for question_id, question_details in question_dict.items():
-                            full_question = question_details["question"]
+                            full_question = lang_translations.get(question_id) or question_details["question"]
 
                             list_kwargs.append(
                                 {
                                     "question_id": question_id,
                                     "dialogue_history": user_dialogue,
                                     "full_question": full_question,
+                                    "instruction": translated_instruction,
                                 }
                             )
 
@@ -626,7 +683,10 @@ class ValuesPredictionController:
         """Append data to the specified JSONL file."""
         with open(output_file_path, "a", encoding="utf-8") as jsonl_file:
             for entry in data:
-                jsonl_file.write(json.dumps(entry, ensure_ascii=False) + "\n")
+                # Sanitize surrogate characters that smaller models produce in multilingual output
+                line = json.dumps(entry, ensure_ascii=False)
+                line = line.encode("utf-8", errors="surrogatepass").decode("utf-8", errors="replace")
+                jsonl_file.write(line + "\n")
 
 
 async def main():

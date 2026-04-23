@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import pandas as pd
 import yaml
 from openai import AsyncOpenAI
 from tqdm.asyncio import tqdm
@@ -186,14 +185,9 @@ class TranslationController:
             logger.info("Loaded %d user profiles", len(user_profiles))
 
         # Build OpenAI client
-        api_key = (
-            cfg.get("openai_api_key")
-            or os.environ.get("OPENAI_API_KEY")
-        )
+        api_key = cfg.get("openai_api_key") or os.environ.get("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError(
-                "Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY')."
-            )
+            raise RuntimeError("Missing OpenAI API key (YAML 'openai_api_key' or env 'api_key'/'OPENAI_API_KEY').")
         openai_client = AsyncOpenAI(api_key=api_key)
 
         # Build translator
@@ -246,10 +240,12 @@ class TranslationController:
                     chatbot_turn = turns[i + 1]
 
                     if user_turn.get("role") == "user" and chatbot_turn.get("role") in ["chatbot", "assistant"]:
-                        generated_dialogue.append({
-                            "user_content": user_turn.get("content", ""),
-                            "chatbot_content": chatbot_turn.get("content", "")
-                        })
+                        generated_dialogue.append(
+                            {
+                                "user_content": user_turn.get("content", ""),
+                                "chatbot_content": chatbot_turn.get("content", ""),
+                            }
+                        )
                         i += 2
                     else:
                         # Skip malformed turn
@@ -258,11 +254,7 @@ class TranslationController:
                     # Odd number of turns, skip last one
                     break
 
-            return {
-                "index": index,
-                "generated_dialogue": generated_dialogue,
-                "interview_id": interview_id
-            }
+            return {"index": index, "generated_dialogue": generated_dialogue, "interview_id": interview_id}
 
         # Fallback: return as-is
         return dialogue_data
@@ -372,6 +364,7 @@ class TranslationController:
                             logger.error("Error translating dialogue %d: %s", i, e)
                             if self._verbose >= 2:
                                 import traceback
+
                                 traceback.print_exc()
 
                         pbar.update(1)
@@ -443,9 +436,7 @@ def create_sample_config(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Translate dialogue datasets based on user profiles"
-    )
+    parser = argparse.ArgumentParser(description="Translate dialogue datasets based on user profiles")
     parser.add_argument(
         "--create-config",
         type=str,

@@ -21,12 +21,11 @@ import logging
 from collections import OrderedDict, defaultdict
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import yaml
-from tqdm import tqdm
 
 from llm_behavior_adaptation.utils import register_logger
 
@@ -126,7 +125,7 @@ class IndividualVsGroupAlignment:
 
         # Flatten question metadata
         self.all_questions: Dict[str, Any] = {}
-        for category, questions in picked_questions.items():
+        for _category, questions in picked_questions.items():
             self.all_questions.update(questions)
         logger.info(f"Loaded {len(self.all_questions)} questions")
 
@@ -170,10 +169,7 @@ class IndividualVsGroupAlignment:
             df[tmp_col] = pd.cut(df[target_col], bins=bins, labels=labels, right=False)
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
             return {lab: grouped[lab] for lab in labels if lab in grouped}
 
@@ -208,10 +204,7 @@ class IndividualVsGroupAlignment:
             df[tmp_col] = df[target_col].map(label_to_bin)
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
             ordered = {k: grouped[k] for k in bins_to_labels.keys() if k in grouped}
             return ordered
@@ -234,10 +227,7 @@ class IndividualVsGroupAlignment:
             df[tmp_col] = df[target_col].map(label_to_bin)
 
             grouped = (
-                df.dropna(subset=[tmp_col])
-                .groupby(tmp_col, sort=False)
-                .apply(lambda x: x.index.tolist())
-                .to_dict()
+                df.dropna(subset=[tmp_col]).groupby(tmp_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
             )
             ordered = {k: grouped[k] for k in bins_to_labels.keys() if k in grouped}
             return ordered
@@ -246,9 +236,7 @@ class IndividualVsGroupAlignment:
         grouped = df.groupby(target_col, sort=False).apply(lambda x: x.index.tolist()).to_dict()
         return grouped
 
-    def _compute_group_medians(
-        self, group_indices: Dict[str, List[int]]
-    ) -> Dict[str, Dict[str, float]]:
+    def _compute_group_medians(self, group_indices: Dict[str, List[int]]) -> Dict[str, Dict[str, float]]:
         """
         Compute median response for each question within each demographic group.
 
@@ -294,7 +282,9 @@ class IndividualVsGroupAlignment:
     # ----------------------------
     # Core computation: one attribute at a time
     # ----------------------------
-    def _run_one_attribute(self, demographic_attribute: str) -> Tuple[Dict[str, Any], Dict[Tuple[str, str], Dict[str, Any]]]:
+    def _run_one_attribute(
+        self, demographic_attribute: str
+    ) -> Tuple[Dict[str, Any], Dict[Tuple[str, str], Dict[str, Any]]]:
         """
         Run alignment analysis for a single demographic attribute.
 
@@ -472,7 +462,7 @@ class IndividualVsGroupAlignment:
             total_ties += int(s["ties"])
             total_skipped += int(s["skipped"])
             total_groups_union[attr] = st.get("groups", {})
-            
+
             attribute_results[attr] = {
                 "num_groups": st.get("num_groups", 0),
                 "groups": st.get("groups", {}),
@@ -491,10 +481,8 @@ class IndividualVsGroupAlignment:
         overall_stats = {
             "demographic_attributes": self.demographic_attributes,
             "total_users": len(self.ba_dialogue_results),
-
             # ✅ Explicit per-attribute results (what you asked for)
             "attribute_results": attribute_results,
-
             "overall_alignment_summary": {
                 "total_comparisons": total_comparisons,
                 "individual_wins": total_individual_wins,
@@ -504,7 +492,6 @@ class IndividualVsGroupAlignment:
             },
             "overall_bias_score": round(overall_bias_score, 4),
             "overall_bias_interpretation": self._interpret_bias(overall_bias_score),
-
             # group sizes by attribute (already present before, keep if you want)
             "groups_by_attribute": total_groups_union,
         }
